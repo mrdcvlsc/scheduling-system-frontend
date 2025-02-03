@@ -16,7 +16,7 @@ export default defineConfig({
       input: {
         main: resolve(root, 'index.html'),
         about: resolve(root, 'about', 'index.html'),
-        about: resolve(root, 'class_schedule', 'index.html'),
+        schedule: resolve(root, 'schedule', 'index.html'),
       }
     }
   }
