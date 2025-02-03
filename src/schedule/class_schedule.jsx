@@ -174,6 +174,7 @@ function TimeTable() {
     setYearLevelIdx("")
     setSelectedSectionScheduleIndex("")
     setSemesterIndex("")
+    setClassAssignedSubjects([])
   };
 
   const handleYearLevelChange = (event) => {
@@ -182,10 +183,12 @@ function TimeTable() {
     setYearLevelIdx(year_level_idx);
     setSelectedSectionScheduleIndex("")
     setSemesterIndex("")
+    setClassAssignedSubjects([])
   };
 
   const handleSectionChange = (event) => {
     setSelectedSectionScheduleIndex(event.target.value);
+    setClassAssignedSubjects([])
     console.log('section selected schedule index value:', event.target.value)
   };
 
@@ -242,8 +245,7 @@ function TimeTable() {
             }
           </select>
         </div>
-
-        <button className="fetch-button" onClick={handleFetch}>
+        <button className="fetch-button" onClick={handleFetch} disabled={!selectedSectionScheduleIndex}>
           fetch schedule
         </button>
       </div>
