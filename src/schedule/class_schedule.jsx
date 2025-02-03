@@ -244,7 +244,7 @@ function TimeTable() {
         </div>
 
         <button className="fetch-button" onClick={handleFetch}>
-          Fetch
+          fetch schedule
         </button>
       </div>
 
@@ -264,23 +264,34 @@ function TimeTable() {
             <tr key={row_idx}>
               <td className="time-slot">{time_slot_label.time_range}</td>
               {days.map((_, day_idx) => {
-                const subject = classAssignedSubjects.find(
+                const has_assigned_subject = classAssignedSubjects.find(
                   (subj) => subj.DayIdx === day_idx && subj.TimeSlotIdx === row_idx
                 );
 
-                if (subject) {
+                if (has_assigned_subject) {
                   return (
-                    <td key={day_idx} className={`subject-cell ${subjectColors[subject.SubjectCode]}`} rowSpan={subject.SubjectTimeSlots}>
+                    <td key={day_idx} className={`subject-cell ${subjectColors[has_assigned_subject.SubjectCode]}`} rowSpan={has_assigned_subject.SubjectTimeSlots}>
                       <div className="subject-content">
-                        <div className="subject-name">{subject.SubjectCode}</div>
-                        <div className="instructor">{subject.InstructorLastName}</div>
-                        <div className="room">{subject.RoomName}</div>
+                        <div className="subject-name">{has_assigned_subject.SubjectCode}</div>
+                        <div className="instructor">{has_assigned_subject.InstructorLastName}</div>
+                        <div className="room">{has_assigned_subject.RoomName}</div>
                       </div>
                     </td>
                   );
                 }
 
-                return <td key={day_idx} className="empty-slot"></td>;
+                // row spans occupy space in a tr despite not having the td element spanning in that tr,
+                // that's why this logic is needed because if we didn't do this, we will add empty slots
+                // to the rows with cells that are affected by a row spans, which could lead to new empty
+                // slots that can go outside of the table.
+
+                const is_occupied = classAssignedSubjects.some((subject) => {
+                  const has_hit_subject_in_row = row_idx >= subject.TimeSlotIdx && row_idx < (subject.TimeSlotIdx + subject.SubjectTimeSlots);
+                  const has_hit_subject_in_col = day_idx == subject.DayIdx;
+                  return has_hit_subject_in_row && has_hit_subject_in_col;
+                })
+
+                return is_occupied ? null : <td key={day_idx} className="empty-slot"></td>;
               })}
             </tr>
           ))}
