@@ -5,7 +5,7 @@
   width: 100%;
 }
 
-#right-dropdown-container {
+#left-dropdown-container {
   display: flex;
   gap: 0.8em;
 }
@@ -17,8 +17,9 @@
   border: thin solid #ddd;
   border-radius: 0.3em;
   cursor: pointer;
-  width: 100%;
+  /* width: 100%; */
   height: 100%;
+  transition: 0.4s ease-out;
 }
 
 .dropdown:disabled {
@@ -27,7 +28,8 @@
 }
 
 .dropdown:hover {
-  background-color: #f4daff;
+  background-color: #0e6500;
+  color: white;
 }
 
 .fetch-button {
@@ -42,7 +44,7 @@
 }
 
 .fetch-button:hover {
-  background-color: #0056b3;
+  background-color: #8a00cf;
 }
 
 .fetch-button:disabled {
