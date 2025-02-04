@@ -7,17 +7,29 @@ async function fetch_const(base_url = '') {
   });
 
   if (!response.ok) {
-    throw Error(`${response.status} : unable to fetch const values`);
+    throw Error(`${response.status} : ${await response.text()}`);
   }
 
-  const const_json = await response.json();
-
-
-  console.log('const data fetched.');
-  return const_json;
+  return await response.json();
 }
 
-async function fetch_serialized_schedule(selected_semester, base_url = '') {
+async function fetch_department_data(department_id, semester, base_url = '') {
+  const response = await fetch(
+    `${base_url}/v1/department_data?department_id=${department_id}&semester=${semester}`, {
+    headers: {
+      Accept: "application/json",
+    },
+    method: 'GET'
+  });
+
+  if (!response.ok) {
+    throw Error(`${response.status} : ${await response.text()}`);
+  }
+
+  return await response.json();
+}
+
+async function fetch_serialized_university_schedule(selected_semester, base_url = '') {
   const response = await fetch(`${base_url}/v1/university_schedule?semester=${selected_semester}`, {
     headers: {
       Accept: "text/plain",
@@ -26,13 +38,10 @@ async function fetch_serialized_schedule(selected_semester, base_url = '') {
   });
 
   if (!response.ok) {
-    const err_msg = await response.text();
-    throw Error(`${response.status} : ${err_msg}`);
+    throw Error(`${response.status} : ${await response.text()}`);
   }
 
-  const serialized_schedule = await response.arrayBuffer();
-
-  return [new Uint8Array(serialized_schedule), response.ok];
+  return new Uint8Array(await response.arrayBuffer());
 }
 
 async function fetch_serialized_class_schedule(department_id, selected_semester, schedule_idx, base_url = '') {
@@ -42,35 +51,29 @@ async function fetch_serialized_class_schedule(department_id, selected_semester,
       Accept: "text/plain",
     },
     method: 'GET'
-  }
-  );
+  });
 
   if (!response.ok) {
-    const err_msg = await response.text();
-    throw Error(`${response.status} : ${err_msg}`);
+    throw Error(`${response.status} : ${await response.text()}`);
   }
 
-  const serialized_schedule = await response.arrayBuffer();
-
-  return [new Uint8Array(serialized_schedule), response.ok];
+  return new Uint8Array(await response.arrayBuffer());
 }
 
-async function fetch_serialized_class_json_schedule(department_id, selected_semester, schedule_idx, base_url = '') {
+async function fetch_class_json_schedule(department_id, selected_semester, schedule_idx, base_url = '') {
   const response = await fetch(
     `${base_url}/v1/class_json_schedule?department_id=${department_id}&semester=${selected_semester}&schedule_idx=${schedule_idx}`, {
     headers: {
       Accept: "application/json",
     },
     method: 'GET'
-  }
-  );
+  });
 
   if (!response.ok) {
-    const err_msg = await response.text();
-    throw Error(`${response.status} : ${err_msg}`);
+    throw Error(`${response.status} : ${await response.text()}`);
   }
 
-  return [await response.json(), response.ok];
+  return await response.json();
 }
 
 async function send_serialized_schedule(selected_semester, serialized_schedule, base_url = '') {
@@ -83,13 +86,9 @@ async function send_serialized_schedule(selected_semester, serialized_schedule, 
     body: serialized_schedule
   });
 
-
   if (!response.ok) {
-    const err_msg = await response.text();
-    throw new Error(`${response.status} : ${err_msg}`);
+    throw new Error(`${response.status} : ${await response.text()}`);
   }
-
-  console.log('serialized university schedule sent to backend.');
 }
 
 async function deserialize_schedule(serialized_data, base_url = '') {
@@ -123,7 +122,6 @@ async function deserialize_schedule(serialized_data, base_url = '') {
     university_schedules.push(week_time_table);
   }
 
-  console.log('university schedule deserialized.');
   return university_schedules;
 }
 
@@ -152,7 +150,6 @@ async function serialize_schedule(university_schedules, base_url = '') {
     }
   }
 
-  console.log('university schedule serialized.');
   return serialized_data;
 }
 
@@ -164,11 +161,19 @@ async function generate_schedule(selected_semester, base_url = '') {
     },
   });
 
-  const msg = await response.text();
-
   if (!response.ok) {
-    throw new Error(`${response.status} : ${msg}`);
+    throw new Error(`${response.status} : ${await response.text()}`);
   }
+}
 
-  console.log(`success response: ${msg}`);
+export {
+  fetch_const,
+  fetch_department_data,
+  fetch_serialized_university_schedule,
+  fetch_serialized_class_schedule,
+  fetch_class_json_schedule,
+  send_serialized_schedule,
+  deserialize_schedule,
+  serialize_schedule,
+  generate_schedule
 }
