@@ -7,7 +7,7 @@ import "../assets/main.css";
 import "./TimeTable.css";
 import "./TimeTableDropdowns.css";
 
-import { fetch_class_json_schedule, fetch_department_data } from "../fetch/schedule"
+import { deserialize_schedule, fetch_class_json_schedule, fetch_department_data, fetch_serialized_class_schedule } from "../fetch/schedule"
 
 const formatTime = (hour, minutes) => {
   const period = hour >= 12 ? "PM" : "AM";
@@ -180,6 +180,10 @@ function TimeTable() {
 
       try {
         const class_scheduled_subjects = await fetch_class_json_schedule(departmentID.current, semesterIndex, event.target.value)
+       
+        // for debugging only
+        const class_serialized_scheduled = await fetch_serialized_class_schedule(departmentID.current, semesterIndex, event.target.value)
+        const class_deserialized_sched = await deserialize_schedule(class_serialized_scheduled)
 
         // const class_scheduled_subjects = [
         //   { "SubjectCode": "0001", "DayIdx": 0, "TimeSlotIdx": 0, "SubjectTimeSlots": 3, "InstructorLastName": "John", "RoomName": "RM 4" },
@@ -217,6 +221,10 @@ function TimeTable() {
         //   { "SubjectCode": "0045", "DayIdx": 4, "TimeSlotIdx": 16, "SubjectTimeSlots": 3, "InstructorLastName": "Alice", "RoomName": "RM 47" },
         //   { "SubjectCode": "1146", "DayIdx": 4, "TimeSlotIdx": 20, "SubjectTimeSlots": 3, "InstructorLastName": "Bob", "RoomName": "RM 47" },
         // ];
+
+        console.log('deserialize sched : = ', class_deserialized_sched)
+
+        console.log('json sched : = ', class_scheduled_subjects)
 
         setClassAssignedSubjects(class_scheduled_subjects);
 
