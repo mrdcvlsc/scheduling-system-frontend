@@ -1,0 +1,37 @@
+.instructor-list {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3em; /* Adds spacing between items */
+    padding: 0.5em;
+}
+
+.instructor-item {
+    width: 100%; /* Ensures full width */
+    padding: 0.1em;
+    border-radius: 8px;
+    background: #f9f9f9;
+    border: thin solid #ccc;
+    text-align: center;
+    font-size: 1em;
+    font-weight: normal;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.instructor-item:hover {
+    background: #e0e0e0;
+}
+
+.instructor-item.selected {
+    background: #007bff;
+    color: white;
+    border-color: #0056b3;
+    font-weight: bold;
+}
+
+.occupied-slot {
+    background-color: red;
+    border: thin solid #ddd;
+    width: 14.2857%;
+}
