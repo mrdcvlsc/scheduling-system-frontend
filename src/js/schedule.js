@@ -1,5 +1,171 @@
 const API_VERSION = 'v1'
-const DEV = false
+const DEV = true
+
+async function fetch_department_instructors_erd(department_id, semester, base_url = '') {
+  if (DEV) {
+    return [
+      { "InstructorID": 3, "DepartmentID": 1, "FirstName": "Alice", "MiddleInitial": "M",
+        "LastName": "Garcia", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
+        "Time": [0, 0, 0]
+      },
+      { "InstructorID": 4, "DepartmentID": 1, "FirstName": "Bob", "MiddleInitial": "A",
+        "LastName": "Smith", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
+        "Time": [0, 0, 0]
+      },
+      { "InstructorID": 5, "DepartmentID": 1, "FirstName": "Catherine", "MiddleInitial": "D",
+        "LastName": "Johnson", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
+        "Time": [0, 0, 0]
+      },
+      { "InstructorID": 6, "DepartmentID": 1, "FirstName": "David", "MiddleInitial": "R",
+        "LastName": "Brown", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
+        "Time": [0, 0, 0]
+      },
+      { "InstructorID": 7, "DepartmentID": 1, "FirstName": "Ella", "MiddleInitial": "F",
+        "LastName": "Jones", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
+        "Time": [0, 0, 0]
+      },
+      { "InstructorID": 8, "DepartmentID": 1, "FirstName": "Frank", "MiddleInitial": "P",
+        "LastName": "Miller", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
+        "Time": [0, 0, 0]
+      },
+      { "InstructorID": 9, "DepartmentID": 1, "FirstName": "Grace", "MiddleInitial": "L",
+        "LastName": "Davis", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
+        "Time": [0, 0, 0]
+      },
+      { "InstructorID": 10, "DepartmentID": 1, "FirstName": "Henry", "MiddleInitial": "T",
+        "LastName": "Wilson", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
+        "Time": [0, 0, 0]
+      },
+      { "InstructorID": 11, "DepartmentID": 1, "FirstName": "Isabel", "MiddleInitial": "K",
+        "LastName": "Moore", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
+        "Time": [0, 0, 0]
+      },
+      { "InstructorID": 12, "DepartmentID": 1, "FirstName": "Jack", "MiddleInitial": "G",
+        "LastName": "Taylor", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
+        "Time": [0, 0, 0]
+      },
+      { "InstructorID": 13, "DepartmentID": 1, "FirstName": "Katherine", "MiddleInitial": "Z",
+        "LastName": "Anderson", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
+        "Time": [0, 0, 0]
+      },
+      { "InstructorID": 14, "DepartmentID": 1, "FirstName": "Liam", "MiddleInitial": "Q",
+        "LastName": "Thomas", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
+        "Time": [0, 0, 0]
+      },
+      { "InstructorID": 15, "DepartmentID": 1, "FirstName": "Mia", "MiddleInitial": "J",
+        "LastName": "Martin", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
+        "Time": [0, 0, 0]
+      },
+      { "InstructorID": 16, "DepartmentID": 1, "FirstName": "Roboute", "MiddleInitial": "E",
+        "LastName": "Guilliman", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
+        "Time": [0, 0, 0]
+      }
+    ]
+  }
+
+  const response = await fetch(`${base_url}/${API_VERSION}/instructor_erd?department_id=${department_id}&semester=${semester}`, {
+    headers: {
+      Accept: "application/json",
+    },
+    method: 'GET'
+  });
+
+  if (!response.ok) {
+    throw Error(`${response.status} :${await response.text()}`);
+  }
+
+  return response.json();
+}
+
+async function fetch_department_instructors_era(department_id, semester, base_url = '') {
+  if (DEV) {
+    return [
+      {
+        "InstructorID": 3, "DepartmentID": 1, "FirstName": "Alice", "MiddleInitial": "M",
+        "LastName": "Garcia", "AssignedSubjects": 13, "TotalTeachingHours": 53, "AvailableDay": 63,
+        "Time": [18446743867550925000n, 1125899903696895n, 0n]
+      },
+      {
+        "InstructorID": 4, "DepartmentID": 1, "FirstName": "Bob", "MiddleInitial": "A",
+        "LastName": "Smith", "AssignedSubjects": 15, "TotalTeachingHours": 53, "AvailableDay": 63,
+        "Time": [18446740775174668000n, 281474976710463n, 0n]
+      },
+      {
+        "InstructorID": 5, "DepartmentID": 1, "FirstName": "Catherine", "MiddleInitial": "D",
+        "LastName": "Johnson", "AssignedSubjects": 14, "TotalTeachingHours": 56, "AvailableDay": 63,
+        "Time": [18446744073709552000n, 72057383852965700n, 0n]
+      },
+      {
+        "InstructorID": 6, "DepartmentID": 1, "FirstName": "David", "MiddleInitial": "R",
+        "LastName": "Brown", "AssignedSubjects": 15, "TotalTeachingHours": 58, "AvailableDay": 63,
+        "Time": [18446744073709540000n, 4557638699730338000n, 0n]
+      },
+      {
+        "InstructorID": 7, "DepartmentID": 1, "FirstName": "Ella", "MiddleInitial": "F",
+        "LastName": "Jones", "AssignedSubjects": 14, "TotalTeachingHours": 50, "AvailableDay": 63,
+        "Time": [18446744073696956000n, 1112638120787967n, 0n]
+      },
+      {
+        "InstructorID": 8, "DepartmentID": 1, "FirstName": "Frank", "MiddleInitial": "P",
+        "LastName": "Miller", "AssignedSubjects": 13, "TotalTeachingHours": 51, "AvailableDay": 63,
+        "Time": [18446740774356780000n, 17750511692283712n, 0n]
+      },
+      {
+        "InstructorID": 9, "DepartmentID": 1, "FirstName": "Grace", "MiddleInitial": "L",
+        "LastName": "Davis", "AssignedSubjects": 15, "TotalTeachingHours": 53, "AvailableDay": 63,
+        "Time": [18446532139622072000n, 18014395275673408n, 0n]
+      },
+      {
+        "InstructorID": 10, "DepartmentID": 1, "FirstName": "Henry", "MiddleInitial": "T",
+        "LastName": "Wilson", "AssignedSubjects": 13, "TotalTeachingHours": 51, "AvailableDay": 63,
+        "Time": [18446532967477019000n, 281201172545535n, 0n]
+      },
+      {
+        "InstructorID": 11, "DepartmentID": 1, "FirstName": "Isabel", "MiddleInitial": "K",
+        "LastName": "Moore", "AssignedSubjects": 14, "TotalTeachingHours": 54, "AvailableDay": 63,
+        "Time": [18446744022157361000n, 4543868138004152300n, 0n]
+      },
+      {
+        "InstructorID": 12, "DepartmentID": 1, "FirstName": "Jack", "MiddleInitial": "G",
+        "LastName": "Taylor", "AssignedSubjects": 14, "TotalTeachingHours": 54, "AvailableDay": 63,
+        "Time": [18446744073696969000n, 18374686754549530000n, 3n]
+      },
+      {
+        "InstructorID": 13, "DepartmentID": 1, "FirstName": "Katherine", "MiddleInitial": "Z",
+        "LastName": "Anderson", "AssignedSubjects": 15, "TotalTeachingHours": 52, "AvailableDay": 63,
+        "Time": [18433022117041930000n, 18001201148723200n, 0n]
+      },
+      {
+        "InstructorID": 14, "DepartmentID": 1, "FirstName": "Liam", "MiddleInitial": "Q",
+        "LastName": "Thomas", "AssignedSubjects": 14, "TotalTeachingHours": 58, "AvailableDay": 63,
+        "Time": [18446744073696969000n, 13907115649269760000n, 3n]
+      },
+      {
+        "InstructorID": 15, "DepartmentID": 1, "FirstName": "Mia", "MiddleInitial": "J",
+        "LastName": "Martin", "AssignedSubjects": 13, "TotalTeachingHours": 52, "AvailableDay": 63,
+        "Time": [17582052945241821000n, 281474775384063, 0n]
+      },
+      {
+        "InstructorID": 16, "DepartmentID": 1, "FirstName": "Roboute", "MiddleInitial": "E",
+        "LastName": "Guilliman", "AssignedSubjects": 13, "TotalTeachingHours": 51, "AvailableDay": 63,
+        "Time": [18446532915937411000n, 17737321377943548n, 0n]
+      }
+    ]
+  }
+
+  const response = await fetch(`${base_url}/${API_VERSION}/instructor_era?department_id=${department_id}&semester=${semester}`, {
+    headers: {
+      Accept: "application/json",
+    },
+    method: 'GET'
+  });
+
+  if (!response.ok) {
+    throw Error(`${response.status} :${await response.text()}`);
+  }
+
+  return response.json();
+}
 
 async function fetch_all_departments(base_url = '') {
   if (DEV) {
@@ -10,7 +176,7 @@ async function fetch_all_departments(base_url = '') {
       { "DepartmentID": 4, "Code": "TED", "Name": "Teacher Education Department" }
     ]
   }
-  
+
   const response = await fetch(`${base_url}/${API_VERSION}/all_departments`, {
     headers: {
       Accept: "application/json",
@@ -19,7 +185,7 @@ async function fetch_all_departments(base_url = '') {
   });
 
   if (!response.ok) {
-    throw Error(`${response.status} :${await response.text()}`)
+    throw Error(`${response.status} :${await response.text()}`);
   }
 
   return response.json();
@@ -147,7 +313,7 @@ async function fetch_class_json_schedule(department_id, selected_semester, sched
       { "SubjectCode": "1146", "DayIdx": 4, "TimeSlotIdx": 20, "SubjectTimeSlots": 3, "InstructorLastName": "Bob", "RoomName": "RM 47" },
     ];
   }
-  
+
   const response = await fetch(
     `${base_url}/${API_VERSION}/class_json_schedule?department_id=${department_id}&semester=${selected_semester}&schedule_idx=${schedule_idx}`, {
     headers: {
@@ -263,5 +429,7 @@ export {
   send_serialized_schedule,
   deserialize_schedule,
   serialize_schedule,
-  generate_schedule
+  generate_schedule,
+  fetch_department_instructors_erd,
+  fetch_department_instructors_era,
 }
