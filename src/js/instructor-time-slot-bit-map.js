@@ -1,15 +1,19 @@
 const BITSET_LIMB_WIDENESS = 64;
-const N_WEEKLY_SCHOOL_DAYS = 7;  // Replace with actual value from Const
-const N_DAILY_TIME_SLOTS = 28;   // Replace with actual value from Const
+const N_WEEKLY_SCHOOL_DAYS = 7;
+const N_DAILY_TIME_SLOTS = 24;
 
 const INSTRUCTOR_TIME_SLOT_MAP_LIMBS = 3;
 
 class InstructorTimeSlotBitMap {
     constructor(initialBitset = null) {
-        if (initialBitset && initialBitset.length !== INSTRUCTOR_TIME_SLOT_MAP_LIMBS) {
-            throw new Error(`Invalid initial bitset length. Expected ${INSTRUCTOR_TIME_SLOT_MAP_LIMBS}, got ${initialBitset.length}`);
+        if (initialBitset) {
+            if (!Array.isArray(initialBitset) || initialBitset.length !== INSTRUCTOR_TIME_SLOT_MAP_LIMBS) {
+                throw new Error(`Invalid initial bitset length. Expected ${INSTRUCTOR_TIME_SLOT_MAP_LIMBS}, got ${initialBitset.length}`);
+            }
+            this.bitset = initialBitset.map(numStr => BigInt(numStr));
+        } else {
+            this.bitset = Array(INSTRUCTOR_TIME_SLOT_MAP_LIMBS).fill(0n);
         }
-        this.bitset = initialBitset ? initialBitset.map(BigInt) : Array(INSTRUCTOR_TIME_SLOT_MAP_LIMBS).fill(0n);
     }
 
     setAvailability(available, day, timeSlot) {
@@ -48,11 +52,11 @@ class InstructorTimeSlotBitMap {
 }
 
 // Example usage:
-// const initialBitset = [0n, 1n, 2n]; // Example initial values
+// const initialBitset = ["0", "1", "2"]; // Example initial values as strings
 // const instructorAvailability = new InstructorTimeSlotBitMap(initialBitset);
 // instructorAvailability.setAvailability(true, 2, 10);
 // console.log(instructorAvailability.getAvailability(2, 10)); // true
 
 export {
   InstructorTimeSlotBitMap,
-}
+};

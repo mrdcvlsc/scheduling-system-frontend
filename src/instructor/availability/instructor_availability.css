@@ -1,5 +1,12 @@
+.instructor-list-container {
+    width: 100%;
+}
+
 .instructor-list {
     width: 100%;
+}
+
+.instructor-list-items {
     display: flex;
     flex-wrap: wrap;
     gap: 0.3em; /* Adds spacing between items */
@@ -9,7 +16,7 @@
 .instructor-item {
     width: 100%; /* Ensures full width */
     padding: 0.1em;
-    border-radius: 8px;
+    border-radius: 0.4em;
     background: #f9f9f9;
     border: thin solid #ccc;
     text-align: center;
@@ -30,8 +37,20 @@
     font-weight: bold;
 }
 
+.disabled-slot {
+    background-color: rgba(170, 170, 170, 0.7);
+    border: thin solid #ddd;
+    width: 14.2857%;
+}
+
 .occupied-slot {
-    background-color: red;
+    background-color: rgba(255, 0, 0, 0.7);
+    border: thin solid #ddd;
+    width: 14.2857%;
+}
+
+.available-slot {
+    background-color: rgba(12, 249, 0, 0.623);
     border: thin solid #ddd;
     width: 14.2857%;
 }

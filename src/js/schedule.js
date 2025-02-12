@@ -1,5 +1,5 @@
 const API_VERSION = 'v1'
-const DEV = true
+const DEV = false
 
 async function fetch_department_instructors_erd(department_id, semester, base_url = '') {
   if (DEV) {
