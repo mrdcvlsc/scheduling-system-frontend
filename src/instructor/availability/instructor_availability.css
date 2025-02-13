@@ -3,25 +3,31 @@
 }
 
 .instructor-list {
+    border: green 3px solid;
     width: 100%;
 }
 
 .instructor-list-items {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.3em; /* Adds spacing between items */
-    padding: 0.5em;
+    flex-direction: column;
+
+    gap: 0.2em;
+    padding: 0.3em;
+    border: red 3px solid;
+    width: 100%;
 }
 
 .instructor-item {
-    width: 100%; /* Ensures full width */
-    padding: 0.1em;
-    border-radius: 0.4em;
+    width: 100%;
+    padding: 0.2em;
+    
+    
     background: #f9f9f9;
+    display: flex;
+
+    overflow: hidden;
     border: thin solid #ccc;
-    text-align: center;
-    font-size: 1em;
-    font-weight: normal;
+    border-radius: 0.4em;
     cursor: pointer;
     transition: all 0.3s ease;
 }
@@ -35,6 +41,28 @@
     color: white;
     border-color: #0056b3;
     font-weight: bold;
+}
+
+.instructor-ids {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: x-small;
+    font-weight: normal;
+    width: 4em;
+
+    border-right: thin solid #ccc;
+}
+
+.instructor-names {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+
+    font-size: large;
+    font-weight: normal;
 }
 
 .disabled-slot {

@@ -1,64 +1,64 @@
 const API_VERSION = 'v1'
-const DEV = false
+const DEV = true
 
 async function fetch_department_instructors_erd(department_id, semester, base_url = '') {
   if (DEV) {
     return [
       { "InstructorID": 3, "DepartmentID": 1, "FirstName": "Alice", "MiddleInitial": "M",
-        "LastName": "Garcia", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
-        "Time": [0, 0, 0]
+        "LastName": "Garcia", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["31", "0", "0"]
       },
       { "InstructorID": 4, "DepartmentID": 1, "FirstName": "Bob", "MiddleInitial": "A",
-        "LastName": "Smith", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
-        "Time": [0, 0, 0]
+        "LastName": "Smith", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 5, "DepartmentID": 1, "FirstName": "Catherine", "MiddleInitial": "D",
-        "LastName": "Johnson", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
-        "Time": [0, 0, 0]
+      { "InstructorID": 5, "DepartmentID": 0, "FirstName": "Catherine", "MiddleInitial": "D",
+        "LastName": "Johnson", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       },
       { "InstructorID": 6, "DepartmentID": 1, "FirstName": "David", "MiddleInitial": "R",
-        "LastName": "Brown", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
-        "Time": [0, 0, 0]
+        "LastName": "Brown", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       },
       { "InstructorID": 7, "DepartmentID": 1, "FirstName": "Ella", "MiddleInitial": "F",
-        "LastName": "Jones", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
-        "Time": [0, 0, 0]
+        "LastName": "Jones", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       },
       { "InstructorID": 8, "DepartmentID": 1, "FirstName": "Frank", "MiddleInitial": "P",
-        "LastName": "Miller", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
-        "Time": [0, 0, 0]
+        "LastName": "Miller", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       },
       { "InstructorID": 9, "DepartmentID": 1, "FirstName": "Grace", "MiddleInitial": "L",
-        "LastName": "Davis", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
-        "Time": [0, 0, 0]
+        "LastName": "Davis", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       },
       { "InstructorID": 10, "DepartmentID": 1, "FirstName": "Henry", "MiddleInitial": "T",
-        "LastName": "Wilson", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
-        "Time": [0, 0, 0]
+        "LastName": "Wilson", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 11, "DepartmentID": 1, "FirstName": "Isabel", "MiddleInitial": "K",
-        "LastName": "Moore", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
-        "Time": [0, 0, 0]
+      { "InstructorID": 11, "DepartmentID": 0, "FirstName": "Isabel", "MiddleInitial": "K",
+        "LastName": "Moore", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       },
       { "InstructorID": 12, "DepartmentID": 1, "FirstName": "Jack", "MiddleInitial": "G",
-        "LastName": "Taylor", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
-        "Time": [0, 0, 0]
+        "LastName": "Taylor", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       },
       { "InstructorID": 13, "DepartmentID": 1, "FirstName": "Katherine", "MiddleInitial": "Z",
-        "LastName": "Anderson", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
-        "Time": [0, 0, 0]
+        "LastName": "Anderson", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       },
       { "InstructorID": 14, "DepartmentID": 1, "FirstName": "Liam", "MiddleInitial": "Q",
-        "LastName": "Thomas", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
-        "Time": [0, 0, 0]
+        "LastName": "Thomas", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       },
       { "InstructorID": 15, "DepartmentID": 1, "FirstName": "Mia", "MiddleInitial": "J",
-        "LastName": "Martin", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
-        "Time": [0, 0, 0]
+        "LastName": "Martin", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       },
       { "InstructorID": 16, "DepartmentID": 1, "FirstName": "Roboute", "MiddleInitial": "E",
-        "LastName": "Guilliman", "AssignedSubjects": 0, "TotalTeachingHours": 0, "AvailableDay": 63,
-        "Time": [0, 0, 0]
+        "LastName": "Guilliman", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       }
     ]
   }
@@ -80,75 +80,61 @@ async function fetch_department_instructors_erd(department_id, semester, base_ur
 async function fetch_department_instructors_era(department_id, semester, base_url = '') {
   if (DEV) {
     return [
-      {
-        "InstructorID": 3, "DepartmentID": 1, "FirstName": "Alice", "MiddleInitial": "M",
-        "LastName": "Garcia", "AssignedSubjects": 13, "TotalTeachingHours": 53, "AvailableDay": 63,
-        "Time": [18446743867550925000n, 1125899903696895n, 0n]
+      { "InstructorID": 3, "DepartmentID": 1, "FirstName": "Alice", "MiddleInitial": "M",
+        "LastName": "Garcia", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "332"]
       },
-      {
-        "InstructorID": 4, "DepartmentID": 1, "FirstName": "Bob", "MiddleInitial": "A",
-        "LastName": "Smith", "AssignedSubjects": 15, "TotalTeachingHours": 53, "AvailableDay": 63,
-        "Time": [18446740775174668000n, 281474976710463n, 0n]
+      { "InstructorID": 4, "DepartmentID": 1, "FirstName": "Bob", "MiddleInitial": "A",
+        "LastName": "Smith", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["22", "1154", "3243"]
       },
-      {
-        "InstructorID": 5, "DepartmentID": 1, "FirstName": "Catherine", "MiddleInitial": "D",
-        "LastName": "Johnson", "AssignedSubjects": 14, "TotalTeachingHours": 56, "AvailableDay": 63,
-        "Time": [18446744073709552000n, 72057383852965700n, 0n]
+      { "InstructorID": 5, "DepartmentID": 0, "FirstName": "Catherine", "MiddleInitial": "D",
+        "LastName": "Johnson", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       },
-      {
-        "InstructorID": 6, "DepartmentID": 1, "FirstName": "David", "MiddleInitial": "R",
-        "LastName": "Brown", "AssignedSubjects": 15, "TotalTeachingHours": 58, "AvailableDay": 63,
-        "Time": [18446744073709540000n, 4557638699730338000n, 0n]
+      { "InstructorID": 6, "DepartmentID": 1, "FirstName": "David", "MiddleInitial": "R",
+        "LastName": "Brown", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       },
-      {
-        "InstructorID": 7, "DepartmentID": 1, "FirstName": "Ella", "MiddleInitial": "F",
-        "LastName": "Jones", "AssignedSubjects": 14, "TotalTeachingHours": 50, "AvailableDay": 63,
-        "Time": [18446744073696956000n, 1112638120787967n, 0n]
+      { "InstructorID": 7, "DepartmentID": 1, "FirstName": "Ella", "MiddleInitial": "F",
+        "LastName": "Jones", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       },
-      {
-        "InstructorID": 8, "DepartmentID": 1, "FirstName": "Frank", "MiddleInitial": "P",
-        "LastName": "Miller", "AssignedSubjects": 13, "TotalTeachingHours": 51, "AvailableDay": 63,
-        "Time": [18446740774356780000n, 17750511692283712n, 0n]
+      { "InstructorID": 8, "DepartmentID": 1, "FirstName": "Frank", "MiddleInitial": "P",
+        "LastName": "Miller", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       },
-      {
-        "InstructorID": 9, "DepartmentID": 1, "FirstName": "Grace", "MiddleInitial": "L",
-        "LastName": "Davis", "AssignedSubjects": 15, "TotalTeachingHours": 53, "AvailableDay": 63,
-        "Time": [18446532139622072000n, 18014395275673408n, 0n]
+      { "InstructorID": 9, "DepartmentID": 1, "FirstName": "Grace", "MiddleInitial": "L",
+        "LastName": "Davis", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       },
-      {
-        "InstructorID": 10, "DepartmentID": 1, "FirstName": "Henry", "MiddleInitial": "T",
-        "LastName": "Wilson", "AssignedSubjects": 13, "TotalTeachingHours": 51, "AvailableDay": 63,
-        "Time": [18446532967477019000n, 281201172545535n, 0n]
+      { "InstructorID": 10, "DepartmentID": 1, "FirstName": "Henry", "MiddleInitial": "T",
+        "LastName": "Wilson", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       },
-      {
-        "InstructorID": 11, "DepartmentID": 1, "FirstName": "Isabel", "MiddleInitial": "K",
-        "LastName": "Moore", "AssignedSubjects": 14, "TotalTeachingHours": 54, "AvailableDay": 63,
-        "Time": [18446744022157361000n, 4543868138004152300n, 0n]
+      { "InstructorID": 11, "DepartmentID": 0, "FirstName": "Isabel", "MiddleInitial": "K",
+        "LastName": "Moore", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       },
-      {
-        "InstructorID": 12, "DepartmentID": 1, "FirstName": "Jack", "MiddleInitial": "G",
-        "LastName": "Taylor", "AssignedSubjects": 14, "TotalTeachingHours": 54, "AvailableDay": 63,
-        "Time": [18446744073696969000n, 18374686754549530000n, 3n]
+      { "InstructorID": 12, "DepartmentID": 1, "FirstName": "Jack", "MiddleInitial": "G",
+        "LastName": "Taylor", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       },
-      {
-        "InstructorID": 13, "DepartmentID": 1, "FirstName": "Katherine", "MiddleInitial": "Z",
-        "LastName": "Anderson", "AssignedSubjects": 15, "TotalTeachingHours": 52, "AvailableDay": 63,
-        "Time": [18433022117041930000n, 18001201148723200n, 0n]
+      { "InstructorID": 13, "DepartmentID": 1, "FirstName": "Katherine", "MiddleInitial": "Z",
+        "LastName": "Anderson", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       },
-      {
-        "InstructorID": 14, "DepartmentID": 1, "FirstName": "Liam", "MiddleInitial": "Q",
-        "LastName": "Thomas", "AssignedSubjects": 14, "TotalTeachingHours": 58, "AvailableDay": 63,
-        "Time": [18446744073696969000n, 13907115649269760000n, 3n]
+      { "InstructorID": 14, "DepartmentID": 1, "FirstName": "Liam", "MiddleInitial": "Q",
+        "LastName": "Thomas", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       },
-      {
-        "InstructorID": 15, "DepartmentID": 1, "FirstName": "Mia", "MiddleInitial": "J",
-        "LastName": "Martin", "AssignedSubjects": 13, "TotalTeachingHours": 52, "AvailableDay": 63,
-        "Time": [17582052945241821000n, 281474775384063, 0n]
+      { "InstructorID": 15, "DepartmentID": 1, "FirstName": "Mia", "MiddleInitial": "J",
+        "LastName": "Martin", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       },
-      {
-        "InstructorID": 16, "DepartmentID": 1, "FirstName": "Roboute", "MiddleInitial": "E",
-        "LastName": "Guilliman", "AssignedSubjects": 13, "TotalTeachingHours": 51, "AvailableDay": 63,
-        "Time": [18446532915937411000n, 17737321377943548n, 0n]
+      { "InstructorID": 16, "DepartmentID": 1, "FirstName": "Roboute", "MiddleInitial": "E",
+        "LastName": "Guilliman", "AssignedSubjects": 0, "TotalTeachingHours": 0,
+        "Time": ["0", "0", "0"]
       }
     ]
   }

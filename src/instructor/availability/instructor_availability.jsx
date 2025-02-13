@@ -168,8 +168,25 @@ function TimeTable() {
     console.log('instructorERA[selected_index].Time:')
     console.log(instructorERA[selected_index].Time)
 
+    let default_instructors_idx = -1
+
+    for (let i = 0; i < instructorERD.length; i++) {
+      if (instructorERD[i].InstructorID === instructorERA[selected_index].InstructorID) {
+        default_instructors_idx = i
+        break
+      }
+    }
+
+    if (default_instructors_idx < 0) {
+      setPopupOptions({
+        Heading: "Incorrect Data",
+        HeadingStyle: { background: "red", color: "white" },
+        Message: "missing default instructor encoding resources"
+      });
+    }
+
     setInstructorIndex(selected_index)
-    setInstructorDefault(instructorERD[selected_index])
+    setInstructorDefault(instructorERD[default_instructors_idx])
     setInstructorAlloc(instructorERA[selected_index])
   }
 
@@ -230,15 +247,16 @@ function TimeTable() {
         <div className="instructor-list-container">
           <div className="instructor-list">
             <h2>General Instructors</h2>
-            <div className="instrucotr-list-items">
-              {instructorERA?.map((instructor, index) => {
-                if (instructor.DepartmentID == 0) {
+            <div className="instructor-list-items">
+              {instructorERD?.map((instructor, index) => {
+                if (instructor.DepartmentID === 0) {
                   return <div
                     key={index}
                     className={`instructor-item ${instructorIndex === index ? "selected" : ""}`}
                     onClick={() => handleInstructorSelection(index)}
                   >
-                    {`${instructor.LastName}, ${instructor.FirstName} ${instructor.MiddleInitial}.`}
+                    <div className="instructor-ids">{`${instructor.InstructorID}`}</div>
+                    <div className="instructor-names">{`${instructor.LastName}, ${instructor.FirstName} ${instructor.MiddleInitial}.`}</div>
                   </div>
                 } else {
                   return null
@@ -249,15 +267,16 @@ function TimeTable() {
 
           <div className="instructor-list">
             <h2>Department Instructors</h2>
-            <div className="instrucotr-list-items">
-              {instructorERA?.map((instructor, index) => {
-                if (instructor.DepartmentID == departmentID) {
+            <div className="instructor-list-items">
+              {instructorERD?.map((instructor, index) => {
+                if (instructor.DepartmentID === Number(departmentID)) {
                   return <div
                     key={index}
                     className={`instructor-item ${instructorIndex === index ? "selected" : ""}`}
                     onClick={() => handleInstructorSelection(index)}
                   >
-                    {`${instructor.LastName}, ${instructor.FirstName} ${instructor.MiddleInitial}.`}
+                    <div className="instructor-ids">{`${instructor.InstructorID}`}</div>
+                    <div className="instructor-names">{`${instructor.LastName}, ${instructor.FirstName} ${instructor.MiddleInitial}.`}</div>
                   </div>
                 } else {
                   return null
@@ -284,28 +303,33 @@ function TimeTable() {
               <tr key={time_slot_index}>
                 <td className="time-slot">{time_slot_label}</td>
                 {DAYS.map((_, day_index) => {
-                  if (instructorAlloc) {
-                    const is_available_time_slot = instructorAlloc.Time.getAvailability(day_index, time_slot_index)
-
-                    if (!is_available_time_slot) {
-                      return <td key={day_index} className="occupied-slot" onClick={() => {
-                        const available = instructorAlloc.Time.getAvailability(day_index, time_slot_index)
-                        console.log(`day(${day_index}), time_slot(${time_slot_index} = available? ${available})`)
-                      }}></td>;
-                    }
-
+                  if (instructorDefault) {
                     const is_enabled_time_slot = instructorDefault.Time.getAvailability(day_index, time_slot_index)
 
                     if (!is_enabled_time_slot) {
-                      return <td key={day_index} className="disabled-slot" />
-                    }
-
-                    return (
-                      <td key={day_index} className="available-slot" onClick={() => {
+                      return <td key={day_index} className="disabled-slot" onClick={() => {
                         const available = instructorAlloc.Time.getAvailability(day_index, time_slot_index)
                         console.log(`day(${day_index}), time_slot(${time_slot_index} = available? ${available})`)
-                      }} />
-                    );
+                      }}/>
+                    }
+
+                    if (instructorAlloc) {
+                      const is_available_time_slot = instructorAlloc.Time.getAvailability(day_index, time_slot_index)
+
+                      if (!is_available_time_slot) {
+                        return <td key={day_index} className="occupied-slot" onClick={() => {
+                          const available = instructorAlloc.Time.getAvailability(day_index, time_slot_index)
+                          console.log(`day(${day_index}), time_slot(${time_slot_index} = available? ${available})`)
+                        }}></td>;
+                      }
+
+                      return (
+                        <td key={day_index} className="available-slot" onClick={() => {
+                          const available = instructorAlloc.Time.getAvailability(day_index, time_slot_index)
+                          console.log(`day(${day_index}), time_slot(${time_slot_index} = available? ${available})`)
+                        }} />
+                      );
+                    }
                   } else {
                     return <td key={day_index} className="disabled-slot" />
                   }
