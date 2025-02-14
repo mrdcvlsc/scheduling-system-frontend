@@ -38,18 +38,12 @@ function TimeTable() {
   const [instructorERD, setInstructorERD] = useState([]);                // fetch on page load
   const [instructorERA, setInstructorERA] = useState([]);                // fetch on page load
 
-  const [curriculumData, setCurriculumData] = useState([]);              // fetch on semester selection
-  const [classAssignedSubjects, setClassAssignedSubjects] = useState([]) // fetch on section selection
-
   /////////////////////////////////////////////////////////////////////////////////
   //                       DROPDOWN SELECTION STATES
   /////////////////////////////////////////////////////////////////////////////////
 
   const [departmentID, setDepartmentID] = useState("");
   const [semesterIndex, setSemesterIndex] = useState("");
-  const [curriculumIndex, setCurriculumIndex] = useState("");
-  const [yearLevelIndex, setYearLevelIndex] = useState("");
-  const [sectionSchedIndex, setSectionSchedIndex] = useState("");
 
   /////////////////////////////////////////////////////////////////////////////////
   //                       SELECTED INSTRUCTORS
@@ -113,19 +107,11 @@ function TimeTable() {
     console.log(`selected departmentID: ${event.target.value}`);
     setDepartmentID(event.target.value);
     setSemesterIndex("");
-    setCurriculumIndex("");
-    setYearLevelIndex("");
-    setSectionSchedIndex("");
-    setClassAssignedSubjects([]);
   }
 
   const handleSemesterChange = async (event) => {
     console.log(`selected semesterIndex: ${event.target.value}`);
     setSemesterIndex(event.target.value);
-    setCurriculumIndex("");
-    setYearLevelIndex("");
-    setSectionSchedIndex("");
-    setClassAssignedSubjects([]);
 
     try {
       setIsLoading(true);
@@ -165,19 +151,19 @@ function TimeTable() {
 
   const handleInstructorSelection = (selected_index) => {
     console.log('selected instructor index =', selected_index)
-    console.log('instructorERA[selected_index].Time:')
-    console.log(instructorERA[selected_index].Time)
+    console.log('instructorERD[selected_index].Time:')
+    console.log(instructorERD[selected_index].Time)
 
-    let default_instructors_idx = -1
+    let allocated_instructors_idx = -1
 
     for (let i = 0; i < instructorERD.length; i++) {
       if (instructorERD[i].InstructorID === instructorERA[selected_index].InstructorID) {
-        default_instructors_idx = i
+        allocated_instructors_idx = i
         break
       }
     }
 
-    if (default_instructors_idx < 0) {
+    if (allocated_instructors_idx < 0) {
       setPopupOptions({
         Heading: "Incorrect Data",
         HeadingStyle: { background: "red", color: "white" },
@@ -186,21 +172,9 @@ function TimeTable() {
     }
 
     setInstructorIndex(selected_index)
-    setInstructorDefault(instructorERD[default_instructors_idx])
-    setInstructorAlloc(instructorERA[selected_index])
+    setInstructorDefault(instructorERD[selected_index])
+    setInstructorAlloc(instructorERA[allocated_instructors_idx])
   }
-
-  /////////////////////////////////////////////////////////////////////////////////
-  //                             DROPDOWN HANDLERS
-  /////////////////////////////////////////////////////////////////////////////////
-
-  const handleFetch = async () => {
-    console.log(
-      `departmentID: ${departmentID}, semesterIndex: ${semesterIndex}, curriculumIndex: ${curriculumIndex}, ${curriculumData[curriculumIndex].YearLevels[yearLevelIndex]}, schedIdx: ${sectionSchedIndex}`
-    );
-  };
-
-  const [subjectColors, setSubjectColors] = useState({});
 
   /////////////////////////////////////////////////////////////////////////////////
   //                              COMPONENT UI CODE
@@ -239,9 +213,6 @@ function TimeTable() {
               <option value={1}>2nd Semester</option>
             </select>
           </div>
-          <button className="fetch-button" onClick={handleFetch} disabled={!sectionSchedIndex}>
-            fetch schedule
-          </button>
         </div>
 
         <div className="instructor-list-container">
@@ -310,7 +281,7 @@ function TimeTable() {
                       return <td key={day_index} className="disabled-slot" onClick={() => {
                         const available = instructorAlloc.Time.getAvailability(day_index, time_slot_index)
                         console.log(`day(${day_index}), time_slot(${time_slot_index} = available? ${available})`)
-                      }}/>
+                      }} />
                     }
 
                     if (instructorAlloc) {
