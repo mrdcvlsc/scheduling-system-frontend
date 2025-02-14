@@ -149,15 +149,15 @@ function TimeTable() {
     }
   };
 
-  const handleInstructorSelection = (selected_index) => {
-    console.log('selected instructor index =', selected_index)
+  const handleInstructorSelection = (instructor_erd_index) => {
+    console.log('selected instructor index =', instructor_erd_index)
     console.log('instructorERD[selected_index].Time:')
-    console.log(instructorERD[selected_index].Time)
+    console.log(instructorERD[instructor_erd_index].Time)
 
     let allocated_instructors_idx = -1
 
-    for (let i = 0; i < instructorERD.length; i++) {
-      if (instructorERD[i].InstructorID === instructorERA[selected_index].InstructorID) {
+    for (let i = 0; i < instructorERA.length; i++) {
+      if (instructorERD[instructor_erd_index].InstructorID === instructorERA[i].InstructorID) {
         allocated_instructors_idx = i
         break
       }
@@ -169,11 +169,11 @@ function TimeTable() {
         HeadingStyle: { background: "red", color: "white" },
         Message: "missing default instructor encoding resources"
       });
+    } else {
+      setInstructorIndex(instructor_erd_index)
+      setInstructorDefault(instructorERD[instructor_erd_index])
+      setInstructorAlloc(instructorERA[allocated_instructors_idx])
     }
-
-    setInstructorIndex(selected_index)
-    setInstructorDefault(instructorERD[selected_index])
-    setInstructorAlloc(instructorERA[allocated_instructors_idx])
   }
 
   /////////////////////////////////////////////////////////////////////////////////
