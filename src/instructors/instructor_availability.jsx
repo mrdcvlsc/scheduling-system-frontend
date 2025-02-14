@@ -1,16 +1,16 @@
 import { StrictMode, useState, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
 
-import { Loading, Popup } from "../../components/Loading";
+import { Loading, Popup } from "../components/Loading";
 
-import "../../assets/main.css";
+import "../assets/main.css";
 import "./TimeTable.css";
 import "./TimeTableDropdowns.css";
 import "./instructor_availability.css";
 
-import { fetch_all_departments, fetch_department_instructors_erd, fetch_department_instructors_era } from "../../js/schedule"
-import { generateTimeSlotRowLabels } from "../../js/week-time-table-grid-functions";
-import { InstructorTimeSlotBitMap } from "../../js/instructor-time-slot-bit-map"
+import { fetch_all_departments, fetch_department_instructors_erd, fetch_department_instructors_era } from "../js/schedule"
+import { generateTimeSlotRowLabels } from "../js/week-time-table-grid-functions";
+import { InstructorTimeSlotBitMap } from "../js/instructor-time-slot-bit-map"
 
 function TimeTable() {
 
