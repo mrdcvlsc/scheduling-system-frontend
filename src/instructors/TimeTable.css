@@ -46,14 +46,16 @@
     width: 14.2857%;
 }
 
-/* .subject-content {
-    padding: 0.2em;
-} */
-
 .instructor,
 .room {
     font-size: 0.8rem;
     font-weight: normal;
+}
+
+td.time-slot {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 /* ========== Subject colors ========== */
