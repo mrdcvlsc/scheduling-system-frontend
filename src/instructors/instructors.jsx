@@ -6,7 +6,7 @@ import { Loading, Popup } from "../components/Loading";
 import "../assets/main.css";
 import "./TimeTable.css";
 import "./TimeTableDropdowns.css";
-import "./instructor_availability.css";
+import "./instructors.css";
 
 import { fetch_all_departments, fetch_department_instructors_erd, fetch_department_instructors_era } from "../js/schedule"
 import { generateTimeSlotRowLabels } from "../js/week-time-table-grid-functions";
