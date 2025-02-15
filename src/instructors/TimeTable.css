@@ -17,9 +17,6 @@
     background-color: #004466;
     color: white;
     padding: 0.2em;
-    /* position: sticky; */
-    /* top: 0; */
-    /* z-index: 10; */
     border-inline: thin solid #ddd;
 }
 
@@ -30,178 +27,58 @@
     padding: 0.2em;
     border: thin solid #ddd;
     width: 14.2857%;
-}
 
-.empty-slot {
-    background-color: white;
-    border: thin solid #ddd;
-    width: 14.2857%;
-}
-
-.subject-cell {
-    font-weight: bold;
-    font-size: 0.875em;
-    border: thin solid #ddd;
-    text-align: center;
-    width: 14.2857%;
-}
-
-.instructor,
-.room {
-    font-size: 0.8rem;
-    font-weight: normal;
-}
-
-td.time-slot {
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
 }
 
-/* ========== Subject colors ========== */
+.time-slot-cover {
+    position: absolute;
+    
+    width: 100%;
+    height: 100%;
 
-.color-1 {
-    background-color: red;
-    color: white;
+    top: 0px;
+    left: 0px;
+
+    transition: ease 0.1s;
 }
 
-.color-2 {
-    background-color: #008812;
-    color: white;
+.time-slot-cover:hover {
+    border: 0.2em solid rgb(44, 0, 85) !important;
 }
 
-.color-3 {
-    background-color: #fb6d00;
-    color: white; 
+.time-slot-cover.selected-time-slot-cell {
+    background: rgba(11, 190, 255, 0.42) !important;
+    border: thin solid rgb(44, 0, 85) !important;
 }
 
-.color-4 {
-    background-color: blue;
-    color: white;
+.disabled-slot, .occupied-slot, .available-slot {
+    position: relative;
+
+    width: 14.2857%;
+    border: thin solid #ddd;
+    user-select: none;
+
+    cursor: pointer;
+
+
 }
 
-.color-5 {
-    background-color: yellow;
-    color: black;
+.disabled-slot:hover, .occupied-slot:hover, .available-slot:hover {
+    /* outline: 0.2em solid rgb(44, 0, 85) !important;
+    border: 0.2em solid rgb(44, 0, 85) !important; */
 }
 
-.color-6 {
-    background-color: purple;
-    color: white;
+.disabled-slot {
+    background-color: rgba(170, 170, 170, 0.7);
 }
 
-.color-7 {
-    background-color: #000000;
-    color: white;   
+.occupied-slot {
+    background-color: rgba(255, 0, 0, 0.7);
 }
 
-.color-8 {
-    background-color: #00FA9A;
-    color: black;
-}
-
-.color-9 {
-    background-color: #B22222;
-    color: white;
-}
-
-.color-10 {
-    background-color: #89c80b;
-    color: white;
-}
-
-.color-11 {
-    background-color: #1E90FF;
-    color: white;
-}
-
-.color-12 {
-    background-color: #C71585;
-    color: white;
-}
-
-.color-13 {
-    color: white;
-    background-color: #fe5517;
-}
-
-.color-14 {
-    background-color: #FF1493;
-    color: white;
-}
-
-.color-15 {
-    background-color: #00BFFF;
-    color: black;
-}
-
-.color-16 {
-    background-color: #A52A2A;
-    color: white;
-}
-
-.color-17 {
-    background-color: #20B2AA;
-    color: white;
-}
-
-.color-18 {
-    background-color: #8B4513;
-    color: white;
-}
-
-.color-19 {
-    background-color: #ae500d;
-    color: white;
-}
-
-.color-20 {
-    background-color: #F4A300;
-    color: black;
-}
-
-.color-21 {
-    background-color: #BA55D3;
-    color: white;
-}
-
-.color-22 {
-    background-color: #ff9068;
-}
-
-.color-23 {
-    background-color: #4682B4;
-    color: white;
-}
-
-.color-24 {
-    background-color: #370c4d;
-    color: white;
-}
-
-.color-25 {
-    background-color: #ffbebe9b;
-}
-
-.color-26 {
-    background-color: #c50707;
-    color: white;
-}
-
-.color-27 {
-    background-color: #ff0055;
-    color: white;
-}
-
-.color-28 {
-    background-color: #00f794;
-}
-
-.color-29 {
-    background-color: #e74646;
-}
-
-.color-30 {
-    background-color: #00884d;
-    color: white;
+.available-slot {
+    background-color: rgba(12, 249, 0, 0.623);
 }

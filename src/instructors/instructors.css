@@ -64,21 +64,3 @@
     font-size: large;
     font-weight: normal;
 }
-
-.disabled-slot {
-    background-color: rgba(170, 170, 170, 0.7);
-    border: thin solid #ddd;
-    width: 14.2857%;
-}
-
-.occupied-slot {
-    background-color: rgba(255, 0, 0, 0.7);
-    border: thin solid #ddd;
-    width: 14.2857%;
-}
-
-.available-slot {
-    background-color: rgba(12, 249, 0, 0.623);
-    border: thin solid #ddd;
-    width: 14.2857%;
-}
