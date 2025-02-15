@@ -281,7 +281,7 @@ function TimeTable() {
               }
             </select>
           </div>
-          <button className="fetch-button" onClick={handleFetch} disabled={!sectionSchedIndex}>
+          <button className="all-btns" onClick={handleFetch} disabled={!sectionSchedIndex}>
             fetch schedule
           </button>
         </div>
