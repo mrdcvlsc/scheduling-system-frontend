@@ -29,7 +29,7 @@ class InstructorTimeSlotBitMap {
         const limbBitIdx = idx2DTo1D % BITSET_LIMB_WIDENESS;
 
         if (available) {
-            this.bitset[limbIdx] &= ~(1n << BigInt(limbBitIdx));
+            this.bitset[limbIdx] &= ~(1n << BigInt(limbBitIdx)) & 0xFFFFFFFFFFFFFFFFn;
         } else {
             this.bitset[limbIdx] |= (1n << BigInt(limbBitIdx));
         }
@@ -58,5 +58,5 @@ class InstructorTimeSlotBitMap {
 // console.log(instructorAvailability.getAvailability(2, 10)); // true
 
 export {
-  InstructorTimeSlotBitMap,
+    InstructorTimeSlotBitMap,
 };
