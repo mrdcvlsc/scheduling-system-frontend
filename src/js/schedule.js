@@ -1,5 +1,21 @@
 const API_VERSION = 'v1'
-const DEV = true
+const DEV = false
+
+async function post_update_insturctor(instructor, base_url = '') {
+  const response = await fetch(`${base_url}/${API_VERSION}/instructor_update`, {
+    method: 'POST',
+    headers: {
+      Accept: "text/plain",
+      "Content-Type": "application/json",
+    },
+
+    body: JSON.stringify(instructor)
+  });
+
+  if (!response.ok) {
+    throw new Error(`${response.status} : ${await response.text()}`);
+  }
+}
 
 async function fetch_department_instructors_erd(department_id, semester, base_url = '') {
   if (DEV) {
@@ -418,4 +434,5 @@ export {
   generate_schedule,
   fetch_department_instructors_erd,
   fetch_department_instructors_era,
+  post_update_insturctor,
 }
