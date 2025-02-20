@@ -7,7 +7,7 @@ import "../assets/main.css";
 import "./TimeTable.css";
 import "./TimeTableDropdowns.css";
 
-import { deserialize_schedule, fetch_all_departments, fetch_class_json_schedule, fetch_department_data, fetch_serialized_class_schedule } from "../js/schedule"
+import { deserializeSchedule, fetchAllDepartments, fetchClassJsonSchedule, fetchDepartmentData, fetchSerializedClassSchedule } from "../js/schedule"
 import { generateTimeSlotRowLabels } from "../js/week-time-table-grid-functions";
 
 const SECTION_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz";
@@ -73,7 +73,7 @@ function TimeTable() {
     try {
       setIsLoading(true);
 
-      const all_departments = await fetch_all_departments();
+      const all_departments = await fetchAllDepartments();
 
       setAllDepartment(all_departments);
       console.log(all_departments);
@@ -116,7 +116,7 @@ function TimeTable() {
       setIsLoading(true);
 
       try {
-        const curriculum_data = await fetch_department_data(departmentID, event.target.value);
+        const curriculum_data = await fetchDepartmentData(departmentID, event.target.value);
         setCurriculumData(curriculum_data);
 
         setIsLoading(false);
@@ -161,11 +161,11 @@ function TimeTable() {
       setIsLoading(true);
 
       try {
-        const class_scheduled_subjects = await fetch_class_json_schedule(departmentID, semesterIndex, event.target.value);
+        const class_scheduled_subjects = await fetchClassJsonSchedule(departmentID, semesterIndex, event.target.value);
         
         // DEBUG BLOCK: START
-        const class_serialized_scheduled = await fetch_serialized_class_schedule(departmentID, semesterIndex, event.target.value);
-        const class_deserialized_sched = await deserialize_schedule(class_serialized_scheduled);
+        const class_serialized_scheduled = await fetchSerializedClassSchedule(departmentID, semesterIndex, event.target.value);
+        const class_deserialized_sched = await deserializeSchedule(class_serialized_scheduled);
 
         console.log('deserialized schedule :');
         console.log(class_deserialized_sched);

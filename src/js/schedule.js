@@ -1,7 +1,7 @@
 const API_VERSION = 'v1'
 const DEV = false
 
-async function post_update_insturctor(instructor, base_url = '') {
+async function postUpdateInsturctor(instructor, base_url = '') {
   const response = await fetch(`${base_url}/${API_VERSION}/instructor_update`, {
     method: 'POST',
     headers: {
@@ -17,69 +17,83 @@ async function post_update_insturctor(instructor, base_url = '') {
   }
 }
 
-async function fetch_department_instructors_erd(department_id, semester, base_url = '') {
+async function fetchDepartmentInstructorsDefaults(department_id, semester, base_url = '') {
   if (DEV) {
     return [
-      { "InstructorID": 3, "DepartmentID": 1, "FirstName": "Alice", "MiddleInitial": "M",
+      {
+        "InstructorID": 3, "DepartmentID": 1, "FirstName": "Alice", "MiddleInitial": "M",
         "LastName": "Garcia", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["31", "0", "0"]
       },
-      { "InstructorID": 4, "DepartmentID": 1, "FirstName": "Bob", "MiddleInitial": "A",
+      {
+        "InstructorID": 4, "DepartmentID": 1, "FirstName": "Bob", "MiddleInitial": "A",
         "LastName": "Smith", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 5, "DepartmentID": 0, "FirstName": "Catherine", "MiddleInitial": "D",
+      {
+        "InstructorID": 5, "DepartmentID": 0, "FirstName": "Catherine", "MiddleInitial": "D",
         "LastName": "Johnson", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 6, "DepartmentID": 1, "FirstName": "David", "MiddleInitial": "R",
+      {
+        "InstructorID": 6, "DepartmentID": 1, "FirstName": "David", "MiddleInitial": "R",
         "LastName": "Brown", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 7, "DepartmentID": 1, "FirstName": "Ella", "MiddleInitial": "F",
+      {
+        "InstructorID": 7, "DepartmentID": 1, "FirstName": "Ella", "MiddleInitial": "F",
         "LastName": "Jones", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 8, "DepartmentID": 1, "FirstName": "Frank", "MiddleInitial": "P",
+      {
+        "InstructorID": 8, "DepartmentID": 1, "FirstName": "Frank", "MiddleInitial": "P",
         "LastName": "Miller", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 9, "DepartmentID": 1, "FirstName": "Grace", "MiddleInitial": "L",
+      {
+        "InstructorID": 9, "DepartmentID": 1, "FirstName": "Grace", "MiddleInitial": "L",
         "LastName": "Davis", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 10, "DepartmentID": 1, "FirstName": "Henry", "MiddleInitial": "T",
+      {
+        "InstructorID": 10, "DepartmentID": 1, "FirstName": "Henry", "MiddleInitial": "T",
         "LastName": "Wilson", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 11, "DepartmentID": 0, "FirstName": "Isabel", "MiddleInitial": "K",
+      {
+        "InstructorID": 11, "DepartmentID": 0, "FirstName": "Isabel", "MiddleInitial": "K",
         "LastName": "Moore", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 12, "DepartmentID": 1, "FirstName": "Jack", "MiddleInitial": "G",
+      {
+        "InstructorID": 12, "DepartmentID": 1, "FirstName": "Jack", "MiddleInitial": "G",
         "LastName": "Taylor", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 13, "DepartmentID": 1, "FirstName": "Katherine", "MiddleInitial": "Z",
+      {
+        "InstructorID": 13, "DepartmentID": 1, "FirstName": "Katherine", "MiddleInitial": "Z",
         "LastName": "Anderson", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 14, "DepartmentID": 1, "FirstName": "Liam", "MiddleInitial": "Q",
+      {
+        "InstructorID": 14, "DepartmentID": 1, "FirstName": "Liam", "MiddleInitial": "Q",
         "LastName": "Thomas", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 15, "DepartmentID": 1, "FirstName": "Mia", "MiddleInitial": "J",
+      {
+        "InstructorID": 15, "DepartmentID": 1, "FirstName": "Mia", "MiddleInitial": "J",
         "LastName": "Martin", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 16, "DepartmentID": 1, "FirstName": "Roboute", "MiddleInitial": "E",
+      {
+        "InstructorID": 16, "DepartmentID": 1, "FirstName": "Roboute", "MiddleInitial": "E",
         "LastName": "Guilliman", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       }
     ]
   }
 
-  const response = await fetch(`${base_url}/${API_VERSION}/instructor_erd?department_id=${department_id}&semester=${semester}`, {
+  const response = await fetch(`${base_url}/${API_VERSION}/instructors/d?department_id=${department_id}&semester=${semester}`, {
     headers: {
       Accept: "application/json",
     },
@@ -93,69 +107,83 @@ async function fetch_department_instructors_erd(department_id, semester, base_ur
   return response.json();
 }
 
-async function fetch_department_instructors_era(department_id, semester, base_url = '') {
+async function fetchDepartmentInstructorsAllocated(department_id, semester, base_url = '') {
   if (DEV) {
     return [
-      { "InstructorID": 3, "DepartmentID": 1, "FirstName": "Alice", "MiddleInitial": "M",
+      {
+        "InstructorID": 3, "DepartmentID": 1, "FirstName": "Alice", "MiddleInitial": "M",
         "LastName": "Garcia", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "332"]
       },
-      { "InstructorID": 4, "DepartmentID": 1, "FirstName": "Bob", "MiddleInitial": "A",
+      {
+        "InstructorID": 4, "DepartmentID": 1, "FirstName": "Bob", "MiddleInitial": "A",
         "LastName": "Smith", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["22", "1154", "3243"]
       },
-      { "InstructorID": 5, "DepartmentID": 0, "FirstName": "Catherine", "MiddleInitial": "D",
+      {
+        "InstructorID": 5, "DepartmentID": 0, "FirstName": "Catherine", "MiddleInitial": "D",
         "LastName": "Johnson", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 6, "DepartmentID": 1, "FirstName": "David", "MiddleInitial": "R",
+      {
+        "InstructorID": 6, "DepartmentID": 1, "FirstName": "David", "MiddleInitial": "R",
         "LastName": "Brown", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 7, "DepartmentID": 1, "FirstName": "Ella", "MiddleInitial": "F",
+      {
+        "InstructorID": 7, "DepartmentID": 1, "FirstName": "Ella", "MiddleInitial": "F",
         "LastName": "Jones", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 8, "DepartmentID": 1, "FirstName": "Frank", "MiddleInitial": "P",
+      {
+        "InstructorID": 8, "DepartmentID": 1, "FirstName": "Frank", "MiddleInitial": "P",
         "LastName": "Miller", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 9, "DepartmentID": 1, "FirstName": "Grace", "MiddleInitial": "L",
+      {
+        "InstructorID": 9, "DepartmentID": 1, "FirstName": "Grace", "MiddleInitial": "L",
         "LastName": "Davis", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 10, "DepartmentID": 1, "FirstName": "Henry", "MiddleInitial": "T",
+      {
+        "InstructorID": 10, "DepartmentID": 1, "FirstName": "Henry", "MiddleInitial": "T",
         "LastName": "Wilson", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 11, "DepartmentID": 0, "FirstName": "Isabel", "MiddleInitial": "K",
+      {
+        "InstructorID": 11, "DepartmentID": 0, "FirstName": "Isabel", "MiddleInitial": "K",
         "LastName": "Moore", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 12, "DepartmentID": 1, "FirstName": "Jack", "MiddleInitial": "G",
+      {
+        "InstructorID": 12, "DepartmentID": 1, "FirstName": "Jack", "MiddleInitial": "G",
         "LastName": "Taylor", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 13, "DepartmentID": 1, "FirstName": "Katherine", "MiddleInitial": "Z",
+      {
+        "InstructorID": 13, "DepartmentID": 1, "FirstName": "Katherine", "MiddleInitial": "Z",
         "LastName": "Anderson", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 14, "DepartmentID": 1, "FirstName": "Liam", "MiddleInitial": "Q",
+      {
+        "InstructorID": 14, "DepartmentID": 1, "FirstName": "Liam", "MiddleInitial": "Q",
         "LastName": "Thomas", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 15, "DepartmentID": 1, "FirstName": "Mia", "MiddleInitial": "J",
+      {
+        "InstructorID": 15, "DepartmentID": 1, "FirstName": "Mia", "MiddleInitial": "J",
         "LastName": "Martin", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       },
-      { "InstructorID": 16, "DepartmentID": 1, "FirstName": "Roboute", "MiddleInitial": "E",
+      {
+        "InstructorID": 16, "DepartmentID": 1, "FirstName": "Roboute", "MiddleInitial": "E",
         "LastName": "Guilliman", "AssignedSubjects": 0, "TotalTeachingHours": 0,
         "Time": ["0", "0", "0"]
       }
     ]
   }
 
-  const response = await fetch(`${base_url}/${API_VERSION}/instructor_era?department_id=${department_id}&semester=${semester}`, {
+  const response = await fetch(`${base_url}/${API_VERSION}/instructors/a?department_id=${department_id}&semester=${semester}`, {
     headers: {
       Accept: "application/json",
     },
@@ -169,7 +197,7 @@ async function fetch_department_instructors_era(department_id, semester, base_ur
   return response.json();
 }
 
-async function fetch_all_departments(base_url = '') {
+async function fetchAllDepartments(base_url = '') {
   if (DEV) {
     return [
       { "DepartmentID": 1, "Code": "DIT", "Name": "Department of Information Technology" },
@@ -193,7 +221,7 @@ async function fetch_all_departments(base_url = '') {
   return response.json();
 }
 
-async function fetch_const(base_url = '') {
+async function fetchConst(base_url = '') {
   const response = await fetch(`${base_url}/${API_VERSION}/const`, {
     headers: {
       Accept: "application/json",
@@ -208,7 +236,7 @@ async function fetch_const(base_url = '') {
   return await response.json();
 }
 
-async function fetch_department_data(department_id, semester, base_url = '') {
+async function fetchDepartmentData(department_id, semester, base_url = '') {
   if (DEV) {
     return [
       {
@@ -245,7 +273,7 @@ async function fetch_department_data(department_id, semester, base_url = '') {
   return await response.json();
 }
 
-async function fetch_serialized_university_schedule(selected_semester, base_url = '') {
+async function fetchSerializedUniversitySchedule(selected_semester, base_url = '') {
   const response = await fetch(`${base_url}/${API_VERSION}/university_schedule?semester=${selected_semester}`, {
     headers: {
       Accept: "text/plain",
@@ -260,7 +288,7 @@ async function fetch_serialized_university_schedule(selected_semester, base_url 
   return new Uint8Array(await response.arrayBuffer());
 }
 
-async function fetch_serialized_class_schedule(department_id, selected_semester, schedule_idx, base_url = '') {
+async function fetchSerializedClassSchedule(department_id, selected_semester, schedule_idx, base_url = '') {
   const response = await fetch(
     `${base_url}/${API_VERSION}/class_schedule?department_id=${department_id}&semester=${selected_semester}&schedule_idx=${schedule_idx}`, {
     headers: {
@@ -276,7 +304,7 @@ async function fetch_serialized_class_schedule(department_id, selected_semester,
   return new Uint8Array(await response.arrayBuffer());
 }
 
-async function fetch_class_json_schedule(department_id, selected_semester, schedule_idx, base_url = '') {
+async function fetchClassJsonSchedule(department_id, selected_semester, schedule_idx, base_url = '') {
   if (DEV) {
     return [
       { "SubjectCode": "0001", "DayIdx": 0, "TimeSlotIdx": 0, "SubjectTimeSlots": 3, "InstructorLastName": "John", "RoomName": "RM 4" },
@@ -331,7 +359,7 @@ async function fetch_class_json_schedule(department_id, selected_semester, sched
   return await response.json();
 }
 
-async function send_serialized_schedule(selected_semester, serialized_schedule, base_url = '') {
+async function sendSerializedSchedule(selected_semester, serialized_schedule, base_url = '') {
   const response = await fetch(`${base_url}/${API_VERSION}/university_schedule?semester=${selected_semester}`, {
     method: 'POST',
     headers: {
@@ -346,8 +374,8 @@ async function send_serialized_schedule(selected_semester, serialized_schedule, 
   }
 }
 
-async function deserialize_schedule(serialized_data, base_url = '') {
-  let constants = await fetch_const(base_url)
+async function deserializeSchedule(serialized_data, base_url = '') {
+  let constants = await fetchConst(base_url)
 
   const time_slot_bytes = constants.time_slot_bytes;
   const weekly_school_days = constants.weekly_school_days;
@@ -380,8 +408,8 @@ async function deserialize_schedule(serialized_data, base_url = '') {
   return university_schedules;
 }
 
-async function serialize_schedule(university_schedules, base_url = '') {
-  let constants = await fetch_const(base_url)
+async function serializeSchedule(university_schedules, base_url = '') {
+  let constants = await fetchConst(base_url)
 
   const time_slot_bytes = constants.time_slot_bytes;
   const weekly_time_slots = constants.weekly_time_slots;
@@ -408,7 +436,7 @@ async function serialize_schedule(university_schedules, base_url = '') {
   return serialized_data;
 }
 
-async function generate_schedule(selected_semester, base_url = '') {
+async function generateSchedule(selected_semester, base_url = '') {
   const response = await fetch(`${base_url}/${API_VERSION}/generate_schedule?semester=${selected_semester}`, {
     method: 'POST',
     headers: {
@@ -422,17 +450,17 @@ async function generate_schedule(selected_semester, base_url = '') {
 }
 
 export {
-  fetch_const,
-  fetch_all_departments,
-  fetch_department_data,
-  fetch_serialized_university_schedule,
-  fetch_serialized_class_schedule,
-  fetch_class_json_schedule,
-  send_serialized_schedule,
-  deserialize_schedule,
-  serialize_schedule,
-  generate_schedule,
-  fetch_department_instructors_erd,
-  fetch_department_instructors_era,
-  post_update_insturctor,
+  fetchConst,
+  fetchAllDepartments,
+  fetchDepartmentData,
+  fetchSerializedUniversitySchedule,
+  fetchSerializedClassSchedule,
+  fetchClassJsonSchedule,
+  sendSerializedSchedule,
+  deserializeSchedule,
+  serializeSchedule,
+  generateSchedule,
+  fetchDepartmentInstructorsDefaults,
+  fetchDepartmentInstructorsAllocated,
+  postUpdateInsturctor,
 }

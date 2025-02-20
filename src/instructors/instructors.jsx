@@ -8,7 +8,7 @@ import "./TimeTable.css";
 import "./TimeTableDropdowns.css";
 import "./instructors.css";
 
-import { fetch_all_departments, fetch_department_instructors_erd, fetch_department_instructors_era, post_update_insturctor } from "../js/schedule"
+import { fetchAllDepartments, fetchDepartmentInstructorsDefaults, fetchDepartmentInstructorsAllocated, postUpdateInsturctor } from "../js/schedule"
 import { generateTimeSlotRowLabels } from "../js/week-time-table-grid-functions";
 import { InstructorTimeSlotBitMap } from "../js/instructor-time-slot-bit-map"
 import { ContextMenu, ContextMenuItem, Position, useContextMenuState } from "../components/ContextMenu";
@@ -36,8 +36,8 @@ function TimeTable() {
   /////////////////////////////////////////////////////////////////////////////////
 
   const [allDepartment, setAllDepartment] = useState([]); // fetch on page load
-  const [instructorsERD, setInstructorsERD] = useState([]); // fetch on page load
-  const [instructorsERA, setInstructorsERA] = useState([]); // fetch on page load
+  const [instructorsDefaults, setInstructorsDefaults] = useState([]); // fetch on page load
+  const [instructorsAllocated, setInstructorsAllocated] = useState([]); // fetch on page load
 
   /////////////////////////////////////////////////////////////////////////////////
   //                       DROPDOWN SELECTION STATES
@@ -50,9 +50,9 @@ function TimeTable() {
   //                       SELECTED INSTRUCTORS
   /////////////////////////////////////////////////////////////////////////////////
 
-  const [selectedInstructorIndex, setSelectedInstructorIndex] = useState("")
-  const [selectedInstructorAlloc, setSelectedInstructorAlloc] = useState("")
+  const [selectedInstructorDefaultIndex, setSelectedInstructorDefaultIndex] = useState("")
   const [selectedInstructorDefault, setSelectedInstructorDefault] = useState("")
+  const [selectedInstructorAllocated, setSelectedInstructorAllocated] = useState("")
 
   /////////////////////////////////////////////////////////////////////////////////
   //                       SELECTED TIME SLOT CELL
@@ -86,7 +86,7 @@ function TimeTable() {
     try {
       setIsLoading(true);
 
-      const all_departments = await fetch_all_departments();
+      const all_departments = await fetchAllDepartments();
 
 
       setAllDepartment(all_departments);
@@ -116,12 +116,12 @@ function TimeTable() {
     setDepartmentID(event.target.value);
     setSemesterIndex("");
 
-    setInstructorsERD([])
-    setInstructorsERA([])
+    setInstructorsDefaults([])
+    setInstructorsAllocated([])
 
-    setSelectedInstructorIndex("")
-    setSelectedInstructorAlloc("")
+    setSelectedInstructorDefaultIndex("")
     setSelectedInstructorDefault("")
+    setSelectedInstructorAllocated("")
 
     setSelectedTimeSlots(new Set([]))
   }
@@ -129,30 +129,38 @@ function TimeTable() {
   const handleSemesterChange = async (event) => {
     console.log(`selected semesterIndex: ${event.target.value}`);
     setSemesterIndex(event.target.value);
-    setSelectedTimeSlots(new Set([]))
+    
+    setInstructorsDefaults([])
+    setInstructorsAllocated([])
 
+    setSelectedInstructorDefaultIndex("")
+    setSelectedInstructorDefault("")
+    setSelectedInstructorAllocated("")
+    
+    setSelectedTimeSlots(new Set([]))
+    
     try {
       setIsLoading(true);
 
-      const instructors_erd = await fetch_department_instructors_erd(departmentID, event.target.value);
-      const instructors_era = await fetch_department_instructors_era(departmentID, event.target.value);
+      const instructors_defaults = await fetchDepartmentInstructorsDefaults(departmentID, event.target.value);
+      const instructors_allocated = await fetchDepartmentInstructorsAllocated(departmentID, event.target.value);
 
-      for (let i = 0; i < instructors_erd.length; i++) {
-        instructors_erd[i].Time = new InstructorTimeSlotBitMap(instructors_erd[i].Time);
+      for (let i = 0; i < instructors_defaults.length; i++) {
+        instructors_defaults[i].Time = new InstructorTimeSlotBitMap(instructors_defaults[i].Time);
       }
 
-      for (let i = 0; i < instructors_era.length; i++) {
-        instructors_era[i].Time = new InstructorTimeSlotBitMap(instructors_era[i].Time);
+      for (let i = 0; i < instructors_allocated.length; i++) {
+        instructors_allocated[i].Time = new InstructorTimeSlotBitMap(instructors_allocated[i].Time);
       }
 
-      setInstructorsERD(instructors_erd)
-      console.log('instructors_erd')
-      console.log(instructors_erd);
+      setInstructorsDefaults(instructors_defaults)
+      console.log('instructors_defaults :')
+      console.log(instructors_defaults);
       console.log()
 
-      setInstructorsERA(instructors_era)
-      console.log('instructors_era')
-      console.log(instructors_era);
+      setInstructorsAllocated(instructors_allocated)
+      console.log('instructors_allocated :')
+      console.log(instructors_allocated);
       console.log()
 
       setIsLoading(false);
@@ -167,36 +175,36 @@ function TimeTable() {
     }
   };
 
-  const handleInstructorSelection = (instructor_erd_index) => {
+  const handleInstructorSelection = (defaults_idx) => {
     setSelectedTimeSlots(new Set([]))
 
-    let allocated_instructors_idx = -1
+    let allocated_idx = -1
 
-    for (let i = 0; i < instructorsERA.length; i++) {
-      if (instructorsERD[instructor_erd_index].InstructorID === instructorsERA[i].InstructorID) {
-        allocated_instructors_idx = i
+    for (let i = 0; i < instructorsAllocated.length; i++) {
+      if (instructorsDefaults[defaults_idx].InstructorID === instructorsAllocated[i].InstructorID) {
+        allocated_idx = i
         break
       }
     }
 
-    if (allocated_instructors_idx < 0) {
+    if (allocated_idx < 0) {
       setPopupOptions({
         Heading: "Incorrect Data",
         HeadingStyle: { background: "red", color: "white" },
         Message: "missing default instructor encoding resources"
       });
     } else {
-      setSelectedInstructorIndex(instructor_erd_index)
-      setSelectedInstructorDefault(instructorsERD[instructor_erd_index])
-      setSelectedInstructorAlloc(instructorsERA[allocated_instructors_idx])
+      setSelectedInstructorDefaultIndex(defaults_idx)
+      setSelectedInstructorDefault(instructorsDefaults[defaults_idx])
+      setSelectedInstructorAllocated(instructorsAllocated[allocated_idx])
 
-      console.log('selected instructor index =', instructor_erd_index)
+      console.log('selected instructor defaults index :', defaults_idx)
 
-      console.log('instructorERD[selected_index].Time :')
-      console.log(instructorsERD[instructor_erd_index])
+      console.log('instructorsDefaults[defaults_idx] :')
+      console.log(instructorsDefaults[defaults_idx])
 
-      console.log('instructorsERA[allocated_instructors_idx] :')
-      console.log(instructorsERA[allocated_instructors_idx])
+      console.log('instructorsAllocated[allocated_idx] :')
+      console.log(instructorsAllocated[allocated_idx])
     }
   }
 
@@ -224,8 +232,14 @@ function TimeTable() {
 
       setIsLoading(true);
 
-      await post_update_insturctor(updated_instructor_time_str);
-      
+      await postUpdateInsturctor(updated_instructor_time_str);
+
+      setPopupOptions({
+        Heading: "Edits Applied Successfully",
+        HeadingStyle: { background: "green", color: "white" },
+        Message: "changes to the instructor time slots availability are saved"
+      });
+
       setIsLoading(false);
 
     } catch (err) {
@@ -241,19 +255,72 @@ function TimeTable() {
   const handleContextMenuEnable = () => {
     console.log('before enable =', selectedInstructorDefault)
 
+    let is_all_enabled = true
+    let has_impossible_error = false
+    let enabled_time_slots = 0
+
     for (const value of selectedTimeSlots) {
       let [day, time_slot] = value.split(":")
 
       day = Number(day)
       time_slot = Number(time_slot)
 
-      if (!selectedInstructorDefault?.Time?.getAvailability(day, time_slot)) {
-        selectedInstructorDefault.Time.setAvailability(true, day, time_slot)
-        selectedInstructorAlloc.Time.setAvailability(true, day, time_slot)
+      const is_default_available = selectedInstructorDefault?.Time?.getAvailability(day, time_slot)
+      const is_allocated_available = selectedInstructorAllocated?.Time?.getAvailability(day, time_slot)
+
+      if (!is_default_available && !is_allocated_available) {
+        enabled_time_slots++
+      } else if (!is_default_available && is_allocated_available) {
+        has_impossible_error = true
+      } else {
+        is_all_enabled = false
       }
     }
 
-    setSelectedInstructorAlloc(selectedInstructorAlloc)
+    if (has_impossible_error) {
+      setPopupOptions({
+        Heading: "That should not happen!",
+        HeadingStyle: { background: "red", color: "white" },
+        Message: "we detected an instructor default time slot that is not available yet the corresponding allocation time slot is available"
+      });
+
+      return
+    } else if (enabled_time_slots === 0) {
+      setPopupOptions({
+        Heading: "No Action",
+        HeadingStyle: { background: "orange", color: "white" },
+        Message: "all selected time slots are either enabled or already occupied so no need to enable again"
+      });
+    } else if (!is_all_enabled) {
+      setPopupOptions({
+        Heading: "Partially Successful",
+        HeadingStyle: { background: "orange", color: "white" },
+        Message: `some selected time slots (${selectedTimeSlots.size - enabled_time_slots}/${selectedTimeSlots.size}) are already enabled and/or occupied so no need to enabled again`
+      });
+    } else {
+      setPopupOptions({
+        Heading: "Fully Successful",
+        HeadingStyle: { background: "green", color: "white" },
+        Message: "all selected time slots are enabled"
+      });
+    }
+
+    for (const value of selectedTimeSlots) {
+      let [day, time_slot] = value.split(":")
+
+      day = Number(day)
+      time_slot = Number(time_slot)
+
+      const is_default_available = selectedInstructorDefault?.Time?.getAvailability(day, time_slot)
+      const is_allocated_available = selectedInstructorAllocated?.Time?.getAvailability(day, time_slot)
+
+      if (!is_default_available && !is_allocated_available) {
+        selectedInstructorDefault.Time.setAvailability(true, day, time_slot)
+        selectedInstructorAllocated.Time.setAvailability(true, day, time_slot)
+      }
+    }
+
+    setSelectedInstructorAllocated(selectedInstructorAllocated)
     setSelectedInstructorDefault(selectedInstructorDefault)
 
     setSelectedTimeSlots(new Set())
@@ -262,19 +329,72 @@ function TimeTable() {
   const handleContextMenuDisable = () => {
     console.log('before disable =', selectedInstructorDefault)
 
+    let is_all_disabled = true
+    let has_impossible_error = false
+    let disabled_time_slots = 0
+
     for (const value of selectedTimeSlots) {
       let [day, time_slot] = value.split(":")
 
       day = Number(day)
       time_slot = Number(time_slot)
 
-      if (selectedInstructorDefault?.Time?.getAvailability(day, time_slot)) {
-        selectedInstructorDefault.Time.setAvailability(false, day, time_slot)
-        selectedInstructorAlloc.Time.setAvailability(false, day, time_slot)
+      const is_default_available = selectedInstructorDefault?.Time?.getAvailability(day, time_slot)
+      const is_allocated_available = selectedInstructorAllocated?.Time?.getAvailability(day, time_slot)
+
+      if (is_default_available && is_allocated_available) {
+        disabled_time_slots++
+      } else if (!is_default_available && is_allocated_available) {
+        has_impossible_error = true
+      } else {
+        is_all_disabled = false
       }
     }
 
-    setSelectedInstructorAlloc(selectedInstructorAlloc)
+    if (has_impossible_error) {
+      setPopupOptions({
+        Heading: "That should not happen!",
+        HeadingStyle: { background: "red", color: "white" },
+        Message: "we detected an instructor default time slot that is not available yet the corresponding allocation time slot is available"
+      });
+
+      return
+    } else if (disabled_time_slots === 0) {
+      setPopupOptions({
+        Heading: "No Action",
+        HeadingStyle: { background: "orange", color: "white" },
+        Message: "all selected time slots are either disabled or already occupied so no need to disable again"
+      });
+    } else if (!is_all_disabled) {
+      setPopupOptions({
+        Heading: "Partially Successful",
+        HeadingStyle: { background: "orange", color: "white" },
+        Message: `some selected time slots (${selectedTimeSlots.size - disabled_time_slots}/${selectedTimeSlots.size}) are already disabled or occupied so no need to disable again`
+      });
+    } else {
+      setPopupOptions({
+        Heading: "Fully Successful",
+        HeadingStyle: { background: "green", color: "white" },
+        Message: "all selected time slots are disabled"
+      });
+    }
+
+    for (const value of selectedTimeSlots) {
+      let [day, time_slot] = value.split(":")
+
+      day = Number(day)
+      time_slot = Number(time_slot)
+
+      const is_default_available = selectedInstructorDefault?.Time?.getAvailability(day, time_slot)
+      const is_allocated_available = selectedInstructorAllocated?.Time?.getAvailability(day, time_slot)
+
+      if (is_default_available && is_allocated_available) {
+        selectedInstructorDefault.Time.setAvailability(false, day, time_slot)
+        selectedInstructorAllocated.Time.setAvailability(false, day, time_slot)
+      }
+    }
+
+    setSelectedInstructorAllocated(selectedInstructorAllocated)
     setSelectedInstructorDefault(selectedInstructorDefault)
 
     setSelectedTimeSlots(new Set())
@@ -333,11 +453,11 @@ function TimeTable() {
           <div className="instructor-list">
             <h2>General Instructors</h2>
             <div className="instructor-list-items">
-              {instructorsERD?.map((instructor, index) => {
+              {instructorsDefaults?.map((instructor, index) => {
                 if (instructor.DepartmentID === 0) {
                   return <div
                     key={index}
-                    className={`instructor-item ${selectedInstructorIndex === index ? "selected" : ""}`}
+                    className={`instructor-item ${selectedInstructorDefaultIndex === index ? "selected" : ""}`}
                     onClick={() => handleInstructorSelection(index)}
                   >
                     <div className="instructor-ids">{`${instructor.InstructorID}`}</div>
@@ -353,11 +473,11 @@ function TimeTable() {
           <div className="instructor-list">
             <h2>Department Instructors</h2>
             <div className="instructor-list-items">
-              {instructorsERD?.map((instructor, index) => {
+              {instructorsDefaults?.map((instructor, index) => {
                 if (instructor.DepartmentID === Number(departmentID)) {
                   return <div
                     key={index}
-                    className={`instructor-item ${selectedInstructorIndex === index ? "selected" : ""}`}
+                    className={`instructor-item ${selectedInstructorDefaultIndex === index ? "selected" : ""}`}
                     onClick={() => handleInstructorSelection(index)}
                   >
                     <div className="instructor-ids">{`${instructor.InstructorID}`}</div>
@@ -407,7 +527,7 @@ function TimeTable() {
                   let selected = ""
 
                   const is_available_default = selectedInstructorDefault?.Time?.getAvailability(day_index, time_slot_index) ? true : false
-                  const is_available_alloc = selectedInstructorAlloc?.Time?.getAvailability(day_index, time_slot_index) ? true : false
+                  const is_available_alloc = selectedInstructorAllocated?.Time?.getAvailability(day_index, time_slot_index) ? true : false
 
                   if (!is_available_default) {
                     class_name = "disabled-slot"
@@ -430,7 +550,7 @@ function TimeTable() {
                         event.preventDefault()
                         console.log(`right click: class="${event.target.className}"`)
 
-                        const available = selectedInstructorAlloc?.Time?.getAvailability(day_index, time_slot_index)
+                        const available = selectedInstructorAllocated?.Time?.getAvailability(day_index, time_slot_index)
                         console.log(`day(${day_index}), time_slot(${time_slot_index} = available? ${available})`)
 
                         contextMenuState.setShow(true)
