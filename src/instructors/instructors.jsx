@@ -1,6 +1,16 @@
 import { StrictMode, useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 
+import Button from '@mui/material/Button';
+import DoneIcon from '@mui/icons-material/Done';
+import CancelIcon from '@mui/icons-material/Cancel';
+import ClearAllIcon from '@mui/icons-material/ClearAll';
+
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+
 import { Loading, Popup } from "../components/Loading";
 
 import "../assets/main.css";
@@ -12,6 +22,7 @@ import { fetchAllDepartments, fetchDepartmentInstructorsDefaults, fetchDepartmen
 import { generateTimeSlotRowLabels } from "../js/week-time-table-grid-functions";
 import { InstructorTimeSlotBitMap } from "../js/instructor-time-slot-bit-map"
 import { ContextMenu, ContextMenuItem, Position, useContextMenuState } from "../components/ContextMenu";
+import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 function TimeTable() {
 
@@ -129,16 +140,16 @@ function TimeTable() {
   const handleSemesterChange = async (event) => {
     console.log(`selected semesterIndex: ${event.target.value}`);
     setSemesterIndex(event.target.value);
-    
+
     setInstructorsDefaults([])
     setInstructorsAllocated([])
 
     setSelectedInstructorDefaultIndex("")
     setSelectedInstructorDefault("")
     setSelectedInstructorAllocated("")
-    
+
     setSelectedTimeSlots(new Set([]))
-    
+
     try {
       setIsLoading(true);
 
@@ -432,20 +443,35 @@ function TimeTable() {
 
         <div className="dropdown-container">
           <div id="left-dropdown-container">
-            <select className="dropdown" value={departmentID} onChange={handleDepartmentChange}>
-              <option value="">Department</option>
-              {allDepartment ?
-                allDepartment.map((department, index) => (
-                  <option key={index} value={department.DepartmentID}>{department.Code}</option>
-                )) : null
-              }
-            </select>
+            <FormControl sx={{ minWidth: 130 }} size="small">
+              <InputLabel id="label-id-department">Department</InputLabel>
+              <Select autoWidth
+                id="id-department" labelId="label-id-department" label="Department"
+                value={departmentID}
+                onChange={handleDepartmentChange}
+              >
+                <MenuItem value=""><em>none</em></MenuItem>
+                {allDepartment ?
+                  allDepartment.map((department, index) => (
+                    <MenuItem key={index} value={department.DepartmentID}>{department.Code}</MenuItem>
+                  )) : null
+                }
+              </Select>
+            </FormControl>
 
-            <select className="dropdown" value={semesterIndex} onChange={handleSemesterChange} disabled={!departmentID}>
-              <option value="">Semester</option>
-              <option value={0}>1st Semester</option>
-              <option value={1}>2nd Semester</option>
-            </select>
+            <FormControl sx={{ minWidth: 115 }} size="small">
+              <InputLabel id="label-id-semester">Semester</InputLabel>
+              <Select autoWidth
+                labelId="label-id-semester"
+                label="Semester"
+                value={semesterIndex}
+                onChange={handleSemesterChange}
+                disabled={!departmentID}
+              >
+                <MenuItem value={0}>1st Semester</MenuItem>
+                <MenuItem value={1}>2nd Semester</MenuItem>
+              </Select>
+            </FormControl>
           </div>
         </div>
 
@@ -503,9 +529,21 @@ function TimeTable() {
             }
           </div>
           <div style={{ display: "flex", gap: "0.8em" }}>
-            <button className="all-btns" onClick={() => setSelectedTimeSlots(new Set([]))}>Clear Time Slot Selection</button>
-            <button className="all-btns" onClick={handleApplyTimeSlotDefaultChanges}>Apply Changes</button>
-            <button className="all-btns">Cancel</button>
+
+            <Button
+              startIcon={<ClearAllIcon />} size="medium" color="primary" variant="contained"
+              onClick={() => setSelectedTimeSlots(new Set([]))}
+            >Clear Time Slot Selection</Button>
+
+            <Button
+              endIcon={<DoneIcon />} size="medium" color="success" variant="contained"
+              onClick={handleApplyTimeSlotDefaultChanges} loading={IsLoading}
+            >Apply Changes</Button>
+
+            <Button
+              endIcon={<CancelIcon />} size="medium" color="error" variant="outlined"
+            >Cancel</Button>
+
           </div>
         </div>
 

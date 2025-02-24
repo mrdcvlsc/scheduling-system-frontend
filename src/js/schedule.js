@@ -1,5 +1,5 @@
 const API_VERSION = 'v1'
-const DEV = false
+const DEV = true
 
 async function postUpdateInsturctor(instructor, base_url = '') {
   const response = await fetch(`${base_url}/${API_VERSION}/instructor_update`, {
