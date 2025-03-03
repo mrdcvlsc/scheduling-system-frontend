@@ -4,15 +4,16 @@ const DEV = true
 // this is for development only.
 const base_url = 'http://localhost:3000'
 
-async function postUpdateInsturctor(instructor) {
+export async function postUpdateInsturctor(instructor) {
   let api_request = `/${API_VERSION}/instructor_update`
 
   if (DEV) {
+    console.log('call: postUpdateInsturctor')
     api_request = `${base_url}/${API_VERSION}/instructor_update`
   }
 
   const response = await fetch(api_request, {
-    method: 'POST',
+    method: 'PATCH',
     headers: {
       Accept: "text/plain",
       "Content-Type": "application/json",
@@ -26,11 +27,12 @@ async function postUpdateInsturctor(instructor) {
   }
 }
 
-async function fetchDepartmentInstructorsDefaults(department_id, semester) {
-  let api_request = `/${API_VERSION}/instructors/d?department_id=${department_id}&semester=${semester}`
+export async function fetchDepartmentInstructorsDefaults(department_id, semester, page_size, page) {
+  let api_request = `/${API_VERSION}/instructors/d?department_id=${department_id}&semester=${semester}&page_size=${page_size}&page=${page}`
 
   if (DEV) {
-    api_request = `${base_url}/${API_VERSION}/instructors/d?department_id=${department_id}&semester=${semester}`
+    console.log('call: fetchDepartmentInstructorsDefaults')
+    api_request = `${base_url}/${API_VERSION}/instructors/d?department_id=${department_id}&semester=${semester}&page_size=${page_size}&page=${page}`
   }
 
   const response = await fetch(api_request, {
@@ -47,11 +49,12 @@ async function fetchDepartmentInstructorsDefaults(department_id, semester) {
   return response.json();
 }
 
-async function fetchDepartmentInstructorsAllocated(department_id, semester) {
-  let api_request = `/${API_VERSION}/instructors/a?department_id=${department_id}&semester=${semester}`
+export async function fetchDepartmentInstructorsAllocated(department_id, semester, page_size, page) {
+  let api_request = `/${API_VERSION}/instructors/a?department_id=${department_id}&semester=${semester}&page_size=${page_size}&page=${page}`
 
   if (DEV) {
-    api_request = `${base_url}/${API_VERSION}/instructors/a?department_id=${department_id}&semester=${semester}`
+    console.log('call: fetchDepartmentInstructorsAllocated')
+    api_request = `${base_url}/${API_VERSION}/instructors/a?department_id=${department_id}&semester=${semester}&page_size=${page_size}&page=${page}`
   }
 
   const response = await fetch(api_request, {
@@ -68,10 +71,11 @@ async function fetchDepartmentInstructorsAllocated(department_id, semester) {
   return response.json();
 }
 
-async function fetchAllDepartments() {
+export async function fetchAllDepartments() {
   let api_request = `/${API_VERSION}/all_departments`
 
   if (DEV) {
+    console.log('call: fetchAllDepartments')
     api_request = `${base_url}/${API_VERSION}/all_departments`
   }
 
@@ -89,10 +93,11 @@ async function fetchAllDepartments() {
   return response.json();
 }
 
-async function fetchConst() {
+export async function fetchConst() {
   let api_request = `/${API_VERSION}/const`
 
   if (DEV) {
+    console.log('call: fetchConst')
     api_request = `${base_url}/${API_VERSION}/const`
   }
 
@@ -110,10 +115,11 @@ async function fetchConst() {
   return await response.json();
 }
 
-async function fetchDepartmentData(department_id, semester) {
+export async function fetchDepartmentData(department_id, semester) {
   let api_request = `/${API_VERSION}/department_data?department_id=${department_id}&semester=${semester}`
 
   if (DEV) {
+    console.log('call: fetchDepartmentData')
     api_request = `${base_url}/${API_VERSION}/department_data?department_id=${department_id}&semester=${semester}`
   }
 
@@ -131,10 +137,11 @@ async function fetchDepartmentData(department_id, semester) {
   return await response.json();
 }
 
-async function fetchSerializedUniversitySchedule(selected_semester) {
+export async function fetchSerializedUniversitySchedule(selected_semester) {
   let api_request = `/${API_VERSION}/university_schedule?semester=${selected_semester}`
 
   if (DEV) {
+    console.log('call: fetchSerializedUniversitySchedule')
     api_request = `${base_url}/${API_VERSION}/university_schedule?semester=${selected_semester}`
   }
 
@@ -152,10 +159,11 @@ async function fetchSerializedUniversitySchedule(selected_semester) {
   return new Uint8Array(await response.arrayBuffer());
 }
 
-async function fetchSerializedClassSchedule(department_id, selected_semester, schedule_idx) {
+export async function fetchSerializedClassSchedule(department_id, selected_semester, schedule_idx) {
   let api_request = `/${API_VERSION}/class_schedule?department_id=${department_id}&semester=${selected_semester}&schedule_idx=${schedule_idx}`
 
   if (DEV) {
+    console.log('call: fetchSerializedClassSchedule')
     api_request = `${base_url}/${API_VERSION}/class_schedule?department_id=${department_id}&semester=${selected_semester}&schedule_idx=${schedule_idx}`
   }
 
@@ -173,10 +181,11 @@ async function fetchSerializedClassSchedule(department_id, selected_semester, sc
   return new Uint8Array(await response.arrayBuffer());
 }
 
-async function fetchClassJsonSchedule(department_id, selected_semester, schedule_idx) {
+export async function fetchClassJsonSchedule(department_id, selected_semester, schedule_idx) {
   let api_request = `/${API_VERSION}/class_json_schedule?department_id=${department_id}&semester=${selected_semester}&schedule_idx=${schedule_idx}`
 
   if (DEV) {
+    console.log('call: fetchClassJsonSchedule')
     api_request = `${base_url}/${API_VERSION}/class_json_schedule?department_id=${department_id}&semester=${selected_semester}&schedule_idx=${schedule_idx}`
   }
 
@@ -194,10 +203,11 @@ async function fetchClassJsonSchedule(department_id, selected_semester, schedule
   return await response.json();
 }
 
-async function sendSerializedSchedule(selected_semester, serialized_schedule) {
+export async function sendSerializedSchedule(selected_semester, serialized_schedule) {
   let api_request = `/${API_VERSION}/university_schedule?semester=${selected_semester}`
 
   if (DEV) {
+    console.log('call: sendSerializedSchedule')
     api_request = `${base_url}/${API_VERSION}/university_schedule?semester=${selected_semester}`
   }
 
@@ -215,7 +225,7 @@ async function sendSerializedSchedule(selected_semester, serialized_schedule) {
   }
 }
 
-async function deserializeSchedule(serialized_data) {
+export async function deserializeSchedule(serialized_data) {
   let constants = await fetchConst()
 
   const time_slot_bytes = constants.time_slot_bytes;
@@ -249,7 +259,7 @@ async function deserializeSchedule(serialized_data) {
   return university_schedules;
 }
 
-async function serializeSchedule(university_schedules) {
+export async function serializeSchedule(university_schedules) {
   let constants = await fetchConst()
 
   const time_slot_bytes = constants.time_slot_bytes;
@@ -277,10 +287,11 @@ async function serializeSchedule(university_schedules) {
   return serialized_data;
 }
 
-async function generateSchedule(selected_semester) {
+export async function generateSchedule(selected_semester) {
   let api_request = `/${API_VERSION}/generate_schedule?semester=${selected_semester}`
 
   if (DEV) {
+    console.log('call: generateSchedule')
     api_request = `${base_url}/${API_VERSION}/generate_schedule?semester=${selected_semester}`
   }
 
@@ -294,20 +305,4 @@ async function generateSchedule(selected_semester) {
   if (!response.ok) {
     throw new Error(`${response.status} : ${await response.text()}`);
   }
-}
-
-export {
-  fetchConst,
-  fetchAllDepartments,
-  fetchDepartmentData,
-  fetchSerializedUniversitySchedule,
-  fetchSerializedClassSchedule,
-  fetchClassJsonSchedule,
-  sendSerializedSchedule,
-  deserializeSchedule,
-  serializeSchedule,
-  generateSchedule,
-  fetchDepartmentInstructorsDefaults,
-  fetchDepartmentInstructorsAllocated,
-  postUpdateInsturctor,
 }
