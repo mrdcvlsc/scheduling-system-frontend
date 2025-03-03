@@ -18,6 +18,7 @@ export default defineConfig({
         about: resolve(root, 'about', 'index.html'),
         schedule: resolve(root, 'schedule', 'index.html'),
         instructors: resolve(root, 'instructors', 'index.html'),
+        instructors_page: resolve(root, 'instructors_page', 'index.html'),
       }
     }
   }
