@@ -30,7 +30,7 @@ import { List, ListItem, ListItemText, Stack } from "@mui/material";
 import { Padding } from "@mui/icons-material";
 
 import InstructorTableList from "./InstructorsTableList";
-import InstructorTimeSlot from "./InstructorTimeSlot"
+import InstructorDataView from "./InstructorDataView"
 
 // just use the default theme for now
 const theme = createTheme();
@@ -232,7 +232,7 @@ function TimeTable() {
 
         {
             isView ?
-                <InstructorTimeSlot
+                <InstructorDataView
                     SelectedInstructorDefault={selectedInstructorDefault}
                     SelectedInstructorAllocated={selectedInstructorAllocated}
                     setIsView={setIsView}

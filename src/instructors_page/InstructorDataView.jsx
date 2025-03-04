@@ -14,7 +14,7 @@ import { ContextMenu, ContextMenuItem, Position, useContextMenuState } from "../
 import { fetchAllDepartments, postUpdateInsturctor } from "../js/schedule"
 import { Loading, Popup } from "../components/Loading";
 
-export default function InstructorTimeSlot({ SelectedInstructorDefault, SelectedInstructorAllocated, mode, setMode, setIsView }) {
+export default function InstructorDataView({ SelectedInstructorDefault, SelectedInstructorAllocated, mode, setMode, setIsView }) {
 
     const [popupOptions, setPopupOptions] = useState(null);
 
