@@ -29,7 +29,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import { List, ListItem, ListItemText, Stack } from "@mui/material";
 import { Padding } from "@mui/icons-material";
 
-import InstructorTableList from "./InstructorTable";
+import InstructorTableList from "./InstructorsTableList";
 import InstructorTimeSlot from "./InstructorTimeSlot"
 
 // just use the default theme for now
