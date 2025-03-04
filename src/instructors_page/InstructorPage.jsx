@@ -13,7 +13,7 @@ import "./TimeTable.css";
 import "./TimeTableDropdowns.css";
 import "./instructors.css";
 
-import { fetchAllDepartments, postUpdateInsturctor } from "../js/schedule"
+import { fetchAllDepartments, deleteRemoveInsturctor } from "../js/schedule"
 import { Box, FormControl, InputLabel, MenuItem, Select, ThemeProvider, Button, Typography, createTheme } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 
@@ -58,6 +58,7 @@ function TimeTable() {
     //                       DROPDOWN SELECTION STATES
     /////////////////////////////////////////////////////////////////////////////////
 
+    const [selectedDepartment, setSelectedDepartment] = useState("")
     const [departmentID, setDepartmentID] = useState("");
     const [semesterIndex, setSemesterIndex] = useState("");
 
@@ -160,7 +161,7 @@ function TimeTable() {
         />
 
         <Box display={!isView ? 'block' : 'none'}>
-            <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
+            <Box sx={{ display: "flex", flexDirection: "row", gap: 2, padding: '1em' }}>
                 <FormControl sx={{ minWidth: 130 }} size="small">
                     <InputLabel id="label-id-department">Department</InputLabel>
                     <Select
@@ -171,7 +172,7 @@ function TimeTable() {
                         <MenuItem value=""><em>none</em></MenuItem>
                         {allDepartment ?
                             allDepartment.map((department, index) => (
-                                <MenuItem key={index} value={department.DepartmentID}>{department.Code}</MenuItem>
+                                <MenuItem key={index} value={department.DepartmentID}>{`${department.Code} - ${department.Name}`}</MenuItem>
                             )) : null
                         }
                     </Select>
@@ -195,8 +196,7 @@ function TimeTable() {
                     <Button disabled={!Number.isInteger(departmentID)}
                         endIcon={<AddIcon />} size="medium" color="secondary" variant="contained"
                         onClick={() => {
-                            setMode("new")
-                            setIsView(true)
+                            setIsLoading(true)
 
                             const new_instructor = {
                                 DepartmentID: departmentID,
@@ -208,6 +208,10 @@ function TimeTable() {
 
                             setSelectedInstructorAllocated(new_instructor)
                             setSelectedInstructorDefault(new_instructor)
+                            setIsLoading(false)
+
+                            setMode("new")
+                            setIsView(true)
                         }}
                         loading={IsLoading}
                     >
@@ -233,6 +237,7 @@ function TimeTable() {
         {
             isView ?
                 <InstructorDataView
+                    selectedDepartment={selectedDepartment}
                     SelectedInstructorDefault={selectedInstructorDefault}
                     SelectedInstructorAllocated={selectedInstructorAllocated}
                     setIsView={setIsView}

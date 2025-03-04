@@ -6,15 +6,16 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
+import Divider from '@mui/material/Divider';
 
 import { Box, FormControl, InputLabel, MenuItem, Select, ThemeProvider, Typography, createTheme, TextField } from "@mui/material";
 import { generateTimeSlotRowLabels } from "../js/week-time-table-grid-functions";
 import { ContextMenu, ContextMenuItem, Position, useContextMenuState } from "../components/ContextMenu";
 
-import { fetchAllDepartments, postUpdateInsturctor } from "../js/schedule"
+import { fetchAllDepartments, patchUpdateInsturctor, postCreateInsturctor } from "../js/schedule"
 import { Loading, Popup } from "../components/Loading";
 
-export default function InstructorDataView({ SelectedInstructorDefault, SelectedInstructorAllocated, mode, setMode, setIsView }) {
+export default function InstructorDataView({ selectedDepartment, SelectedInstructorDefault, SelectedInstructorAllocated, mode, setMode, setIsView }) {
 
     const [popupOptions, setPopupOptions] = useState(null);
 
@@ -217,7 +218,7 @@ export default function InstructorDataView({ SelectedInstructorDefault, Selected
     //                     TIME SLOT SELECTION BUTTON HANDLERS
     /////////////////////////////////////////////////////////////////////////////////
 
-    const handleApplyTimeSlotDefaultChanges = async () => {
+    const handleEditOrNewAction = async () => {
         try {
 
             let new_default_time = []
@@ -237,13 +238,23 @@ export default function InstructorDataView({ SelectedInstructorDefault, Selected
 
             setIsLoading(true);
 
-            await postUpdateInsturctor(updated_instructor_time_str);
+            if (mode === "edit") {
+                await patchUpdateInsturctor(updated_instructor_time_str);
 
-            setPopupOptions({
-                Heading: "Edits Applied Successfully",
-                HeadingStyle: { background: "green", color: "white" },
-                Message: "changes to the instructor time slots availability are saved"
-            });
+                setPopupOptions({
+                    Heading: "Edit Successful",
+                    HeadingStyle: { background: "green", color: "white" },
+                    Message: "changes to the instructor data are saved"
+                });
+            } else if (mode === "new") {
+                await postCreateInsturctor(updated_instructor_time_str);
+
+                setPopupOptions({
+                    Heading: "Add Successful",
+                    HeadingStyle: { background: "green", color: "white" },
+                    Message: "a new instructor was added"
+                });
+            }
 
             setIsLoading(false);
 
@@ -274,8 +285,21 @@ export default function InstructorDataView({ SelectedInstructorDefault, Selected
             IsLoading={IsLoading}
         />
 
-        <Box sx={{ display: "flex", border: '2px solid yellow', flexDirection: 'column' }}>
-            <Box sx={{ display: "flex", flexDirection: 'row', border: '2px solid red', justifyContent: 'space-between' }}>
+        <Box
+            sx={{
+                display: "flex",
+                // border: '6px solid yellow', // debug border
+                flexDirection: 'column'
+            }}
+        >
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: 'row',
+                    // border: '2px solid red', // debug border
+                    justifyContent: 'space-between'
+                }}
+            >
                 <Box>
                     <Typography variant="h4">
                         {mode === "view" ? (
@@ -284,11 +308,19 @@ export default function InstructorDataView({ SelectedInstructorDefault, Selected
                             'Edit Instructor'
                         ) : (mode === "new" ? (
                             'Add New Instructor'
-                        ) : <p>green button error: unknown mode</p>))}
+                        ) : <p>green btn error: unknown mode</p>))}
                     </Typography>
                 </Box>
 
-                <Box sx={{ display: "flex", justifyContent: 'right', p: 0.15, gap: 1, border: '5px solid green' }}>
+                <Box
+                    sx={{
+                        display: "flex",
+                        justifyContent: 'right',
+                        p: 0.15,
+                        gap: 1,
+                        // border: '5px solid green' // debug border
+                    }}
+                >
                     {mode === "view" ? (
                         <Button
                             endIcon={<EditIcon />} size="medium" color="primary" variant="contained"
@@ -302,7 +334,7 @@ export default function InstructorDataView({ SelectedInstructorDefault, Selected
                     ) : (mode === "edit" ? (
                         <Button
                             endIcon={<DoneIcon />} size="medium" color="success" variant="contained"
-                            onClick={handleApplyTimeSlotDefaultChanges} loading={IsLoading}
+                            onClick={handleEditOrNewAction} loading={IsLoading}
                         >
                             Apply Changes
                         </Button>
@@ -310,12 +342,13 @@ export default function InstructorDataView({ SelectedInstructorDefault, Selected
                         <Button
                             endIcon={<AddIcon />} size="medium" color="success" variant="contained"
                             onClick={() => {
+                                handleEditOrNewAction()
                                 setIsView(false)
                             }}
                         >
                             Save New Instructor
                         </Button>
-                    ) : <p>green button error: unknown mode</p>))}
+                    ) : <p>green btn error: unknown mode</p>))}
 
                     {mode === "view" ? (
                         <Button
@@ -344,7 +377,7 @@ export default function InstructorDataView({ SelectedInstructorDefault, Selected
                         >
                             Close
                         </Button>
-                    ) : <p>red button error: unknown mode</p>))}
+                    ) : <p>red btn error: unknown mode</p>))}
                 </Box>
             </Box>
 
@@ -353,19 +386,69 @@ export default function InstructorDataView({ SelectedInstructorDefault, Selected
                     <Typography variant="h5">{`${SelectedInstructorDefault.FirstName} ${SelectedInstructorDefault.MiddleInitial}. ${SelectedInstructorDefault.LastName}`}</Typography>
                 </Box>
             ) : (mode === "edit" ? (
-                <Box sx={{ p: 2, border: '1px dashed grey', width: '100%', display: 'flex', justifyContent: 'left', gap: '1em' }}>
-                    <TextField variant="filled" label="First Name" defaultValue={SelectedInstructorDefault.FirstName}></TextField>
-                    <TextField variant="filled" label="M.I." defaultValue={SelectedInstructorDefault.MiddleInitial}></TextField>
-                    <TextField variant="filled" label="Last Name" defaultValue={SelectedInstructorDefault.LastName}></TextField>
+                <Box
+                    sx={{
+                        p: 2,
+                        // border: '1px dashed grey', // debug border
+                        width: '100%',
+                        display: 'flex',
+                        justifyContent: 'left',
+                        gap: '1em'
+                    }}
+                >
+                    <TextField variant="filled" label="First Name" defaultValue={SelectedInstructorDefault.FirstName}
+                        onChange={(e) => {
+                            SelectedInstructorDefault.FirstName = e.target.value
+                            console.log(`FirstName : ${e.target.value}`)
+                        }}
+                    />
+                    <TextField variant="filled" label="M.I." defaultValue={SelectedInstructorDefault.MiddleInitial}
+                        onChange={(e) => {
+                            SelectedInstructorDefault.MiddleInitial = e.target.value
+                            console.log(`MiddleInitial : ${e.target.value}`)
+                        }}
+                    />
+                    <TextField variant="filled" label="Last Name" defaultValue={SelectedInstructorDefault.LastName}
+                        onChange={(e) => {
+                            SelectedInstructorDefault.LastName = e.target.value
+                            console.log(`LastName : ${e.target.value}`)
+                        }}
+                    />
                 </Box>
             ) : (mode === "new" ? (
-                <Box sx={{ p: 2, border: '1px dashed grey', width: '100%', display: 'flex', justifyContent: 'left', gap: '1em' }}>
-                    <TextField variant="filled" label="First Name" defaultValue=""></TextField>
-                    <TextField variant="filled" label="M.I." defaultValue=""></TextField>
-                    <TextField variant="filled" label="Last Name" defaultValue=""></TextField>
+                <Box sx={{
+                    p: 2,
+                    // border: '1px dashed grey', // debug border
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'left',
+                    gap: '1em'
+                }}
+                >
+                    <TextField variant="filled" label="First Name" defaultValue=""
+                        onChange={(e) => {
+                            SelectedInstructorDefault.FirstName = e.target.value
+                            console.log(`FirstName : ${e.target.value}`)
+                        }}
+                    />
+                    <TextField variant="filled" label="M.I." defaultValue=""
+                        onChange={(e) => {
+                            SelectedInstructorDefault.MiddleInitial = e.target.value
+                            console.log(`MiddleInitial : ${e.target.value}`)
+                        }}
+                    />
+                    <TextField variant="filled" label="Last Name" defaultValue=""
+                        onChange={(e) => {
+                            SelectedInstructorDefault.LastName = e.target.value
+                            console.log(`LastName : ${e.target.value}`)
+                        }}
+                    />
                 </Box>
-            ) : <p>green button error: unknown mode</p>))}
+            ) : <p>green btn error: unknown mode</p>))}
         </Box>
+
+        <Divider orientation="vertical" flexItem />
+        <Typography align="center" sx={{ background: 'black', color: 'white', marginBottom: '0.05em' }}>Instructor Availability Time Slot</Typography>
 
         <div
             style={{
@@ -374,7 +457,7 @@ export default function InstructorDataView({ SelectedInstructorDefault, Selected
                 justifyContent: "space-between",
                 alignItems: "center",
                 paddingInline: "1em",
-                border: '2px solid red',  // debug border
+                // border: '4px solid red',  // debug border
             }}
         >
             <div
@@ -384,7 +467,7 @@ export default function InstructorDataView({ SelectedInstructorDefault, Selected
                     justifyContent: "center",
                     alignItems: "center",
                     gap: "0.6em",
-                    border: '2px solid green', // debug border
+                    // border: '7px solid green', // debug border
                 }}
             >
                 <p>{mode === "edit" || mode === "new" ? 'time slot drag select' : ''}

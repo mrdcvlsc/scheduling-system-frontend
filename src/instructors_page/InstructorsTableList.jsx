@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from "react";
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
-    Button, TablePagination, CircularProgress
+    Button, TablePagination, CircularProgress,
+    Dialog,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    DialogActions
 } from "@mui/material";
 
 import DeleteIcon from '@mui/icons-material/Delete';
 import { InstructorTimeSlotBitMap } from "../js/instructor-time-slot-bit-map"
 import PageviewIcon from '@mui/icons-material/Pageview';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { fetchDepartmentInstructorsDefaults, fetchDepartmentInstructorsAllocated } from "../js/schedule";
+import { fetchDepartmentInstructorsDefaults, fetchDepartmentInstructorsAllocated, deleteRemoveInsturctor, postCreateInsturctor } from "../js/schedule";
 
 import { Loading, Popup } from "../components/Loading";
 
 
 function InstructorTableList({ DepartmentID, Semester, SetPopUpOptions, setSelectedInstructorDefault, setSelectedInstructorAllocated, setIsView, setMode }) {
     const [popupOptions, setPopupOptions] = useState(null);
-
+    const [isDialogDeleteShow, setIsDialogDeleteShow] = useState(false)
 
     const [instructorsDefaults, setInstructorsDefaults] = useState([]); // fetch on page load
     const [instructorsAllocated, setInstructorsAllocated] = useState([]); // fetch on page load
@@ -110,6 +115,28 @@ function InstructorTableList({ DepartmentID, Semester, SetPopUpOptions, setSelec
         }
     }
 
+    const handleInstructorDelete = async (instructor_id) => {
+
+        setLoading(true);
+
+        try {
+            await deleteRemoveInsturctor(instructor_id);          
+        } catch (err) {
+            SetPopUpOptions({
+                Heading: "Delete Failed",
+                HeadingStyle: { background: "red", color: "white" },
+                Message: `${err}`
+            })
+        }
+
+        setLoading(false);
+        setIsDialogDeleteShow(false)
+
+        console.log('instructor id to delete :', instructor_id)
+    }
+
+    const [instructorToDelete, setInstructorToDelete] = useState(null)
+
     return (<>
         <Popup popupOptions={popupOptions} closeButtonActionHandler={() => {
             setPopupOptions(null);
@@ -153,7 +180,13 @@ function InstructorTableList({ DepartmentID, Semester, SetPopUpOptions, setSelec
                                     >
                                         View
                                     </Button>
-                                    <Button variant="contained" color="error" size="small" endIcon={<DeleteIcon />}>
+                                    <Button
+                                        variant="contained" color="error" size="small" endIcon={<DeleteIcon />}
+                                        onClick={() => {
+                                            setInstructorToDelete(instructor)
+                                            setIsDialogDeleteShow(true)
+                                        }}
+                                    >
                                         Delete
                                     </Button>
                                 </TableCell>
@@ -174,6 +207,43 @@ function InstructorTableList({ DepartmentID, Semester, SetPopUpOptions, setSelec
                 onRowsPerPageChange={handleChangeRowsPerPage}
             />
         </TableContainer>
+
+        <Dialog
+            open={isDialogDeleteShow}
+            onClose={() => {
+                setIsDialogDeleteShow(false)
+                setInstructorToDelete(null)
+            }}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+        >
+            <DialogTitle id="alert-dialog-title">
+                Remove Instructor
+            </DialogTitle>
+
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                    {`Are you sure you want to remove "${instructorToDelete?.FirstName} ${instructorToDelete?.MiddleInitial} ${instructorToDelete?.LastName}"?`}
+                </DialogContentText>
+            </DialogContent>
+
+            <DialogActions>
+                <Button
+                    onClick={() => {
+                        handleInstructorDelete(instructorToDelete?.InstructorID)
+                    }}
+                >Yes
+                </Button>
+
+                <Button
+                    onClick={() => {
+                        setIsDialogDeleteShow(false)
+                    }}
+                >
+                    No
+                </Button>
+            </DialogActions>
+        </Dialog>
     </>);
 }
 
