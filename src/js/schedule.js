@@ -1,10 +1,57 @@
 const API_VERSION = 'v1'
+
+// this is for development only : start.
 const DEV = true
 
-// this is for development only.
 const base_url = 'http://localhost:3000'
+// const base_url = 'http://192.168.1.17:3000'
 
-export async function postUpdateInsturctor(instructor) {
+// this is for development only : end.
+
+export async function deleteRemoveInsturctor(instructor_id) {
+  let api_request = `/${API_VERSION}/instructor_remove?instructor_id=${instructor_id}`
+
+  if (DEV) {
+    console.log('call: postUpdateInsturctor')
+    api_request = `${base_url}/${API_VERSION}/instructor_remove?instructor_id=${instructor_id}`
+  }
+
+  const response = await fetch(api_request, {
+    method: 'DELETE',
+    headers: {
+      Accept: "text/plain",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`${response.status} : ${await response.text()}`);
+  }
+}
+
+export async function postCreateInsturctor(instructor) {
+  let api_request = `/${API_VERSION}/instructor_add`
+
+  if (DEV) {
+    console.log('call: postUpdateInsturctor')
+    api_request = `${base_url}/${API_VERSION}/instructor_add`
+  }
+
+  const response = await fetch(api_request, {
+    method: 'POST',
+    headers: {
+      Accept: "text/plain",
+      "Content-Type": "application/json",
+    },
+
+    body: JSON.stringify(instructor)
+  });
+
+  if (!response.ok) {
+    throw new Error(`${response.status} : ${await response.text()}`);
+  }
+}
+
+export async function patchUpdateInsturctor(instructor) {
   let api_request = `/${API_VERSION}/instructor_update`
 
   if (DEV) {
