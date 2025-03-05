@@ -13,27 +13,17 @@ import "./TimeTable.css";
 import "./TimeTableDropdowns.css";
 import "./instructors.css";
 
-import { fetchAllDepartments, deleteRemoveInsturctor } from "../js/schedule"
-import { Box, FormControl, InputLabel, MenuItem, Select, ThemeProvider, Button, Typography, createTheme } from "@mui/material";
+import { fetchAllDepartments } from "../js/schedule"
+import { Box, FormControl, InputLabel, MenuItem, Select, Button, Typography, createTheme } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 
 import { InstructorTimeSlotBitMap } from "../js/instructor-time-slot-bit-map"
-
-
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-
-import someTheme from "../components/Theme";
-
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, CircularProgress } from "@mui/material";
-import { List, ListItem, ListItemText, Stack } from "@mui/material";
-import { Padding } from "@mui/icons-material";
 
 import InstructorTableList from "./InstructorsTableList";
 import InstructorDataView from "./InstructorDataView"
 
 // just use the default theme for now
-const theme = createTheme();
+// const theme = createTheme();
 // const theme = someTheme;
 
 function TimeTable() {
@@ -68,12 +58,6 @@ function TimeTable() {
 
     const [selectedInstructorDefault, setSelectedInstructorDefault] = useState("")
     const [selectedInstructorAllocated, setSelectedInstructorAllocated] = useState("")
-
-    /////////////////////////////////////////////////////////////////////////////////
-    //                       SELECTED TIME SLOT CELL
-    /////////////////////////////////////////////////////////////////////////////////
-
-    const [selectedTimeSlots, setSelectedTimeSlots] = useState(new Set())
 
     /////////////////////////////////////////////////////////////////////////////////
     //                       PAGE LOAD PROCESS
@@ -129,7 +113,6 @@ function TimeTable() {
         setSelectedInstructorDefault("")
         setSelectedInstructorAllocated("")
 
-        setSelectedTimeSlots(new Set([]))
         setIsView(false)
     }
 
@@ -140,7 +123,6 @@ function TimeTable() {
         setSelectedInstructorDefault("")
         setSelectedInstructorAllocated("")
 
-        setSelectedTimeSlots(new Set([]))
         setIsView(false)
         console.log('setIsView(false)')
     };
@@ -167,7 +149,16 @@ function TimeTable() {
                     <Select
                         id="id-department" labelId="label-id-department" label="Department"
                         value={departmentID}
-                        onChange={handleDepartmentChange}
+                        onChange={(e) => {
+                            handleDepartmentChange(e)
+
+                            for (let i = 0; i < allDepartment?.length; i++) {
+                                if (allDepartment[i].DepartmentID === e.target.value) {
+                                    setSelectedDepartment(allDepartment[i])
+                                    break
+                                }
+                            }
+                        }}
                     >
                         <MenuItem value=""><em>none</em></MenuItem>
                         {allDepartment ?
@@ -228,6 +219,7 @@ function TimeTable() {
                         SetPopUpOptions={setPopupOptions}
                         setSelectedInstructorDefault={setSelectedInstructorDefault}
                         setSelectedInstructorAllocated={setSelectedInstructorAllocated}
+                        isView={isView}
                         setIsView={setIsView}
                         setMode={setMode}
                     /> : <Typography sx={{ textAlign: 'center', fontStyle: 'italic', color: 'GrayText' }} >Select A Department and a Semester</Typography>}
@@ -239,10 +231,13 @@ function TimeTable() {
                 <InstructorDataView
                     selectedDepartment={selectedDepartment}
                     SelectedInstructorDefault={selectedInstructorDefault}
+                    SetSelectedInstructorDefault={setSelectedInstructorDefault}
                     SelectedInstructorAllocated={selectedInstructorAllocated}
+                    SetSelectedInstructorAllocated={setSelectedInstructorAllocated}
                     setIsView={setIsView}
                     mode={mode}
                     setMode={setMode}
+                    onInstructorDataViewClose={() => { }}
                 /> : null
         }
     </>);

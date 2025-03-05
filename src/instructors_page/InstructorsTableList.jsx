@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
+
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
     Button, TablePagination, CircularProgress,
@@ -11,14 +12,13 @@ import {
 
 import DeleteIcon from '@mui/icons-material/Delete';
 import { InstructorTimeSlotBitMap } from "../js/instructor-time-slot-bit-map"
-import PageviewIcon from '@mui/icons-material/Pageview';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { fetchDepartmentInstructorsDefaults, fetchDepartmentInstructorsAllocated, deleteRemoveInsturctor, postCreateInsturctor } from "../js/schedule";
+import { fetchDepartmentInstructorsDefaults, fetchDepartmentInstructorsAllocated, deleteRemoveInsturctor } from "../js/schedule";
 
-import { Loading, Popup } from "../components/Loading";
+import { Popup } from "../components/Loading";
 
 
-function InstructorTableList({ DepartmentID, Semester, SetPopUpOptions, setSelectedInstructorDefault, setSelectedInstructorAllocated, setIsView, setMode }) {
+function InstructorTableList({ DepartmentID, Semester, SetPopUpOptions, setSelectedInstructorDefault, setSelectedInstructorAllocated, isView, setIsView, setMode }) {
     const [popupOptions, setPopupOptions] = useState(null);
     const [isDialogDeleteShow, setIsDialogDeleteShow] = useState(false)
 
@@ -27,8 +27,10 @@ function InstructorTableList({ DepartmentID, Semester, SetPopUpOptions, setSelec
 
     const [loading, setLoading] = useState(false); // Loading state
     const [page, setPage] = useState(0); // Current page (starts at 0)
-    const [pageSize, setPageSize] = useState(5); // Rows per page
+    const [pageSize, setPageSize] = useState(10); // Rows per page
     const [totalCount, setTotalCount] = useState(0); // Total instructors count
+
+    const [reducer, forceUpdate] = useReducer(x => x + 1, 0);
 
     useEffect(() => {
         console.log('InstructorTable.useEffect')
@@ -71,7 +73,7 @@ function InstructorTableList({ DepartmentID, Semester, SetPopUpOptions, setSelec
         };
 
         fetchInstructors();
-    }, [DepartmentID, Semester, page, pageSize]); // Refetch when page/rowsPerPage changes
+    }, [DepartmentID, Semester, page, pageSize, isView, reducer]); // Refetch when page/rowsPerPage changes
 
     // Handle page change
     const handleChangePage = (event, new_page) => {
@@ -120,7 +122,8 @@ function InstructorTableList({ DepartmentID, Semester, SetPopUpOptions, setSelec
         setLoading(true);
 
         try {
-            await deleteRemoveInsturctor(instructor_id);          
+            await deleteRemoveInsturctor(instructor_id);
+            forceUpdate()
         } catch (err) {
             SetPopUpOptions({
                 Heading: "Delete Failed",
@@ -131,8 +134,8 @@ function InstructorTableList({ DepartmentID, Semester, SetPopUpOptions, setSelec
 
         setLoading(false);
         setIsDialogDeleteShow(false)
-
-        console.log('instructor id to delete :', instructor_id)
+    
+        console.log(`call: handleInstructorDelete(${instructor_id})`)
     }
 
     const [instructorToDelete, setInstructorToDelete] = useState(null)
@@ -238,6 +241,7 @@ function InstructorTableList({ DepartmentID, Semester, SetPopUpOptions, setSelec
                 <Button
                     onClick={() => {
                         setIsDialogDeleteShow(false)
+                        console.log("delete dialog 'No' click : red -", reducer)
                     }}
                 >
                     No
