@@ -20,13 +20,13 @@
     border-radius: 0.3em;
     cursor: pointer;
     height: 100%;
-  }
-  
-  .all-btns:hover {
+}
+
+.all-btns:hover {
     background-color: #8a00cf;
-  }
-  
-  .all-btns:disabled {
+}
+
+.all-btns:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
-  }
+}

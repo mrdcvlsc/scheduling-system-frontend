@@ -74,6 +74,28 @@ export async function patchUpdateInsturctor(instructor) {
   }
 }
 
+export async function fetchDepartmentRooms(department_id, page_size, page) {
+  let api_request = `/${API_VERSION}/rooms?department_id=${department_id}&page_size=${page_size}&page=${page}`
+
+  if (DEV) {
+    console.log('call: fetchDepartmentInstructorsDefaults')
+    api_request = `${base_url}/${API_VERSION}/rooms?department_id=${department_id}&page_size=${page_size}&page=${page}`
+  }
+
+  const response = await fetch(api_request, {
+    headers: {
+      Accept: "application/json",
+    },
+    method: 'GET'
+  });
+
+  if (!response.ok) {
+    throw Error(`${response.status} :${await response.text()}`);
+  }
+
+  return response.json();
+}
+
 export async function fetchDepartmentInstructorsDefaults(department_id, semester, page_size, page) {
   let api_request = `/${API_VERSION}/instructors/d?department_id=${department_id}&semester=${semester}&page_size=${page_size}&page=${page}`
 
