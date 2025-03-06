@@ -23,17 +23,13 @@ import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import Divider from '@mui/material/Divider';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import "../assets/main.css";
 import { fetchAllDepartments, fetchDepartmentRooms } from "../js/schedule"
 
 function Rooms() {
-    const [department, setDepartment] = useState("")
-    const [departmentList, setDepartmentList] = useState("")
-    const handleDepartmentChange = async () => {
-
-    }
-
     const [room, setRoom] = useState("")
     const [roomList, setRoomList] = useState([])
 
@@ -41,21 +37,109 @@ function Rooms() {
     const [page, setPage] = useState(0);
     const [pageSize, setPageSize] = useState(10);
     const [totalCount, setTotalCount] = useState(0);
-    
-    const handleChangePage = (event, new_page) => {
+
+    const handleChangePage = async (event, new_page) => {
+        console.log('handleChangePage :', new_page)
         setPage(new_page);
-        setIsView(false)
+        await load_rooms(departmentID, new_page)
     };
 
-    const handleChangeRowsPerPage = (event) => {
+    const handleChangeRowsPerPage = async (event) => {
         setPageSize(parseInt(event.target.value, 10));
-        setPage(0); // Reset to first page
+        setPage(0);
+        await load_rooms(departmentID, 0)
     };
+
+    const [departmentList, setDepartmentList] = useState("")
+    useEffect(() => {
+        const useEffectAsyncs = async () => {
+            try {
+                setLoading(true);
+
+                const all_departments = await fetchAllDepartments();
+
+                setDepartmentList(all_departments);
+                console.log('all_departments')
+                console.log(all_departments);
+
+                setLoading(false);
+            } catch (err) {
+                setPopupOptions({
+                    Heading: "Failed to Fetch All Department Data",
+                    HeadingStyle: { background: "red", color: "white" },
+                    Message: `${err}`
+                });
+                setLoading(false);
+                setSemesterIndex("");
+            }
+        };
+
+        useEffectAsyncs();
+    }, []);
+
+    const load_rooms = async(department_id, new_page) => {
+        console.log('loading rooms for department id :', department_id)
+        console.log('pageSize :', pageSize)
+        console.log('page :', new_page)
+
+        setLoading(true);
+
+        try {
+            const rooms = await fetchDepartmentRooms(department_id, pageSize, new_page)
+            console.log(`fetched rooms : ${rooms}`)
+
+            setRoomList(rooms.Rooms)
+            setTotalCount(rooms.TotalRooms)
+        } catch (err) {
+            SetPopUpOptions({
+                Heading: "Failed to fetch rooms",
+                HeadingStyle: { background: "red", color: "white" },
+                Message: `${err}`
+            })
+        }
+
+        setLoading(false);
+    }
+
+    const [departmentID, setDepartmentID] = useState("")
+    const [department, setDepartment] = useState("")
+    const handleDepartmentChange = async (e) => {
+
+        const department_id = e.target.value
+
+        console.log(`selected departmentID: ${department_id}`)
+        setDepartmentID(department_id)
+
+        let selected_department = null
+        for (let i = 0; i < departmentList?.length; i++) {
+            if (departmentList[i].DepartmentID === department_id) {
+                setDepartment(departmentList[i])
+                selected_department = departmentList[i]
+                break
+            }
+        }
+
+        await load_rooms(department_id, page)
+    }
 
     return (<>
         <Box>
             <Box>
-                {/* > department dropdown left - new room button right */}
+                <FormControl sx={{ minWidth: 130 }} size="small">
+                    <InputLabel id="label-id-department">Department</InputLabel>
+                    <Select
+                        id="id-department" labelId="label-id-department" label="Department"
+                        value={departmentID}
+                        onChange={handleDepartmentChange}
+                    >
+                        <MenuItem value=""><em>none</em></MenuItem>
+                        {departmentList ?
+                            departmentList.map((department_iter, index) => (
+                                <MenuItem key={index} value={department_iter.DepartmentID}>{`${department_iter.Code} - ${department_iter.Name}`}</MenuItem>
+                            )) : null
+                        }
+                    </Select>
+                </FormControl>
                 {/* > new room will be a form dialog */}
             </Box>
             <Box
@@ -64,17 +148,20 @@ function Rooms() {
                 justifyContent={'space-between'}
             >
                 <Typography>Rooms</Typography>
-                <Typography>[Department]</Typography>
+                <Typography>{department ? `${department?.Name}` : null}</Typography>
             </Box>
 
             <TableContainer>
                 <Table size="small">
                     <TableHead>
-                        <TableCell>Room ID</TableCell>
-                        <TableCell>Name</TableCell>
-                        <TableCell>Capacity</TableCell>
-                        <TableCell>Room Type</TableCell>
-                        <TableCell align="right">Actions</TableCell>
+                        <TableRow sx={{ height: 1 }}>
+
+                            <TableCell>Room ID</TableCell>
+                            <TableCell>Name</TableCell>
+                            <TableCell>Capacity</TableCell>
+                            <TableCell>Room Type</TableCell>
+                            <TableCell align="right">Actions</TableCell>
+                        </TableRow>
                     </TableHead>
                     <TableBody>{loading ? (
                         <TableRow>
