@@ -13,22 +13,21 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import { InstructorTimeSlotBitMap } from "../js/instructor-time-slot-bit-map"
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { fetchDepartmentInstructorsDefaults, fetchDepartmentInstructorsAllocated, deleteRemoveInsturctor } from "../js/schedule";
+
+import { fetchDepartmentInstructorsDefaults, fetchDepartmentInstructorsAllocated, deleteRemoveInsturctor } from "../js/instructors";
 
 import { Popup } from "../components/Loading";
 
-
 function InstructorTableList({ DepartmentID, Semester, SetPopUpOptions, setSelectedInstructorDefault, setSelectedInstructorAllocated, isView, setIsView, setMode }) {
-    const [popupOptions, setPopupOptions] = useState(null);
     const [isDialogDeleteShow, setIsDialogDeleteShow] = useState(false)
 
-    const [instructorsDefaults, setInstructorsDefaults] = useState([]); // fetch on page load
-    const [instructorsAllocated, setInstructorsAllocated] = useState([]); // fetch on page load
+    const [instructorsDefaults, setInstructorsDefaults] = useState([]);
+    const [instructorsAllocated, setInstructorsAllocated] = useState([]);
 
-    const [loading, setLoading] = useState(false); // Loading state
-    const [page, setPage] = useState(0); // Current page (starts at 0)
-    const [pageSize, setPageSize] = useState(10); // Rows per page
-    const [totalCount, setTotalCount] = useState(0); // Total instructors count
+    const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(0);
+    const [pageSize, setPageSize] = useState(10);
+    const [totalCount, setTotalCount] = useState(0);
 
     const [reducer, forceUpdate] = useReducer(x => x + 1, 0);
 
@@ -98,7 +97,7 @@ function InstructorTableList({ DepartmentID, Semester, SetPopUpOptions, setSelec
         }
 
         if (allocated_idx < 0) {
-            setPopupOptions({
+            SetPopUpOptions({
                 Heading: "Incorrect Data",
                 HeadingStyle: { background: "red", color: "white" },
                 Message: "missing default instructor encoding resources"
@@ -141,10 +140,6 @@ function InstructorTableList({ DepartmentID, Semester, SetPopUpOptions, setSelec
     const [instructorToDelete, setInstructorToDelete] = useState(null)
 
     return (<>
-        <Popup popupOptions={popupOptions} closeButtonActionHandler={() => {
-            setPopupOptions(null);
-        }} />
-
         <TableContainer component={Paper}>
             <Table size="small">
                 <TableHead>

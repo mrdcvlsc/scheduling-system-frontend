@@ -1,4 +1,4 @@
-import { StrictMode, useState, useEffect, useRef } from "react";
+import { StrictMode, useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 
 import { Loading, Popup } from "../components/Loading";
@@ -7,7 +7,9 @@ import "../assets/main.css";
 import "./TimeTable.css";
 import "./TimeTableDropdowns.css";
 
-import { deserializeSchedule, fetchAllDepartments, fetchClassJsonSchedule, fetchDepartmentData, fetchSerializedClassSchedule } from "../js/schedule"
+import { fetchAllDepartments, fetchDepartmentData } from "../js/departments"
+import { deserializeSchedule, fetchClassJsonSchedule, fetchSerializedClassSchedule } from "../js/schedule"
+
 import { generateTimeSlotRowLabels } from "../js/week-time-table-grid-functions";
 
 const SECTION_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz";

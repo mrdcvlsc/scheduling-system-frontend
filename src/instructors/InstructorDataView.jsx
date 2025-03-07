@@ -15,7 +15,8 @@ import { Box, Typography, TextField } from "@mui/material";
 import { generateTimeSlotRowLabels } from "../js/week-time-table-grid-functions";
 import { ContextMenu, ContextMenuItem, Position, useContextMenuState } from "../components/ContextMenu";
 
-import { patchUpdateInsturctor, postCreateInsturctor } from "../js/schedule"
+import { patchUpdateInsturctor, postCreateInsturctor } from "../js/instructors"
+
 import { Loading, Popup } from "../components/Loading";
 
 export default function InstructorDataView({

@@ -13,8 +13,9 @@ import "./TimeTable.css";
 import "./TimeTableDropdowns.css";
 import "./instructors.css";
 
-import { fetchAllDepartments } from "../js/schedule"
-import { Box, FormControl, InputLabel, MenuItem, Select, Button, Typography, createTheme } from "@mui/material";
+import { fetchAllDepartments } from "../js/departments"
+
+import { Box, FormControl, InputLabel, MenuItem, Select, Button, Typography } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 
 import { InstructorTimeSlotBitMap } from "../js/instructor-time-slot-bit-map"
@@ -26,7 +27,7 @@ import InstructorDataView from "./InstructorDataView"
 // const theme = createTheme();
 // const theme = someTheme;
 
-function TimeTable() {
+function InstructorPage() {
 
     const [isView, setIsView] = useState(false)
     const [mode, setMode] = useState("")
@@ -245,6 +246,6 @@ function TimeTable() {
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
-        <TimeTable />
+        <InstructorPage />
     </StrictMode>
 );
