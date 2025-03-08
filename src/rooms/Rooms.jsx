@@ -59,7 +59,6 @@ function Rooms() {
     const [isDialogFormOpen, setIsDialogFormOpen] = useState(false)
 
     const [popupOptions, setPopupOptions] = useState(null);
-    const [reducer, forceUpdate] = useReducer(x => x + 1, 0);
     const [isDialogDeleteShow, setIsDialogDeleteShow] = useState(false)
     const [roomToDelete, setRoomToDelete] = useState(null)
     const handleRoomDelete = async (room_id) => {
@@ -71,7 +70,7 @@ function Rooms() {
 
             setPopupOptions({
                 Heading: "Delete Success",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: "green", color: "white" },
                 Message: 'the room was succesfully deleted'
             })
         } catch (err) {
@@ -127,7 +126,7 @@ function Rooms() {
         };
 
         useEffectAsyncs();
-    }, [reducer]);
+    }, []);
 
     const load_rooms = async (department_id, page_size, new_page) => {
         console.log('loading rooms for department id :', department_id)
@@ -327,7 +326,6 @@ function Rooms() {
                 <Button
                     onClick={() => {
                         setIsDialogDeleteShow(false)
-                        console.log("delete dialog 'No' click : red -", reducer)
                     }}
                 >
                     No
