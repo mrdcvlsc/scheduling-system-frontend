@@ -19,6 +19,7 @@ export default defineConfig({
         schedule: resolve(root, 'schedule', 'index.html'),
         instructors: resolve(root, 'instructors', 'index.html'),
         rooms: resolve(root, 'rooms', 'index.html'),
+        subjects: resolve(root, 'subjects', 'index.html'),
       }
     }
   }
