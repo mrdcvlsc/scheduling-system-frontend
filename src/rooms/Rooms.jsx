@@ -235,7 +235,7 @@ function Rooms() {
                     </TableHead>
                     <TableBody>{loading ? (
                         <TableRow>
-                            <TableCell align="center">
+                            <TableCell colSpan={5} align="center">
                                 <CircularProgress />
                             </TableCell>
                         </TableRow>
