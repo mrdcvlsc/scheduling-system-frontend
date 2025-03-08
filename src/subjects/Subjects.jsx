@@ -1,4 +1,4 @@
-import { StrictMode, useState, useEffect, useReducer } from "react";
+import { StrictMode, useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 
 import '@fontsource/roboto/300.css';
@@ -7,459 +7,408 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
 import {
-    Box,
-    FormControl, InputLabel,
-    TextField, Select, MenuItem,
-    Button,
-    Typography,
-
+    Box, TextField, Button, Typography,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination,
-    Paper, CircularProgress,
-
-    Dialog, DialogContent, DialogContentText, DialogTitle, DialogActions,
-
-    createTheme,
-    Alert,
+    Paper, CircularProgress, Dialog, DialogContent, DialogContentText, DialogTitle, DialogActions,
+    FormControlLabel, Checkbox,
 } from "@mui/material";
-
-import { Popup } from "../components/Loading";
 
 import DoneIcon from '@mui/icons-material/Done';
 import CancelIcon from '@mui/icons-material/Cancel';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
-import Divider from '@mui/material/Divider';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import "../assets/main.css";
+import { fetchSubjects, deleteRemoveSubject, patchUpdateSubject, postCreateSubject } from "../js/subjects";
+import { Popup } from "../components/Loading";
 
-import { fetchSubjects, deleteRemoveSubject, patchUpdateSubject, postCreateSubject } from "../js/subjects"
-
-function RoomTypeName(room_type) {
-    switch (room_type) {
-        case 0: return 'Lecture'
-        case 1: return 'Laboratory'
-        case 2: return 'Gym'
+const truncateText = (text, maxLength) => {
+    if (text.length > maxLength) {
+        return text.substring(0, maxLength) + '...';
     }
-}
+    return text;
+};
 
 function Subjects() {
-    
-    const [mode, setMode] = useState("")
-    const [isDialogFormOpen, setIsDialogFormOpen] = useState(false)
-
+    const [mode, setMode] = useState(""); // "new" or "edit"
+    const [isDialogFormOpen, setIsDialogFormOpen] = useState(false);
     const [popupOptions, setPopupOptions] = useState(null);
-    const [isDialogDeleteShow, setIsDialogDeleteShow] = useState(false)
-    const [subjectToDelete, setSubjectToDelete] = useState(null)
-    const handleSubjectDelete = async (room_id) => {
-        setLoading(true);
-
-        try {
-            await deleteRemoveRoom(room_id);
-            await load_subjects(departmentID, pageSize, page)
-
-            setPopupOptions({
-                Heading: "Delete Success",
-                HeadingStyle: { background: "green", color: "white" },
-                Message: 'the room was succesfully deleted'
-            })
-        } catch (err) {
-            setPopupOptions({
-                Heading: "Delete Failed",
-                HeadingStyle: { background: "red", color: "white" },
-                Message: `${err}`
-            })
-        }
-
-        setSubjectToDelete(null)
-        setLoading(false);
-        setIsDialogDeleteShow(false)
-
-        console.log(`call: handleRoomDelete(${room_id})`)
-    }
+    const [isDialogDeleteShow, setIsDialogDeleteShow] = useState(false);
+    const [subjectToDelete, setSubjectToDelete] = useState(null);
 
     const [subject, setSubject] = useState({
-        Name: null,
-        Capacity: null,
-        RoomType: null,
-    })
+        Code: "",
+        Name: "",
+        LecHours: 0,
+        LabHours: 0,
+    });
 
-    const [subjectList, setSubjectList] = useState([])
-
+    const [subjectList, setSubjectList] = useState([]);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(0);
     const [pageSize, setPageSize] = useState(10);
     const [totalCount, setTotalCount] = useState(0);
 
-    const [departmentList, setDepartmentList] = useState("")
-    useEffect(() => {
-        const useEffectAsyncs = async () => {
-            try {
-                setLoading(true);
+    const [codeFilter, setCodeFilter] = useState("");
+    const [nameFilter, setNameFilter] = useState("");
 
-                const all_departments = await fetchAllDepartments();
+    const [jumpToPage, setJumpToPage] = useState('');
 
-                setDepartmentList(all_departments);
-                console.log('all_departments')
-                console.log(all_departments);
+    const totalPages = Math.ceil(totalCount / pageSize);
 
-                setLoading(false);
-            } catch (err) {
-                setPopupOptions({
-                    Heading: "Failed to Fetch All Department Data",
-                    HeadingStyle: { background: "red", color: "white" },
-                    Message: `${err}`
-                });
-                setLoading(false);
-                setSemesterIndex("");
-            }
-        };
-
-        useEffectAsyncs();
-    }, []);
-
-    const load_subjects = async (page_size, new_page) => {
-        console.log('page_size :', page_size)
-        console.log('page :', new_page)
-
+    const load_subjects = async (page_size, new_page, code_match = "", name_match = "") => {
         setLoading(true);
-
         try {
-            const subjects = await fetchSubjects(page_size, new_page)
-            console.log(`fetched subjects : ${subjects}`)
-
-            setSubjectList(subjects.Subjects)
-            setTotalCount(subjects.TotalSubjects)
+            const subjectsData = await fetchSubjects(page_size, new_page, code_match, name_match);
+            setSubjectList(subjectsData.Subjects);
+            setTotalCount(subjectsData.TotalSubjects);
         } catch (err) {
             setPopupOptions({
-                Heading: "Failed to fetch rooms",
+                Heading: "Failed to Fetch Subjects",
                 HeadingStyle: { background: "red", color: "white" },
-                Message: `${err}`
-            })
+                Message: `${err.message}`,
+            });
         }
-
         setLoading(false);
-    }
+    };
 
-    const [departmentID, setDepartmentID] = useState("")
-    const [department, setDepartment] = useState("")
+    const handleSubjectDelete = async (subject_id) => {
+        setLoading(true);
+        try {
+            await deleteRemoveSubject(subject_id);
+            await load_subjects(pageSize, page, codeFilter, nameFilter);
+            setPopupOptions({
+                Heading: "Delete Success",
+                HeadingStyle: { background: "green", color: "white" },
+                Message: "The subject was successfully deleted",
+            });
+        } catch (err) {
+            setPopupOptions({
+                Heading: "Delete Failed",
+                HeadingStyle: { background: "red", color: "white" },
+                Message: `${err.message}`,
+            });
+        }
+        setSubjectToDelete(null);
+        setLoading(false);
+        setIsDialogDeleteShow(false);
+    };
 
-    return (<>
-        <Popup popupOptions={popupOptions} closeButtonActionHandler={() => {
-            setPopupOptions(null);
-        }} />
+    const handleJumpToPage = () => {
+        const pageNumber = parseInt(jumpToPage, 10);
+        if (pageNumber > 0 && pageNumber <= totalPages) {
+            const newPage = pageNumber - 1; // Convert to 0-based index
+            setPage(newPage);
+            load_subjects(pageSize, newPage, codeFilter, nameFilter);
+            setJumpToPage('');
+        } else {
+            setPopupOptions({
+                Heading: "Invalid Page",
+                HeadingStyle: { background: "orange", color: "white" },
+                Message: `Please enter a page number between 1 and ${totalPages}`,
+            });
+        }
+    };
 
-        <Box>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: '0.5em' }}>
-                <FormControl sx={{ minWidth: 130 }} size="small">
-                    <InputLabel id="label-id-department">Department</InputLabel>
-                    <Select
-                        id="id-department" labelId="label-id-department" label="Department"
-                        value={departmentID}
-                        onChange={async (e) => {
+    useEffect(() => {
+        load_subjects(pageSize, page, codeFilter, nameFilter);
+    }, []);
 
-                            const department_id = e.target.value
+    return (
+        <>
+            <Popup popupOptions={popupOptions} closeButtonActionHandler={() => setPopupOptions(null)} />
 
-                            console.log(`selected departmentID: ${department_id}`)
-                            setDepartmentID(department_id)
-
-                            for (let i = 0; i < departmentList?.length; i++) {
-                                if (departmentList[i].DepartmentID === department_id) {
-                                    setDepartment(departmentList[i])
-                                    break
-                                }
-                            }
-
-                            await load_subjects(department_id, pageSize, page)
+            <Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: '0.5em' }}>
+                    <Typography>Subjects</Typography>
+                    <Button
+                        endIcon={<AddIcon />}
+                        size="medium"
+                        color="secondary"
+                        variant="contained"
+                        onClick={() => {
+                            setSubject({ Code: "", Name: "", LecHours: 0, LabHours: 0 });
+                            setMode("new");
+                            setIsDialogFormOpen(true);
                         }}
                     >
-                        <MenuItem value=""><em>none</em></MenuItem>
-                        {departmentList ?
-                            departmentList.map((department_iter, index) => (
-                                <MenuItem key={index} value={department_iter.DepartmentID}>{`${department_iter.Code}`}</MenuItem>
-                            )) : null
-                        }
-                    </Select>
-                </FormControl>
+                        Add New Subject
+                    </Button>
+                </Box>
 
-                {/* > new room will be a form dialog */}
-                <Button disabled={!Number.isInteger(departmentID)}
-                    endIcon={<AddIcon />} size="medium" color="secondary" variant="contained"
-                    onClick={() => {
-                        const new_empty_room_fields = {
-                            Name: null,
-                            Capacity: null,
-                            RoomType: null,
-                        }
+                <Box sx={{ display: 'flex', gap: 2, marginBottom: 2 }}>
+                    <TextField
+                        size="small"
+                        label="Filter by Code"
+                        value={codeFilter}
+                        onChange={(e) => setCodeFilter(e.target.value)}
+                    />
+                    <TextField
+                        size="small"
+                        label="Filter by Name"
+                        value={nameFilter}
+                        onChange={(e) => setNameFilter(e.target.value)}
+                    />
+                    <Button
+                        size="small"
+                        variant="contained"
+                        onClick={() => {
+                            setPage(0);
+                            load_subjects(pageSize, 0, codeFilter, nameFilter);
+                        }}
+                    >
+                        Apply Filters
+                    </Button>
+                </Box>
 
-                        setSubject(new_empty_room_fields)
-                        console.log('new_empty_room_fields =', new_empty_room_fields)
-                        setMode("new")
-                        setIsDialogFormOpen(true)
-                    }}
-                >
-                    Add New Room
-                </Button>
+                <TableContainer component={Paper}>
+                    <Table size="small">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>ID</TableCell>
+                                <TableCell>Code</TableCell>
+                                <TableCell>Name</TableCell>
+                                <TableCell>Lec Hours</TableCell>
+                                <TableCell>Lab Hours</TableCell>
+                                <TableCell align="right">Actions</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {loading ? (
+                                <TableRow>
+                                    <TableCell colSpan={6} align="center">
+                                        <CircularProgress />
+                                    </TableCell>
+                                </TableRow>
+                            ) : (
+                                subjectList.map((subject) => (
+                                    <TableRow key={subject.ID}>
+                                        <TableCell>{subject.ID}</TableCell>
+                                        <TableCell>{subject.Code}</TableCell>
+                                        <TableCell>{truncateText(subject.Name, 90)}</TableCell>
+                                        <TableCell>{subject.LecHours}</TableCell>
+                                        <TableCell>{subject.LabHours}</TableCell>
+                                        <TableCell align="right">
+                                            <Button
+                                                variant="contained"
+                                                color="primary"
+                                                size="small"
+                                                style={{ marginRight: 8 }}
+                                                startIcon={<EditIcon />}
+                                                onClick={() => {
+                                                    setSubject(subject);
+                                                    setMode("edit");
+                                                    setIsDialogFormOpen(true);
+                                                }}
+                                            >
+                                                Edit
+                                            </Button>
+                                            <Button
+                                                variant="contained"
+                                                color="error"
+                                                size="small"
+                                                endIcon={<DeleteIcon />}
+                                                onClick={() => {
+                                                    setSubjectToDelete(subject);
+                                                    setIsDialogDeleteShow(true);
+                                                }}
+                                            >
+                                                Delete
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            )}
+                        </TableBody>
+                    </Table>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <TablePagination
+                            rowsPerPageOptions={[5, 10, 15]}
+                            component="div"
+                            count={totalCount}
+                            rowsPerPage={pageSize}
+                            page={page}
+                            onPageChange={async (_, new_page) => {
+                                setPage(new_page);
+                                await load_subjects(pageSize, new_page, codeFilter, nameFilter);
+                            }}
+                            onRowsPerPageChange={async (event) => {
+                                const newPageSize = parseInt(event.target.value, 10);
+                                setPageSize(newPageSize);
+                                setPage(0);
+                                await load_subjects(newPageSize, 0, codeFilter, nameFilter);
+                            }}
+                        />
+                        {/* page jump controls */}
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Typography>{`${page+1}/${totalPages}`}</Typography>
+                            <TextField
+                                label="Go to page"
+                                type="number"
+                                value={jumpToPage}
+                                onChange={(e) => setJumpToPage(e.target.value)}
+                                slotProps={{htmlInput: { min: 1, max: totalPages }}}
+                                size="small"
+                                style={{ width: '100px' }}
+                            />
+                            <Button
+                                variant="contained"
+                                onClick={handleJumpToPage}
+                                size="small"
+                            >
+                                Go
+                            </Button>
+                        </Box>
+                    </Box>
+                </TableContainer>
             </Box>
-            <Box
-                padding={'1em'}
-                display={'flex'}
-                justifyContent={'space-between'}
+
+            <Dialog
+                open={isDialogDeleteShow}
+                onClose={() => setIsDialogDeleteShow(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
             >
-                <Typography>Rooms</Typography>
-                <Typography fontStyle={'italic'}>{department ? `${department?.Name}` : null}</Typography>
-            </Box>
+                <DialogTitle id="alert-dialog-title">Remove Subject</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        {`Are you sure you want to remove "${subjectToDelete?.Name}"?`}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => handleSubjectDelete(subjectToDelete?.ID)}>Yes</Button>
+                    <Button onClick={() => setIsDialogDeleteShow(false)}>No</Button>
+                </DialogActions>
+            </Dialog>
 
-            <TableContainer>
-                <Table size="small">
-                    <TableHead>
-                        <TableRow sx={{ height: 1 }}>
+            <Dialog
+                open={isDialogFormOpen}
+                onClose={() => setIsDialogFormOpen(false)}
+                slotProps={{
+                    paper: {
+                        component: 'form',
+                        onSubmit: async (event) => {
+                            event.preventDefault();
+                            const formData = new FormData(event.currentTarget);
+                            const formJson = Object.fromEntries(formData.entries());
 
-                            <TableCell>Room ID</TableCell>
-                            <TableCell>Name</TableCell>
-                            <TableCell>Capacity</TableCell>
-                            <TableCell>Room Type</TableCell>
-                            <TableCell align="right">Actions</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>{loading ? (
-                        <TableRow>
-                            <TableCell colSpan={5} align="center">
-                                <CircularProgress />
-                            </TableCell>
-                        </TableRow>
-                    ) : (subjectList?.map((room, index) => (
-                        <TableRow key={room.RoomID} sx={{ border: '1px solid yellow' }}>
-                            <TableCell>{room.RoomID}</TableCell>
-                            <TableCell>{room.Name}</TableCell>
-                            <TableCell>{room.Capacity}</TableCell>
-                            <TableCell>{RoomTypeName(room.RoomType)}</TableCell>
-                            <TableCell align="right">
-                                <Button
-                                    variant="contained" color="primary" size="small"
-                                    style={{ marginRight: 8 }}
-                                    startIcon={<EditIcon />}
-                                    onClick={() => {
-                                        setSubject(room)
-                                        console.log(room)
-                                        setMode("edit")
-                                        setIsDialogFormOpen(true)
-                                    }}
-                                >
-                                    Edit
-                                </Button>
-                                <Button
-                                    variant="contained" color="error" size="small" endIcon={<DeleteIcon />}
-                                    onClick={async () => {
-                                        setSubjectToDelete(room)
-                                        setIsDialogDeleteShow(true)
-                                    }}
-                                >
-                                    Delete
-                                </Button>
-                            </TableCell>
-                        </TableRow>
-                    )))}</TableBody>
-                </Table>
+                            const isGym = formJson.isGym === "on";
+                            const subjectData = {
+                                Code: formJson.Code,
+                                Name: formJson.Name,
+                                LecHours: parseInt(formJson.LecHours, 10),
+                                LabHours: parseInt(formJson.LabHours, 10),
+                                BitFlags: isGym ? 1 : 0,
+                                DesignatedInstructors: [],
+                            };
 
-                <TablePagination
-                    rowsPerPageOptions={[1, 5, 10, 15]}
-                    component="div"
-                    count={totalCount}
-                    rowsPerPage={pageSize}
-                    page={page}
-
-                    onPageChange={async (_, new_page) => {
-                        console.log('handleChangePage :', new_page)
-                        setPage(new_page);
-                        await load_subjects(departmentID, pageSize, new_page)
-                    }}
-
-                    onRowsPerPageChange={async (event) => {
-                        setPageSize(parseInt(event.target.value, 10));
-                        setPage(0);
-                        await load_subjects(departmentID, parseInt(event.target.value, 10), 0)
-                    }}
-                />
-            </TableContainer>
-        </Box>
-
-        {/* delete dialog */}
-        <Dialog
-            open={isDialogDeleteShow}
-            onClose={() => {
-                setIsDialogDeleteShow(false)
-                setSubjectToDelete(null)
-            }}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-        >
-            <DialogTitle id="alert-dialog-title">
-                Remove Room
-            </DialogTitle>
-
-            <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                    {`Are you sure you want to remove "${subjectToDelete?.Name}"?`}
-                </DialogContentText>
-            </DialogContent>
-
-            <DialogActions>
-                <Button
-                    onClick={() => {
-                        handleSubjectDelete(subjectToDelete?.RoomID)
-                    }}
-                >Yes
-                </Button>
-
-                <Button
-                    onClick={() => {
-                        setIsDialogDeleteShow(false)
-                    }}
-                >
-                    No
-                </Button>
-            </DialogActions>
-        </Dialog>
-
-        {/* add/edit room dialog */}
-        <Dialog
-            open={isDialogFormOpen}
-
-            onClose={() => {
-                setIsDialogFormOpen(false)
-            }}
-
-            slotProps={{
-                paper: {
-                    component: 'form',
-                    onSubmit: async (event) => {
-                        event.preventDefault();
-                        const formData = new FormData(event.currentTarget);
-                        const formJson = Object.fromEntries(formData.entries());
-
-                        formJson.DepartmentID = departmentID
-                        formJson.Capacity = Number(formJson.Capacity)
-                        formJson.RoomType = Number(formJson.RoomType)
-
-                        try {
-                            setLoading(true);
-                
                             if (mode === "edit") {
-                                formJson.RoomID = subject.RoomID
-                                console.log('updating room :', formJson);
-                                await patchUpdateRoom(formJson);
-                
-                                setPopupOptions({
-                                    Heading: "Edit Successful",
-                                    HeadingStyle: { background: "green", color: "white" },
-                                    Message: "changes to the room data are saved"
-                                });
-                            } else if (mode === "new") {
-                                console.log('adding room :', formJson);
-                                await postCreateRoom(formJson);
-                
-                                setPopupOptions({
-                                    Heading: "Add Successful",
-                                    HeadingStyle: { background: "green", color: "white" },
-                                    Message: "a new room was added"
-                                });
+                                subjectData.ID = subject.ID;
                             }
-                            
-                            load_subjects(departmentID, pageSize, page)
-                            setLoading(false);
-                        } catch (err) {
-                            setPopupOptions({
-                                Heading: "Room Update Failed",
-                                HeadingStyle: { background: "red", color: "white" },
-                                Message: `${err}`
-                            });
-                            setLoading(false);
-                        }
 
-                        setIsDialogFormOpen(false)
+                            try {
+                                setLoading(true);
+                                if (mode === "new") {
+                                    await postCreateSubject(subjectData);
+                                    setPopupOptions({
+                                        Heading: "Add Successful",
+                                        HeadingStyle: { background: "green", color: "white" },
+                                        Message: "A new subject was added",
+                                    });
+                                } else if (mode === "edit") {
+                                    await patchUpdateSubject(subjectData);
+                                    setPopupOptions({
+                                        Heading: "Edit Successful",
+                                        HeadingStyle: { background: "green", color: "white" },
+                                        Message: "Changes to the subject data are saved",
+                                    });
+                                }
+                                await load_subjects(pageSize, page, codeFilter, nameFilter);
+                            } catch (err) {
+                                setPopupOptions({
+                                    Heading: "Operation Failed",
+                                    HeadingStyle: { background: "red", color: "white" },
+                                    Message: `${err.message}`,
+                                });
+                            } finally {
+                                setLoading(false);
+                                setIsDialogFormOpen(false);
+                            }
+                        },
                     },
-                },
-            }}
-        >
-            <DialogTitle>{
-                mode === "new" ? ('Add New Room') : (mode === "edit" ? ('Edit Room') : 'Temp Title')
-            }</DialogTitle>
-            <DialogContent>
-                <DialogContentText>{
-                    mode === "new" ? (
-                        'Enter the room details and save it to add a new room.'
-                    ) : (mode === "edit" ? (
-                        "Edit the current room information and apply your changes"
-                    ) : (
-                        'This is a temporary development and debugging content only'
-                    ))
-                }</DialogContentText>
-                <TextField
-                    autoFocus
-                    required
-                    margin="dense"
-                    id="Name"
-                    name="Name"
-                    label="Name"
-                    type="text"
-                    fullWidth
-                    variant="standard"
-                    defaultValue={subject?.Name ? subject?.Name : ""}
-                />
-
-                <TextField
-                    autoFocus
-                    required
-                    margin="dense"
-                    id="Capacity"
-                    name="Capacity"
-                    label="Capacity"
-                    type="number"
-                    fullWidth
-                    variant="standard"
-                    defaultValue={subject?.Capacity ? subject?.Capacity : ""}
-                />
-
-                <FormControl
-                    fullWidth
-                    margin="dense"
-                >
-                    <InputLabel id="label-RoomType">Room Type</InputLabel>
-                    <Select
-                        onFocus={false}
+                }}
+            >
+                <DialogTitle>{mode === "new" ? "Add New Subject" : "Edit Subject"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        {mode === "new" ? "Enter the subject details and save it to add a new subject." : "Edit the current subject information and apply your changes"}
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
                         required
+                        margin="dense"
+                        id="Code"
+                        name="Code"
+                        label="Code"
+                        type="text"
+                        fullWidth
                         variant="standard"
-                        name="RoomType"
-                        label="RoomType"
-                        id="RoomType" labelId="label-RoomType"
-                        value={Number.isInteger(subject?.RoomType) ? subject?.RoomType : ""}
-                        onChange={(e) => {
-                            const new_room = structuredClone(subject)
-                            console.log('e.target.value =', e.target.value)
-                            new_room.RoomType = e.target.value
-                            setSubject(new_room)
-                        }}
-                    >
-                        {ROOM_TYPES ?
-                            ROOM_TYPES.map((room_type, index) => (
-                                <MenuItem key={index} value={room_type}>{`${RoomTypeName(room_type)}`}</MenuItem>
-                            )) : null
+                        defaultValue={subject?.Code || ""}
+                    />
+                    <TextField
+                        required
+                        margin="dense"
+                        id="Name"
+                        name="Name"
+                        label="Name"
+                        type="text"
+                        fullWidth
+                        variant="standard"
+                        defaultValue={subject?.Name || ""}
+                    />
+                    <TextField
+                        required
+                        margin="dense"
+                        id="LecHours"
+                        name="LecHours"
+                        label="Lecture Hours"
+                        type="number"
+                        fullWidth
+                        variant="standard"
+                        defaultValue={subject?.LecHours || 0}
+                        slotProps={{htmlInput: { min: 0, max: 15 }}}
+                    />
+                    <TextField
+                        required
+                        margin="dense"
+                        id="LabHours"
+                        name="LabHours"
+                        label="Lab Hours"
+                        type="number"
+                        fullWidth
+                        variant="standard"
+                        defaultValue={subject?.LabHours || 0}
+                        slotProps={{htmlInput: { min: 0, max: 15 }}}
+                    />
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                name="isGym"
+                                defaultChecked={mode === "edit" && (subject?.BitFlags & 1) === 1}
+                            />
                         }
-                    </Select>
-                </FormControl>
-            </DialogContent>
-            <DialogActions>
-                <Button type="submit">{
-                    mode === "new" ? ('Save') : (mode === "edit" ? ('Apply Changes') : 'Temp Success')
-                }</Button>
-                <Button onClick={() => setIsDialogFormOpen(false)}>Cancel</Button>
-            </DialogActions>
-        </Dialog>
-    </>)
+                        label="Is Gym Type"
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button type="submit">{mode === "new" ? "Save" : "Apply Changes"}</Button>
+                    <Button onClick={() => setIsDialogFormOpen(false)}>Cancel</Button>
+                </DialogActions>
+            </Dialog>
+        </>
+    );
 }
 
 createRoot(document.getElementById("root")).render(
