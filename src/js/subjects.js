@@ -1,10 +1,10 @@
 import { DEV, API_VERSION, base_url } from "./basics.js";
 
-export async function fetchDepartmentSubjects(page_size, page) {
+export async function fetchSubjects(page_size, page) {
   let api_request = `/${API_VERSION}/subjects?page_size=${page_size}&page=${page}`
 
   if (DEV) {
-    console.log('call: fetchDepartmentSubjectsDefaults')
+    console.log('call: fetchSubjectsDefaults')
     api_request = `${base_url}/${API_VERSION}/subjects?page_size=${page_size}&page=${page}`
   }
 
