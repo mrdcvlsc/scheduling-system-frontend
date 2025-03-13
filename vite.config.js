@@ -20,6 +20,7 @@ export default defineConfig({
         instructors: resolve(root, 'instructors', 'index.html'),
         rooms: resolve(root, 'rooms', 'index.html'),
         subjects: resolve(root, 'subjects', 'index.html'),
+        curriculums: resolve(root, 'curriculums', 'index.html'),
       }
     }
   }
