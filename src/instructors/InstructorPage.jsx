@@ -65,27 +65,16 @@ function InstructorPage() {
     /////////////////////////////////////////////////////////////////////////////////
 
     useEffect(() => {
-
-        // TODO: fetch basic const values (data below is just temporary);
-
-        const starting_hour = 7;
-        const time_slot_per_hour = 2;
-        const daily_time_slots = 24;
-
-        const time_slot_minute_interval = 60 / time_slot_per_hour;
-
         const useEffectAsyncs = async () => {
             try {
                 setIsLoading(true);
 
                 const all_departments = await fetchAllDepartments();
 
-
                 setAllDepartment(all_departments);
                 console.log('all_departments')
                 console.log(all_departments);
                 console.log()
-
 
                 setIsLoading(false);
             } catch (err) {
