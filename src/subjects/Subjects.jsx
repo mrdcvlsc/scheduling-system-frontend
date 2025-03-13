@@ -46,20 +46,20 @@ function Subjects() {
     });
 
     const [subjectList, setSubjectList] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [page, setPage] = useState(0);
     const [pageSize, setPageSize] = useState(10);
     const [totalCount, setTotalCount] = useState(0);
 
-    const [codeFilter, setCodeFilter] = useState("");
-    const [nameFilter, setNameFilter] = useState("");
+    const [codeMatch, setCodeMatch] = useState("");
+    const [nameMatch, setNameMatch] = useState("");
 
     const [jumpToPage, setJumpToPage] = useState('');
 
     const totalPages = Math.ceil(totalCount / pageSize);
 
     const load_subjects = async (page_size, new_page, code_match = "", name_match = "") => {
-        setLoading(true);
+        setIsLoading(true);
         try {
             const subjectsData = await fetchSubjects(page_size, new_page, code_match, name_match);
             setSubjectList(subjectsData.Subjects);
@@ -71,14 +71,14 @@ function Subjects() {
                 Message: `${err.message}`,
             });
         }
-        setLoading(false);
+        setIsLoading(false);
     };
 
     const handleSubjectDelete = async (subject_id) => {
-        setLoading(true);
+        setIsLoading(true);
         try {
             await deleteRemoveSubject(subject_id);
-            await load_subjects(pageSize, page, codeFilter, nameFilter);
+            await load_subjects(pageSize, page, codeMatch, nameMatch);
             setPopupOptions({
                 Heading: "Delete Success",
                 HeadingStyle: { background: "green", color: "white" },
@@ -92,7 +92,7 @@ function Subjects() {
             });
         }
         setSubjectToDelete(null);
-        setLoading(false);
+        setIsLoading(false);
         setIsDialogDeleteShow(false);
     };
 
@@ -101,7 +101,7 @@ function Subjects() {
         if (pageNumber > 0 && pageNumber <= totalPages) {
             const newPage = pageNumber - 1; // Convert to 0-based index
             setPage(newPage);
-            load_subjects(pageSize, newPage, codeFilter, nameFilter);
+            load_subjects(pageSize, newPage, codeMatch, nameMatch);
             setJumpToPage('');
         } else {
             setPopupOptions({
@@ -113,7 +113,7 @@ function Subjects() {
     };
 
     useEffect(() => {
-        load_subjects(pageSize, page, codeFilter, nameFilter);
+        load_subjects(pageSize, page, codeMatch, nameMatch);
     }, []);
 
     return (
@@ -122,7 +122,33 @@ function Subjects() {
 
             <Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: '0.5em' }}>
-                    <Typography>Subjects</Typography>
+                    <Box display={'flex'} gap={'0.5em'}>
+                        <TextField
+                            sx={{ width: '7.5em' }}
+                            size="small"
+                            label="Search Code"
+                            value={codeMatch}
+                            onChange={(e) => setCodeMatch(e.target.value)}
+                        />
+                        <TextField
+                            sx={{ width: '8em' }}
+                            size="small"
+                            label="Search Name"
+                            value={nameMatch}
+                            onChange={(e) => setNameMatch(e.target.value)}
+                        />
+                        <Button
+                            size="small"
+                            variant="contained"
+                            onClick={() => {
+                                setPage(0);
+                                load_subjects(pageSize, 0, codeMatch, nameMatch);
+                            }}
+                        >
+                            Search
+                        </Button>
+                    </Box>
+
                     <Button
                         endIcon={<AddIcon />}
                         size="medium"
@@ -138,29 +164,8 @@ function Subjects() {
                     </Button>
                 </Box>
 
-                <Box sx={{ display: 'flex', gap: 2, marginBottom: 2 }}>
-                    <TextField
-                        size="small"
-                        label="Filter by Code"
-                        value={codeFilter}
-                        onChange={(e) => setCodeFilter(e.target.value)}
-                    />
-                    <TextField
-                        size="small"
-                        label="Filter by Name"
-                        value={nameFilter}
-                        onChange={(e) => setNameFilter(e.target.value)}
-                    />
-                    <Button
-                        size="small"
-                        variant="contained"
-                        onClick={() => {
-                            setPage(0);
-                            load_subjects(pageSize, 0, codeFilter, nameFilter);
-                        }}
-                    >
-                        Apply Filters
-                    </Button>
+                <Box sx={{ display: 'flex', padding: '0.5em' }}>
+                    <Typography>Subjects</Typography>
                 </Box>
 
                 <TableContainer component={Paper}>
@@ -176,7 +181,7 @@ function Subjects() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {loading ? (
+                            {isLoading ? (
                                 <TableRow>
                                     <TableCell colSpan={6} align="center">
                                         <CircularProgress />
@@ -232,24 +237,24 @@ function Subjects() {
                             page={page}
                             onPageChange={async (_, new_page) => {
                                 setPage(new_page);
-                                await load_subjects(pageSize, new_page, codeFilter, nameFilter);
+                                await load_subjects(pageSize, new_page, codeMatch, nameMatch);
                             }}
                             onRowsPerPageChange={async (event) => {
                                 const newPageSize = parseInt(event.target.value, 10);
                                 setPageSize(newPageSize);
                                 setPage(0);
-                                await load_subjects(newPageSize, 0, codeFilter, nameFilter);
+                                await load_subjects(newPageSize, 0, codeMatch, nameMatch);
                             }}
                         />
                         {/* page jump controls */}
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Typography>{`${page+1}/${totalPages}`}</Typography>
+                            <Typography>{`${page + 1}/${totalPages}`}</Typography>
                             <TextField
                                 label="Go to page"
                                 type="number"
                                 value={jumpToPage}
                                 onChange={(e) => setJumpToPage(e.target.value)}
-                                slotProps={{htmlInput: { min: 1, max: totalPages }}}
+                                slotProps={{ htmlInput: { min: 1, max: totalPages } }}
                                 size="small"
                                 style={{ width: '100px' }}
                             />
@@ -301,6 +306,7 @@ function Subjects() {
                                 LecHours: parseInt(formJson.LecHours, 10),
                                 LabHours: parseInt(formJson.LabHours, 10),
                                 BitFlags: isGym ? 1 : 0,
+                                // note to self: designated instructors will only be populated in a subject instance in the curriculum's subject not here.
                                 DesignatedInstructors: [],
                             };
 
@@ -309,7 +315,7 @@ function Subjects() {
                             }
 
                             try {
-                                setLoading(true);
+                                setIsLoading(true);
                                 if (mode === "new") {
                                     await postCreateSubject(subjectData);
                                     setPopupOptions({
@@ -325,7 +331,7 @@ function Subjects() {
                                         Message: "Changes to the subject data are saved",
                                     });
                                 }
-                                await load_subjects(pageSize, page, codeFilter, nameFilter);
+                                await load_subjects(pageSize, page, codeMatch, nameMatch);
                             } catch (err) {
                                 setPopupOptions({
                                     Heading: "Operation Failed",
@@ -333,7 +339,7 @@ function Subjects() {
                                     Message: `${err.message}`,
                                 });
                             } finally {
-                                setLoading(false);
+                                setIsLoading(false);
                                 setIsDialogFormOpen(false);
                             }
                         },
@@ -378,7 +384,7 @@ function Subjects() {
                         fullWidth
                         variant="standard"
                         defaultValue={subject?.LecHours || 0}
-                        slotProps={{htmlInput: { min: 0, max: 15 }}}
+                        slotProps={{ htmlInput: { min: 0, max: 15 } }}
                     />
                     <TextField
                         required
@@ -390,7 +396,7 @@ function Subjects() {
                         fullWidth
                         variant="standard"
                         defaultValue={subject?.LabHours || 0}
-                        slotProps={{htmlInput: { min: 0, max: 15 }}}
+                        slotProps={{ htmlInput: { min: 0, max: 15 } }}
                     />
                     <FormControlLabel
                         control={
