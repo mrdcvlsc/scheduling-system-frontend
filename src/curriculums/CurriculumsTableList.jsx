@@ -120,7 +120,7 @@ function CurriculumsTableList() {
     };
 
     const [mode, setMode] = useState("")
-    const [curriculum, setCurriculum] = useState(null)
+    const [curriculumBasicInfo, setCurriculumBasicInfo] = useState(null)
 
     return (<>
         <Popup popupOptions={popupOptions} closeButtonActionHandler={() => setPopupOptions(null)} />
@@ -185,15 +185,12 @@ function CurriculumsTableList() {
                     color="secondary"
                     variant="contained"
                     onClick={() => {
-                        setCurriculum({
-                            CurriculumCode: "",
-                            CurriculumName: "",
-                            DepartmentID: departmentID,
-                            YearLevels: [],
-                        });
+                        setCurriculumBasicInfo(null);
                         setMode("new");
                         setIsView(true)
+                        console.log('new curriculum btn')
                     }}
+                    disabled={!selectedDepartment}
                 >
                     Add New Curriculum
                 </Button>
@@ -235,10 +232,10 @@ function CurriculumsTableList() {
                                             style={{ marginRight: 8 }}
                                             startIcon={<VisibilityIcon />}
                                             onClick={() => {
-                                                setCurriculum(curriculum);
-                                                setMode("edit");
+                                                setCurriculumBasicInfo(curriculum);
+                                                setMode("view");
                                                 setIsView(true)
-                                                console.log('curriculum:')
+                                                console.log('view curriculum:')
                                                 console.log(curriculum)
 
                                             }}
@@ -304,14 +301,15 @@ function CurriculumsTableList() {
             </DialogActions>
         </Dialog>
 
-        {(curriculum?.CurriculumID && curriculum?.CurriculumID !== 0) ? <CurriculumView
+        {(mode === "view" || mode === "edit" || mode === "new") ? <CurriculumView
             mode={mode}
-            curriculum_id={curriculum?.CurriculumID}
+            setMode={setMode}
+            curriculum_id={curriculumBasicInfo?.CurriculumID}
             department={selectedDepartment}
             onClose={() => {
                 setIsView(false)
                 setMode("")
-                setCurriculum(null)
+                setCurriculumBasicInfo(null)
             }}
             setPopupOptions={setPopupOptions}
         /> : null}
