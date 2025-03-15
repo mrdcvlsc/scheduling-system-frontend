@@ -63,9 +63,9 @@ function CurriculumView({ mode, curriculum_id, department, setPopupOptions, onCl
     }, [])
 
     return !isLoading ? (<Box>
-        <Box display={'flex'} justifyContent={'space-between'} border={'1px solid red'}>
+        <Box display={'flex'} justifyContent={'space-between'} borderBottom={'gray solid thin'} padding={'0.5em'}>
             <Typography variant='h6'>{curriculum?.CurriculumCode}</Typography>
-            <Box display={'flex'} gap={'0.5em'} border={'1px solid red'}>
+            <Box display={'flex'} gap={'0.5em'}>
                 <Button
                     endIcon={<EditIcon />} size="small" color="primary" variant="contained"
                 >
@@ -80,7 +80,7 @@ function CurriculumView({ mode, curriculum_id, department, setPopupOptions, onCl
             </Box>
         </Box>
 
-        <Box>
+        <Box display={'flex'} alignItems={'baseline'} justifyContent={'space-between'} borderBottom={'black solid thick'} padding={'0.5em'}>
             <Typography variant='h6'>{curriculum?.CurriculumName}</Typography>
             <Typography variant='body1' fontStyle={'italic'}>{`${department?.Name}`}</Typography>
         </Box>
@@ -91,23 +91,45 @@ function CurriculumView({ mode, curriculum_id, department, setPopupOptions, onCl
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls={`yrlvl-panel${index_curriculum + 1}-content`}
                     id={`yrlvl-panel${index_curriculum + 1}-header`}
+                    sx={{
+                        minHeight: '0px',
+                        '&.Mui-expanded': {
+                            minHeight: '0px',
+                            color: 'whitesmoke',
+                            backgroundColor: 'black',
+                        },
+                        padding: '0xp 0px',
+                        height: '2.5em',
+                        ":hover": { backgroundColor: 'orange' },
+                    }}
                 >
-                    <Box display={'flex'} justifyContent={'space-between'} minWidth={'11em'}>
+                    <Box margin={'0px'} display={'flex'} justifyContent={'space-between'} minWidth={'11em'}>
                         <Typography variant='body1' component="span">{year_level.Name}</Typography>
                         <Typography variant='body1' component="span">{year_level?.IsActive ? '(Active)' : '(Inactive)'}</Typography>
                     </Box>
                 </AccordionSummary>
-                <AccordionDetails>
+                <AccordionDetails sx={{ minHeight: '0px', padding: '0.2em 1em 0.5em 1em' }}>
                     {year_level?.Semesters.map((semester, index_semester) => (<Accordion key={`accordion-id-year-level-${index_semester}`}>
                         <AccordionSummary
                             expandIcon={<ExpandMoreIcon />}
                             aria-controls={`sem-panel${index_semester + 1}-content`}
                             id={`sem-panel${index_semester + 1}-header`}
+                            sx={{
+                                minHeight: '0px',
+                                '&.Mui-expanded': {
+                                    minHeight: '0px',
+                                    backgroundColor: 'darkgray',
+                                    color: 'white'
+                                },
+                                padding: '0xp',
+                                height: '2em',
+                                ":hover": { backgroundColor: 'ButtonHighlight' },
+                            }}
                         >
-                            <Typography variant='body1' component="span">{semester?.Name}</Typography>
+                            <Typography variant='body2' component="span">{semester?.Name}</Typography>
                         </AccordionSummary>
-                        <AccordionDetails>
-                            <Box width={'100%'} display={'flex'} justifyContent={'right'} paddingBlockEnd={'0.5em'}>
+                        <AccordionDetails sx={{ minHeight: '0px', padding: '0.3em', display: 'flex', flexDirection: 'column', gap: '0.5em' }}>
+                            <Box width={'100%'} display={'flex'} justifyContent={'right'} paddingBlockEnd={'0px'}>
                                 <Button
                                     variant="contained"
                                     color="secondary"
