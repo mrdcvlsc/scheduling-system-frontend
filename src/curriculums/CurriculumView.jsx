@@ -34,18 +34,27 @@ import { Popup } from '../components/Loading';
 
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { CheckBox } from '@mui/icons-material';
+import SubjectSelection from './SubjectSelection';
 
 const truncateText = (text, maxLength) => {
     if (text.length > maxLength) {
         return text.substring(0, maxLength) + '...';
     }
+
     return text;
 };
 
 const YEAR_LEVEL_NAMES = ["1st Year", "2nd Year", "3rd Year", "4th Year", "5th Year", "6th Year", "7th Year", "8th Year"]
 const SEMESTER_NAMES = ["1st Semester", "2nd Semester"]
 
-function CurriculumView({ mode, setMode, curriculum_id, department, setPopupOptions, onClose }) {
+function CurriculumView({
+    mode, setMode,
+    curriculum_id,
+    department,
+    onClose,
+    setPopupOptions,
+    reloadList,
+}) {
     const [isLoading, setIsLoading] = useState(false)
     const [curriculum, setCurriculum] = useState(null)
     const [editedCurriculum, setEditedCurriculum] = useState(null)
@@ -76,8 +85,10 @@ function CurriculumView({ mode, setMode, curriculum_id, department, setPopupOpti
 
                 setCurriculum(loaded_curriculum);
                 setEditedCurriculum(structuredClone(loaded_curriculum));
+
                 console.log('loaded_curriculum:')
                 console.log(loaded_curriculum)
+
                 setIsLoading(false);
             } catch (err) {
                 setPopupOptions({
@@ -99,6 +110,10 @@ function CurriculumView({ mode, setMode, curriculum_id, department, setPopupOpti
         LabHours: 0,
     });
 
+    const [isAddingSubjects, setIsAddingSubjects] = useState(false)
+
+    const [yearSemSubjectTarget, setYearSemSubjectTarget] = useState(null)
+
     return !isLoading ? (<>
         <Box display={'flex'} justifyContent={'space-between'} borderBottom={'gray solid thin'} padding={'0.5em'}>
             {(mode === "view") ?
@@ -113,6 +128,11 @@ function CurriculumView({ mode, setMode, curriculum_id, department, setPopupOpti
                     variant="outlined"
                     size='small'
                     defaultValue={editedCurriculum?.CurriculumCode || ""}
+                    onChange={(e) => {
+                        let edited_curriculum = editedCurriculum;
+                        edited_curriculum.CurriculumCode = e.target.value;
+                        setEditedCurriculum(edited_curriculum);
+                    }}
                 />)
             }
             <Box display={'flex'} gap={'0.5em'}>
@@ -138,11 +158,23 @@ function CurriculumView({ mode, setMode, curriculum_id, department, setPopupOpti
                 {(mode === "edit") ? (<>
                     <Button
                         endIcon={<CheckIcon />} size="small" color="primary" variant="contained"
-                        onClick={() => {
+                        onClick={async () => {
                             console.log('mode :', mode)
+                            const updated_curriculum = structuredClone(editedCurriculum)
 
-                            // if backend request success
-                            setCurriculum(structuredClone(editedCurriculum))
+                            try {
+                                await patchUpdateCurriculum(updated_curriculum)
+                            } catch (err) {
+                                setPopupOptions({
+                                    Heading: "Failed to edit curriculum",
+                                    HeadingStyle: { background: "red", color: "white" },
+                                    Message: `${err}`
+                                });
+                            }
+
+                            setEditedCurriculum(updated_curriculum)
+                            setCurriculum(updated_curriculum)
+                            reloadList()
                             setMode("view")
                         }}
                     >
@@ -162,9 +194,26 @@ function CurriculumView({ mode, setMode, curriculum_id, department, setPopupOpti
                 {(mode === "new") ? (<>
                     <Button
                         endIcon={<SaveIcon />} size="small" color="primary" variant="contained"
-                        onClick={() => {
+                        onClick={async () => {
                             console.log('mode :', mode)
                             console.log(editedCurriculum)
+
+                            const new_curriculum = structuredClone(editedCurriculum)
+
+                            try {
+                                await postCreateCurriculum(new_curriculum)
+                            } catch (err) {
+                                setPopupOptions({
+                                    Heading: "Failed to add curriculum",
+                                    HeadingStyle: { background: "red", color: "white" },
+                                    Message: `${err}`
+                                });
+                            }
+
+                            setEditedCurriculum(new_curriculum)
+                            setCurriculum(new_curriculum)
+                            reloadList()
+                            setMode("view")
                         }}
                     >
                         Save
@@ -193,6 +242,11 @@ function CurriculumView({ mode, setMode, curriculum_id, department, setPopupOpti
                     size='small'
                     sx={{ width: '100%' }}
                     defaultValue={editedCurriculum?.CurriculumName || ""}
+                    onChange={(e) => {
+                        let edited_curriculum = editedCurriculum;
+                        edited_curriculum.CurriculumName = e.target.value;
+                        setEditedCurriculum(edited_curriculum);
+                    }}
                 />)
             }
             <Typography align='right' width={'100%'} variant='body1' fontStyle={'italic'}>{`${department?.Name}`}</Typography>
@@ -318,6 +372,13 @@ function CurriculumView({ mode, setMode, curriculum_id, department, setPopupOpti
                                         sx={{ minHeight: '2px', height: '2.3em' }}
                                         size="small"
                                         endIcon={<AddIcon />}
+                                        onClick={() => {
+                                            setIsAddingSubjects(true)
+                                            setYearSemSubjectTarget({
+                                                index_year_level: index_year_level,
+                                                index_semester: index_semester,
+                                            })
+                                        }}
                                     >
                                         Add Subject
                                     </Button>
@@ -535,6 +596,19 @@ function CurriculumView({ mode, setMode, curriculum_id, department, setPopupOpti
                 }}>Cancel</Button>
             </DialogActions>
         </Dialog>
+
+        {/* add subjects */}
+
+        <SubjectSelection
+            open={isAddingSubjects}
+            onClose={() => {
+                setIsAddingSubjects(false)
+                setYearSemSubjectTarget(null)
+            }}
+            curriculum={editedCurriculum}
+            setEditedCurriculum={setEditedCurriculum}
+            yearSemSubjectTarget={yearSemSubjectTarget}
+        />
     </>) : null;
 }
 

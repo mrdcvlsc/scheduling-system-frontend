@@ -35,6 +35,7 @@ function CurriculumsTableList() {
     const [allDepartment, setAllDepartment] = useState([]); // fetch on page load
     const [departmentID, setDepartmentID] = useState("");
     const [selectedDepartment, setSelectedDepartment] = useState("")
+    
     useEffect(() => {
         const useEffectAsyncs = async () => {
             try {
@@ -312,6 +313,9 @@ function CurriculumsTableList() {
                 setCurriculumBasicInfo(null)
             }}
             setPopupOptions={setPopupOptions}
+            reloadList={async () => {
+                await load_curriculums(pageSize, page, departmentID, codeMatch, nameMatch);
+            }}
         /> : null}
     </>);
 }
