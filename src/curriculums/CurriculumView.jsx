@@ -540,11 +540,15 @@ function CurriculumView({
                             console.log('subject edit form json submit data:')
                             console.log(formJson)
 
-                            subject.LabHours = formJson.LabHours
-                            subject.LecHours = formJson.LecHours
+                            // when a subject's "modify" button was clicked, somewhere the `subject` state will be set by that
+                            // associated subject in the curriculum, and since the `subject` state has the same reference as the
+                            // one in the selected subject in the `editedCurriculum` state we can just edit the subject.LabHours
+                            // and subject.LecHours directly and just update the `editedCurriculum` state to force rerender.
+                            subject.LabHours = parseInt(formJson.LabHours, 10)
+                            subject.LecHours = parseInt(formJson.LecHours, 10)
 
-                            setEditedCurriculum(structuredClone(editedCurriculum))
-
+                            let updated_curriculum = structuredClone(editedCurriculum);
+                            setEditedCurriculum(updated_curriculum);
                         } catch (err) {
                             setPopupOptions({
                                 Heading: "Operation Failed",
