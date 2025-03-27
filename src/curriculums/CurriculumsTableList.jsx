@@ -312,6 +312,7 @@ function CurriculumsTableList() {
                 setMode("")
                 setCurriculumBasicInfo(null)
             }}
+            popupOptions={popupOptions}
             setPopupOptions={setPopupOptions}
             reloadList={async () => {
                 await load_curriculums(pageSize, page, departmentID, codeMatch, nameMatch);
