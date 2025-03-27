@@ -19,6 +19,8 @@
   color: rgb(116, 0, 0);
 
   cursor: not-allowed;
+
+  z-index: 10001;
 }
 
 .loading-component>* {
