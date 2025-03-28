@@ -11,6 +11,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          repository: mrdcvlsc/scheduling-system-frontend
 
       - name: Install Dependencies
         run: npm install
