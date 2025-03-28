@@ -19,6 +19,7 @@ import { fetchAllDepartments } from '../js/departments'
 import { Popup } from '../components/Loading';
 
 import CurriculumView from './CurriculumView'
+import { MainHeader } from '../components/Header';
 
 const truncateText = (text, maxLength) => {
     if (text.length > maxLength) {
@@ -35,7 +36,7 @@ function CurriculumsTableList() {
     const [allDepartment, setAllDepartment] = useState([]); // fetch on page load
     const [departmentID, setDepartmentID] = useState("");
     const [selectedDepartment, setSelectedDepartment] = useState("")
-    
+
     useEffect(() => {
         const useEffectAsyncs = async () => {
             try {
@@ -124,6 +125,8 @@ function CurriculumsTableList() {
     const [curriculumBasicInfo, setCurriculumBasicInfo] = useState(null)
 
     return (<>
+        <MainHeader />
+
         <Popup popupOptions={popupOptions} closeButtonActionHandler={() => setPopupOptions(null)} />
 
         <Box display={!isView ? 'block' : 'none'}>

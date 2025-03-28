@@ -22,6 +22,7 @@ import { InstructorTimeSlotBitMap } from "../js/instructor-time-slot-bit-map"
 
 import InstructorTableList from "./InstructorsTableList";
 import InstructorDataView from "./InstructorDataView"
+import { MainHeader } from "../components/Header";
 
 // just use the default theme for now
 // const theme = createTheme();
@@ -124,6 +125,8 @@ function InstructorPage() {
 
 
     return (<>
+        <MainHeader/>
+
         <Popup popupOptions={popupOptions} closeButtonActionHandler={() => {
             setPopupOptions(null);
         }} />

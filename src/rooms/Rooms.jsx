@@ -38,6 +38,7 @@ import "../assets/main.css";
 
 import { fetchAllDepartments } from "../js/departments"
 import { fetchDepartmentRooms, deleteRemoveRoom, patchUpdateRoom, postCreateRoom } from "../js/rooms"
+import { MainHeader } from "../components/Header";
 
 function RoomTypeName(room_type) {
     switch (room_type) {
@@ -156,6 +157,8 @@ function Rooms() {
     const [department, setDepartment] = useState("")
 
     return (<>
+        <MainHeader />
+
         <Popup popupOptions={popupOptions} closeButtonActionHandler={() => {
             setPopupOptions(null);
         }} />
@@ -355,12 +358,12 @@ function Rooms() {
 
                         try {
                             setLoading(true);
-                
+
                             if (mode === "edit") {
                                 formJson.RoomID = room.RoomID
                                 console.log('updating room :', formJson);
                                 await patchUpdateRoom(formJson);
-                
+
                                 setPopupOptions({
                                     Heading: "Edit Successful",
                                     HeadingStyle: { background: "green", color: "white" },
@@ -369,14 +372,14 @@ function Rooms() {
                             } else if (mode === "new") {
                                 console.log('adding room :', formJson);
                                 await postCreateRoom(formJson);
-                
+
                                 setPopupOptions({
                                     Heading: "Add Successful",
                                     HeadingStyle: { background: "green", color: "white" },
                                     Message: "a new room was added"
                                 });
                             }
-                            
+
                             load_rooms(departmentID, pageSize, page)
                             setLoading(false);
                         } catch (err) {
