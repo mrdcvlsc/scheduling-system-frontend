@@ -172,12 +172,12 @@ export async function serializeSchedule(university_schedules) {
   return serialized_data;
 }
 
-export async function generateSchedule(selected_semester) {
-  let api_request = `/${API_VERSION}/generate_schedule?semester=${selected_semester}`
+export async function generateSchedule(selected_semester, department_id) {
+  let api_request = `/${API_VERSION}/generate_schedule?semester=${selected_semester}&department_id=${department_id}`
 
   if (DEV) {
     console.log('call: generateSchedule')
-    api_request = `${base_url}/${API_VERSION}/generate_schedule?semester=${selected_semester}`
+    api_request = `${base_url}/${API_VERSION}/generate_schedule?semester=${selected_semester}&department_id=${department_id}`
   }
 
   const response = await fetch(api_request, {

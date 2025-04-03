@@ -8,7 +8,7 @@ import "./TimeTable.css";
 import "./TimeTableDropdowns.css";
 
 import { fetchAllDepartments, fetchDepartmentData } from "../js/departments"
-import { deserializeSchedule, fetchClassJsonSchedule, fetchSerializedClassSchedule } from "../js/schedule"
+import { deserializeSchedule, fetchClassJsonSchedule, fetchSerializedClassSchedule, generateSchedule } from "../js/schedule"
 
 import { generateTimeSlotRowLabels } from "../js/week-time-table-grid-functions";
 import { MainHeader } from "../components/Header";
@@ -167,6 +167,7 @@ function TimeTable() {
                 const class_scheduled_subjects = await fetchClassJsonSchedule(departmentID, semesterIndex, event.target.value);
 
                 // DEBUG BLOCK: START
+                console.log('debug prints - remove later : start')
                 const class_serialized_scheduled = await fetchSerializedClassSchedule(departmentID, semesterIndex, event.target.value);
                 const class_deserialized_sched = await deserializeSchedule(class_serialized_scheduled);
 
@@ -174,6 +175,7 @@ function TimeTable() {
                 console.log(class_deserialized_sched);
                 console.log('json sched :');
                 console.log(class_scheduled_subjects);
+                console.log('debug prints - remove later : end')
                 // DEBUG BLOCK: END
 
                 setClassAssignedSubjects(class_scheduled_subjects);
@@ -207,9 +209,15 @@ function TimeTable() {
     /////////////////////////////////////////////////////////////////////////////////
 
     const generateDepartmentSchedules = async () => {
-        console.log(
-            `departmentID: ${departmentID}, semesterIndex: ${semesterIndex}, curriculumIndex: ${curriculumIndex}, ${curriculumData[curriculumIndex].YearLevels[yearLevelIndex]}, schedIdx: ${sectionSchedIndex}`
-        );
+        try {
+            await generateSchedule(semesterIndex, departmentID)
+        } catch (err) {
+            setPopupOptions({
+                Heading: "Failed to generate schedule for the department",
+                HeadingStyle: { background: "red", color: "white" },
+                Message: `${err}`
+            });
+        }
     };
 
     const [subjectColors, setSubjectColors] = useState({});
@@ -291,7 +299,7 @@ function TimeTable() {
                             Generate Department Schedules
                         </button>
 
-                        <button className="all-btns" style={{ width: '100%'}} onClick={generateDepartmentSchedules} disabled={!departmentID || departmentID == 0}>
+                        <button className="all-btns" style={{ width: '100%'}} onClick={() => {}} disabled={!departmentID || departmentID == 0}>
                             Clear Department Schedules
                         </button>
                     </div>
