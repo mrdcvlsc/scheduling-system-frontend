@@ -66,6 +66,50 @@ export async function fetchSerializedClassSchedule(department_id, selected_semes
   return new Uint8Array(await response.arrayBuffer());
 }
 
+export async function deleteClearSectionSchedule(department_id, selected_semester, schedule_idx) {
+  let api_request = `/${API_VERSION}/clear_class_schedule?department_id=${department_id}&semester=${selected_semester}&schedule_idx=${schedule_idx}`
+
+  if (DEV) {
+    console.log('call: deleteClearSectionSchedule')
+    api_request = `${base_url}/${API_VERSION}/clear_class_schedule?department_id=${department_id}&semester=${selected_semester}&schedule_idx=${schedule_idx}`
+  }
+
+  const response = await fetch(api_request, {
+    headers: {
+      Accept: "text/plain",
+    },
+    method: 'DELETE'
+  });
+
+  if (!response.ok) {
+    throw Error(`${response.status} : ${await response.text()}`);
+  }
+
+  return await response.text()
+}
+
+export async function deleteClearDepartmentSchedule(department_id, selected_semester) {
+  let api_request = `/${API_VERSION}/clear_department_schedules?department_id=${department_id}&semester=${selected_semester}`
+
+  if (DEV) {
+    console.log('call: deleteClearDepartmentSchedule')
+    api_request = `${base_url}/${API_VERSION}/clear_department_schedules?department_id=${department_id}&semester=${selected_semester}`
+  }
+
+  const response = await fetch(api_request, {
+    headers: {
+      Accept: "text/plain",
+    },
+    method: 'DELETE'
+  });
+
+  if (!response.ok) {
+    throw Error(`${response.status} : ${await response.text()}`);
+  }
+
+  return await response.text()
+}
+
 export async function fetchClassJsonSchedule(department_id, selected_semester, schedule_idx) {
   let api_request = `/${API_VERSION}/class_json_schedule?department_id=${department_id}&semester=${selected_semester}&schedule_idx=${schedule_idx}`
 
@@ -190,4 +234,6 @@ export async function generateSchedule(selected_semester, department_id) {
   if (!response.ok) {
     throw new Error(`${response.status} : ${await response.text()}`);
   }
+
+  return await response.text()
 }
