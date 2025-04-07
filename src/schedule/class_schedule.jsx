@@ -107,6 +107,11 @@ function TimeTable() {
         setClassAssignedSubjects([]);
     }
 
+    const updateCurriculumData = async (semester) => {
+        const curriculum_data = await fetchDepartmentData(departmentID, semester);
+        setCurriculumData(curriculum_data);
+    }
+
     const handleSemesterChange = async (event) => {
         console.log(`selected semesterIndex: ${event.target.value}`);
         setSemesterIndex(event.target.value);
@@ -119,8 +124,7 @@ function TimeTable() {
             setIsLoading(true);
 
             try {
-                const curriculum_data = await fetchDepartmentData(departmentID, event.target.value);
-                setCurriculumData(curriculum_data);
+                await updateCurriculumData(event.target.value);
 
                 setIsLoading(false);
             } catch (err) {
@@ -164,18 +168,19 @@ function TimeTable() {
             setIsLoading(true);
 
             try {
+                await updateCurriculumData(semesterIndex);
                 const class_scheduled_subjects = await fetchClassJsonSchedule(departmentID, semesterIndex, event.target.value);
 
                 // DEBUG BLOCK: START
-                console.log('debug prints - remove later : start')
-                const class_serialized_scheduled = await fetchSerializedClassSchedule(departmentID, semesterIndex, event.target.value);
-                const class_deserialized_sched = await deserializeSchedule(class_serialized_scheduled);
+                // console.log('debug prints - remove later : start')
+                // const class_serialized_scheduled = await fetchSerializedClassSchedule(departmentID, semesterIndex, event.target.value);
+                // const class_deserialized_sched = await deserializeSchedule(class_serialized_scheduled);
 
-                console.log('deserialized schedule :');
-                console.log(class_deserialized_sched);
-                console.log('json sched :');
-                console.log(class_scheduled_subjects);
-                console.log('debug prints - remove later : end')
+                // console.log('deserialized schedule :');
+                // console.log(class_deserialized_sched);
+                // console.log('json sched :');
+                // console.log(class_scheduled_subjects);
+                // console.log('debug prints - remove later : end')
                 // DEBUG BLOCK: END
 
                 setClassAssignedSubjects(class_scheduled_subjects);
@@ -228,7 +233,7 @@ function TimeTable() {
 
     return (
         <>
-            <MainHeader/>
+            <MainHeader />
             {/*================================= Loading Component =================================*/}
 
             <Popup popupOptions={popupOptions} closeButtonActionHandler={() => {
@@ -243,9 +248,9 @@ function TimeTable() {
 
                 {/*================================= Dropdown Container =================================*/}
 
-                <div className="dropdown-container" style={{ display: 'flex', flexDirection: 'column'}}>
-                    <div id="left-dropdown-container" style={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', padding: '0.2em', gap: '0.5em'}}>
-                        <select className="dropdown" style={{ width: '100%'}} value={departmentID} onChange={handleDepartmentChange}>
+                <div className="dropdown-container" style={{ display: 'flex', flexDirection: 'column' }}>
+                    <div id="left-dropdown-container" style={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', padding: '0.2em', gap: '0.5em' }}>
+                        <select className="dropdown" style={{ width: '100%' }} value={departmentID} onChange={handleDepartmentChange}>
                             <option value="">Department</option>
                             {allDepartment ?
                                 allDepartment.map((department, index) => (
@@ -254,13 +259,13 @@ function TimeTable() {
                             }
                         </select>
 
-                        <select className="dropdown" style={{ width: '100%'}} value={semesterIndex} onChange={handleSemesterChange} disabled={!departmentID}>
+                        <select className="dropdown" style={{ width: '100%' }} value={semesterIndex} onChange={handleSemesterChange} disabled={!departmentID}>
                             <option value="">Semester</option>
                             <option value={0}>1st Semester</option>
                             <option value={1}>2nd Semester</option>
                         </select>
 
-                        <select className="dropdown" style={{ width: '100%'}} value={curriculumIndex} onChange={handleCurriculumChange} disabled={!semesterIndex}>
+                        <select className="dropdown" style={{ width: '100%' }} value={curriculumIndex} onChange={handleCurriculumChange} disabled={!semesterIndex}>
                             <option value="">Course</option>
                             {curriculumData ?
                                 curriculumData.map((curriculum, index) => (
@@ -271,7 +276,7 @@ function TimeTable() {
                             }
                         </select>
 
-                        <select className="dropdown" style={{ width: '100%'}} value={yearLevelIndex} onChange={handleYearLevelChange} disabled={!curriculumIndex}>
+                        <select className="dropdown" style={{ width: '100%' }} value={yearLevelIndex} onChange={handleYearLevelChange} disabled={!curriculumIndex}>
                             <option value="">Year Level</option>
                             {curriculumIndex ?
                                 curriculumData[curriculumIndex].YearLevels.map((year_level, index) => (
@@ -282,7 +287,7 @@ function TimeTable() {
                             }
                         </select>
 
-                        <select className="dropdown" style={{ width: '100%'}} value={sectionSchedIndex} onChange={handleSectionChange} disabled={!yearLevelIndex}>
+                        <select className="dropdown" style={{ width: '100%' }} value={sectionSchedIndex} onChange={handleSectionChange} disabled={!yearLevelIndex}>
                             <option value="">Section</option>
                             {yearLevelIndex ?
                                 curriculumData[curriculumIndex].YearLevels[yearLevelIndex].Sections.map((section_schedule_index, index) => (
@@ -294,12 +299,12 @@ function TimeTable() {
                         </select>
                     </div>
 
-                    <div style={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', padding: '0.2em', gap: '0.5em'}}>
-                        <button className="all-btns" style={{ width: '100%'}} onClick={generateDepartmentSchedules} disabled={!departmentID || departmentID == 0}>
+                    <div style={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', padding: '0.2em', gap: '0.5em' }}>
+                        <button className="all-btns" style={{ width: '100%' }} onClick={generateDepartmentSchedules} disabled={!departmentID || departmentID == 0}>
                             Generate Department Schedules
                         </button>
 
-                        <button className="all-btns" style={{ width: '100%'}} onClick={() => {}} disabled={!departmentID || departmentID == 0}>
+                        <button className="all-btns" style={{ width: '100%' }} onClick={() => { }} disabled={!departmentID || departmentID == 0}>
                             Clear Department Schedules
                         </button>
                     </div>
@@ -307,7 +312,7 @@ function TimeTable() {
 
                 {/*================================= TimeTable Table =================================*/}
 
-                <table className="time-table" style={{ display: sectionSchedIndex ? 'revert' : 'none'}} border={'2px solid red'}>
+                <table className="time-table" style={{ display: sectionSchedIndex ? 'revert' : 'none' }} border={'2px solid red'}>
                     <thead>
                         <tr>
                             <th className="time-slot-header">Time Slot</th>
