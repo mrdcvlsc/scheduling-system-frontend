@@ -8,7 +8,7 @@ import "./TimeTable.css";
 import "./TimeTableDropdowns.css";
 
 import { fetchAllDepartments, fetchDepartmentData } from "../js/departments"
-import { deserializeSchedule, fetchClassJsonSchedule, fetchSerializedClassSchedule, generateSchedule } from "../js/schedule"
+import { deserializeSchedule, fetchClassJsonSchedule, fetchSerializedClassSchedule, generateSchedule, deleteClearDepartmentSchedule, deleteClearSectionSchedule } from "../js/schedule"
 
 import { generateTimeSlotRowLabels } from "../js/week-time-table-grid-functions";
 import { MainHeader } from "../components/Header";
@@ -198,6 +198,11 @@ function TimeTable() {
                 setSubjectColors(subject_colors);
 
                 setIsLoading(false);
+
+                window.scrollTo({
+                    top: document.documentElement.scrollHeight,
+                    behavior: 'smooth'
+                });
             } catch (err) {
                 setPopupOptions({
                     Heading: "Failed To Retrieve Schedule",
@@ -209,13 +214,66 @@ function TimeTable() {
         }
     };
 
+    const handleClearDepartmentSchedule = async () => {
+        setIsLoading(true)
+
+        try {
+            const msg = await deleteClearDepartmentSchedule(departmentID, semesterIndex)
+
+            setPopupOptions({
+                Heading: "Cleared Department Schedule",
+                HeadingStyle: { background: "green", color: "white" },
+                Message: msg
+            });
+        } catch (err) {
+            setPopupOptions({
+                Heading: "Clear Department Schedule Failed",
+                HeadingStyle: { background: "red", color: "white" },
+                Message: `${err}`
+            });
+        }
+
+        setIsLoading(false)
+    }
+
+    const handleClearClassSchedule = async () => {
+        setIsLoading(true)
+
+        try {
+            const msg = await deleteClearSectionSchedule(departmentID, semesterIndex, sectionSchedIndex)
+
+            setPopupOptions({
+                Heading: "Cleared Section Schedule",
+                HeadingStyle: { background: "green", color: "white" },
+                Message: msg
+            });
+        } catch (err) {
+            setPopupOptions({
+                Heading: "Clear Section Schedule Failed",
+                HeadingStyle: { background: "red", color: "white" },
+                Message: `${err}`
+            });
+        }
+
+        setIsLoading(false)
+    }
+
     /////////////////////////////////////////////////////////////////////////////////
     //                             DROPDOWN HANDLERS
     /////////////////////////////////////////////////////////////////////////////////
 
     const generateDepartmentSchedules = async () => {
+        setIsLoading(true)
+
         try {
-            await generateSchedule(semesterIndex, departmentID)
+            const msg = await generateSchedule(semesterIndex, departmentID)
+
+            setPopupOptions({
+                Heading: "Generating Schedule...",
+                HeadingStyle: { background: "Yellow", color: "black" },
+                Message: msg
+            });
+
         } catch (err) {
             setPopupOptions({
                 Heading: "Failed to generate schedule for the department",
@@ -223,6 +281,8 @@ function TimeTable() {
                 Message: `${err}`
             });
         }
+
+        setIsLoading(false)
     };
 
     const [subjectColors, setSubjectColors] = useState({});
@@ -298,21 +358,11 @@ function TimeTable() {
                             }
                         </select>
                     </div>
-
-                    <div style={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', padding: '0.2em', gap: '0.5em' }}>
-                        <button className="all-btns" style={{ width: '100%' }} onClick={generateDepartmentSchedules} disabled={!departmentID || departmentID == 0}>
-                            Generate Department Schedules
-                        </button>
-
-                        <button className="all-btns" style={{ width: '100%' }} onClick={() => { }} disabled={!departmentID || departmentID == 0}>
-                            Clear Department Schedules
-                        </button>
-                    </div>
                 </div>
 
                 {/*================================= TimeTable Table =================================*/}
 
-                <table className="time-table" style={{ display: sectionSchedIndex ? 'revert' : 'none' }} border={'2px solid red'}>
+                <table className="time-table" style={{ display: sectionSchedIndex ? 'revert' : 'none' }}>
                     <thead>
                         <tr>
                             <th className="time-slot-header">Time Slot</th>
@@ -359,6 +409,20 @@ function TimeTable() {
                         ))}
                     </tbody>
                 </table>
+
+                <div style={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', padding: '0.5em', gap: '0.5em' }}>
+                    <button className="all-btns" style={{ width: '100%' }} onClick={generateDepartmentSchedules} disabled={!semesterIndex}>
+                        Generate Department Semester Schedules
+                    </button>
+
+                    <button className="all-btns" style={{ width: '100%' }} onClick={handleClearDepartmentSchedule} disabled={!semesterIndex}>
+                        Clear Department Semester Schedules
+                    </button>
+
+                    <button className="all-btns" style={{ width: '100%' }} onClick={handleClearClassSchedule} disabled={!sectionSchedIndex}>
+                        Clear Section Semester Schedule
+                    </button>
+                </div>
             </div>
         </>
     );
