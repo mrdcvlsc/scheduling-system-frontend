@@ -7,7 +7,7 @@ import "../assets/main.css";
 import "./TimeTable.css";
 import "./TimeTableDropdowns.css";
 
-import { fetchAllDepartments, fetchDepartmentData } from "../js/departments"
+import { fetchAllDepartments, fetchDepartmentCurriculumsData } from "../js/departments"
 import { deserializeSchedule, fetchClassJsonSchedule, fetchSerializedClassSchedule, generateSchedule, deleteClearDepartmentSchedule, deleteClearSectionSchedule } from "../js/schedule"
 
 import { generateTimeSlotRowLabels } from "../js/week-time-table-grid-functions";
@@ -37,8 +37,8 @@ function TimeTable() {
     //                       STATES FOR FETCHED DATA
     /////////////////////////////////////////////////////////////////////////////////
 
-    const [allDepartment, setAllDepartment] = useState([]);                // fetch on page load
-    const [curriculumData, setCurriculumData] = useState([]);              // fetch on semester selection
+    const [allDepartments, setAllDepartment] = useState([]);                // fetch on page load
+    const [departmentCurriculumsData, setDepartmentCurriculumsData] = useState([]);              // fetch on semester selection
     const [classAssignedSubjects, setClassAssignedSubjects] = useState([]) // fetch on section selection
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ function TimeTable() {
     const [semesterIndex, setSemesterIndex] = useState("");
     const [curriculumIndex, setCurriculumIndex] = useState("");
     const [yearLevelIndex, setYearLevelIndex] = useState("");
-    const [sectionSchedIndex, setSectionSchedIndex] = useState("");
+    const [sectionIndex, setSectionIndex] = useState("");
 
     /////////////////////////////////////////////////////////////////////////////////
     //                       PAGE LOAD PROCESS
@@ -103,13 +103,13 @@ function TimeTable() {
         setSemesterIndex("");
         setCurriculumIndex("");
         setYearLevelIndex("");
-        setSectionSchedIndex("");
+        setSectionIndex("");
         setClassAssignedSubjects([]);
     }
 
     const updateCurriculumData = async (semester) => {
-        const curriculum_data = await fetchDepartmentData(departmentID, semester);
-        setCurriculumData(curriculum_data);
+        const department_curriculums_data = await fetchDepartmentCurriculumsData(departmentID, semester);
+        setDepartmentCurriculumsData(department_curriculums_data);
     }
 
     const handleSemesterChange = async (event) => {
@@ -117,7 +117,7 @@ function TimeTable() {
         setSemesterIndex(event.target.value);
         setCurriculumIndex("");
         setYearLevelIndex("");
-        setSectionSchedIndex("");
+        setSectionIndex("");
         setClassAssignedSubjects([]);
 
         if (event.target.value) {
@@ -143,14 +143,14 @@ function TimeTable() {
         console.log(`selected curriculumIndex: ${event.target.value}`);
         setCurriculumIndex(event.target.value);
         setYearLevelIndex("");
-        setSectionSchedIndex("");
+        setSectionIndex("");
         setClassAssignedSubjects([]);
     };
 
     const handleYearLevelChange = (event) => {
         console.log(`selected yearLevelIndex: ${event.target.value}`);
         setYearLevelIndex(event.target.value);
-        setSectionSchedIndex("");
+        setSectionIndex("");
         setClassAssignedSubjects([]);
     };
 
@@ -161,7 +161,7 @@ function TimeTable() {
             `fetching : DepartmentID=${departmentID}, SemesterIndex=${semesterIndex}, ScheduleIndex=${event.target.value}`
         );
 
-        setSectionSchedIndex(event.target.value);
+        setSectionIndex(event.target.value);
         setClassAssignedSubjects([]);
 
         if (event.target.value) {
@@ -171,7 +171,7 @@ function TimeTable() {
                 const class_scheduled_subjects = await fetchClassJsonSchedule(
                     departmentID,
                     semesterIndex,
-                    curriculumData[curriculumIndex].CurriculumID,
+                    departmentCurriculumsData[curriculumIndex].CurriculumID,
                     yearLevelIndex,
                     event.target.value
                 );
@@ -250,9 +250,9 @@ function TimeTable() {
             const msg = await deleteClearSectionSchedule(
                 departmentID,
                 semesterIndex,
-                curriculumData[curriculumIndex].CurriculumID,
+                departmentCurriculumsData[curriculumIndex].CurriculumID,
                 yearLevelIndex,
-                sectionSchedIndex
+                sectionIndex
             )
 
             setClassAssignedSubjects([]);
@@ -283,7 +283,7 @@ function TimeTable() {
         try {
             const msg = await generateSchedule(semesterIndex, departmentID)
 
-            setSectionSchedIndex("");
+            setSectionIndex("");
             setClassAssignedSubjects([]);
 
             setPopupOptions({
@@ -329,8 +329,8 @@ function TimeTable() {
                     <div id="left-dropdown-container" style={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', padding: '0.2em', gap: '0.5em' }}>
                         <select className="dropdown" style={{ width: '100%' }} value={departmentID} onChange={handleDepartmentChange}>
                             <option value="">Department</option>
-                            {allDepartment ?
-                                allDepartment.map((department, index) => (
+                            {allDepartments ?
+                                allDepartments.map((department, index) => (
                                     <option key={index} value={department.DepartmentID}>{department.Code}</option>
                                 )) : null
                             }
@@ -344,8 +344,8 @@ function TimeTable() {
 
                         <select className="dropdown" style={{ width: '100%' }} value={curriculumIndex} onChange={handleCurriculumChange} disabled={!semesterIndex}>
                             <option value="">Course</option>
-                            {curriculumData ?
-                                curriculumData.map((curriculum, index) => (
+                            {departmentCurriculumsData ?
+                                departmentCurriculumsData.map((curriculum, index) => (
                                     <option key={curriculum.CurriculumCode} value={index}>
                                         {curriculum.CurriculumCode}
                                     </option>
@@ -356,7 +356,7 @@ function TimeTable() {
                         <select className="dropdown" style={{ width: '100%' }} value={yearLevelIndex} onChange={handleYearLevelChange} disabled={!curriculumIndex}>
                             <option value="">Year Level</option>
                             {curriculumIndex ?
-                                curriculumData[curriculumIndex].YearLevels.map((year_level, index) => (
+                                departmentCurriculumsData[curriculumIndex].YearLevels.map((year_level, index) => (
                                     <option key={index} value={index}>
                                         {year_level.Name}
                                     </option>
@@ -364,10 +364,10 @@ function TimeTable() {
                             }
                         </select>
 
-                        <select className="dropdown" style={{ width: '100%' }} value={sectionSchedIndex} onChange={handleSectionChange} disabled={!yearLevelIndex}>
+                        <select className="dropdown" style={{ width: '100%' }} value={sectionIndex} onChange={handleSectionChange} disabled={!yearLevelIndex}>
                             <option value="">Section</option>
                             {yearLevelIndex ?
-                                Array.from({ length: curriculumData[curriculumIndex].YearLevels[yearLevelIndex].Sections }, (_, index) => (
+                                Array.from({ length: departmentCurriculumsData[curriculumIndex].YearLevels[yearLevelIndex].Sections }, (_, index) => (
                                     <option key={index} value={index}>
                                         {`Section ${SECTION_CHARACTERS[index]}`}
                                     </option>
@@ -379,7 +379,7 @@ function TimeTable() {
 
                 {/*================================= TimeTable Table =================================*/}
 
-                <table className="time-table" style={{ display: sectionSchedIndex ? 'revert' : 'none' }}>
+                <table className="time-table" style={{ display: sectionIndex ? 'revert' : 'none' }}>
                     <thead>
                         <tr>
                             <th className="time-slot-header">Time Slot</th>
@@ -436,7 +436,7 @@ function TimeTable() {
                         Clear Department Semester Schedules
                     </button>
 
-                    <button className="all-btns" style={{ width: '100%' }} onClick={handleClearClassSchedule} disabled={!sectionSchedIndex}>
+                    <button className="all-btns" style={{ width: '100%' }} onClick={handleClearClassSchedule} disabled={!sectionIndex}>
                         Clear Section Semester Schedule
                     </button>
                 </div>

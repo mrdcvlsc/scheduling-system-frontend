@@ -22,7 +22,7 @@ export async function fetchAllDepartments() {
   return response.json();
 }
 
-export async function fetchDepartmentData(department_id, semester) {
+export async function fetchDepartmentCurriculumsData(department_id, semester) {
   let api_request = `/${API_VERSION}/department_data?department_id=${department_id}&semester=${semester}`
 
   if (DEV) {

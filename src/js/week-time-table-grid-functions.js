@@ -6,7 +6,7 @@ const formatTime = (hour, minutes) => {
   return `${formattedHour}:${formattedMinutes} ${period}`;
 };
 
-function generateTimeSlotRowLabels(startHour, minuteIntervals, dailyTimeSlots) {
+export function generateTimeSlotRowLabels(startHour, minuteIntervals, dailyTimeSlots) {
   const time_slots = [];
   let hour = startHour;
   let minutes = 0;
@@ -35,7 +35,3 @@ function generateTimeSlotRowLabels(startHour, minuteIntervals, dailyTimeSlots) {
 
   return time_slots;
 };
-
-export {
-  generateTimeSlotRowLabels,
-}
