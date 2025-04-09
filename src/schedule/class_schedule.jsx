@@ -220,6 +220,8 @@ function TimeTable() {
         try {
             const msg = await deleteClearDepartmentSchedule(departmentID, semesterIndex)
 
+            setClassAssignedSubjects([]);
+
             setPopupOptions({
                 Heading: "Cleared Department Schedule",
                 HeadingStyle: { background: "green", color: "white" },
@@ -241,6 +243,8 @@ function TimeTable() {
 
         try {
             const msg = await deleteClearSectionSchedule(departmentID, semesterIndex, sectionSchedIndex)
+
+            setClassAssignedSubjects([]);
 
             setPopupOptions({
                 Heading: "Cleared Section Schedule",
@@ -268,12 +272,14 @@ function TimeTable() {
         try {
             const msg = await generateSchedule(semesterIndex, departmentID)
 
+            setSectionSchedIndex("");
+            setClassAssignedSubjects([]);
+
             setPopupOptions({
                 Heading: "Generating Schedule...",
                 HeadingStyle: { background: "Yellow", color: "black" },
                 Message: msg
             });
-
         } catch (err) {
             setPopupOptions({
                 Heading: "Failed to generate schedule for the department",
