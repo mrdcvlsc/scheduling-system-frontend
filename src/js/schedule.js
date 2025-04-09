@@ -66,12 +66,12 @@ export async function fetchSerializedClassSchedule(department_id, selected_semes
   return new Uint8Array(await response.arrayBuffer());
 }
 
-export async function deleteClearSectionSchedule(department_id, selected_semester, schedule_idx) {
-  let api_request = `/${API_VERSION}/clear_class_schedule?department_id=${department_id}&semester=${selected_semester}&schedule_idx=${schedule_idx}`
+export async function deleteClearSectionSchedule(department_id, selected_semester, curriculum_id, year_level_idx, section_idx) {
+  let api_request = `/v2/clear_class_schedule?department_id=${department_id}&semester=${selected_semester}&curriculum_id=${curriculum_id}&year_level_idx=${year_level_idx}&section_idx=${section_idx}`
 
   if (DEV) {
     console.log('call: deleteClearSectionSchedule')
-    api_request = `${base_url}/${API_VERSION}/clear_class_schedule?department_id=${department_id}&semester=${selected_semester}&schedule_idx=${schedule_idx}`
+    api_request = `${base_url}/v2/clear_class_schedule?department_id=${department_id}&semester=${selected_semester}&curriculum_id=${curriculum_id}&year_level_idx=${year_level_idx}&section_idx=${section_idx}`
   }
 
   const response = await fetch(api_request, {
@@ -110,12 +110,12 @@ export async function deleteClearDepartmentSchedule(department_id, selected_seme
   return await response.text()
 }
 
-export async function fetchClassJsonSchedule(department_id, selected_semester, schedule_idx) {
-  let api_request = `/${API_VERSION}/class_json_schedule?department_id=${department_id}&semester=${selected_semester}&schedule_idx=${schedule_idx}`
+export async function fetchClassJsonSchedule(department_id, selected_semester, curriculum_id, year_level_idx, section_idx) {
+  let api_request = `/v2/class_json_schedule?department_id=${department_id}&semester=${selected_semester}&curriculum_id=${curriculum_id}&year_level_idx=${year_level_idx}&section_idx=${section_idx}`
 
   if (DEV) {
     console.log('call: fetchClassJsonSchedule')
-    api_request = `${base_url}/${API_VERSION}/class_json_schedule?department_id=${department_id}&semester=${selected_semester}&schedule_idx=${schedule_idx}`
+    api_request = `${base_url}/v2/class_json_schedule?department_id=${department_id}&semester=${selected_semester}&curriculum_id=${curriculum_id}&year_level_idx=${year_level_idx}&section_idx=${section_idx}`
   }
 
   const response = await fetch(api_request, {

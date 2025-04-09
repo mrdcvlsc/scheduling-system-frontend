@@ -168,8 +168,13 @@ function TimeTable() {
             setIsLoading(true);
 
             try {
-                await updateCurriculumData(semesterIndex);
-                const class_scheduled_subjects = await fetchClassJsonSchedule(departmentID, semesterIndex, event.target.value);
+                const class_scheduled_subjects = await fetchClassJsonSchedule(
+                    departmentID,
+                    semesterIndex,
+                    curriculumData[curriculumIndex].CurriculumID,
+                    yearLevelIndex,
+                    event.target.value
+                );
 
                 // DEBUG BLOCK: START
                 // console.log('debug prints - remove later : start')
@@ -242,7 +247,13 @@ function TimeTable() {
         setIsLoading(true)
 
         try {
-            const msg = await deleteClearSectionSchedule(departmentID, semesterIndex, sectionSchedIndex)
+            const msg = await deleteClearSectionSchedule(
+                departmentID,
+                semesterIndex,
+                curriculumData[curriculumIndex].CurriculumID,
+                yearLevelIndex,
+                sectionSchedIndex
+            )
 
             setClassAssignedSubjects([]);
 
@@ -356,8 +367,8 @@ function TimeTable() {
                         <select className="dropdown" style={{ width: '100%' }} value={sectionSchedIndex} onChange={handleSectionChange} disabled={!yearLevelIndex}>
                             <option value="">Section</option>
                             {yearLevelIndex ?
-                                curriculumData[curriculumIndex].YearLevels[yearLevelIndex].Sections.map((section_schedule_index, index) => (
-                                    <option key={index} value={section_schedule_index}>
+                                Array.from({ length: curriculumData[curriculumIndex].YearLevels[yearLevelIndex].Sections }, (_, index) => (
+                                    <option key={index} value={index}>
                                         {`Section ${SECTION_CHARACTERS[index]}`}
                                     </option>
                                 )) : null
