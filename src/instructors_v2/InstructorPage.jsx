@@ -28,6 +28,7 @@ import AddIcon from '@mui/icons-material/Add';
 
 import { InstructorTimeSlotBitMap } from "../js/instructor-time-slot-bit-map"
 import InstructorDataView from "./InstructorDataView"
+import { deleteRemoveInsturctor } from "../js/instructors";
 
 function InstructorPage() {
     const [mode, setMode] = useState("") // 3 mode - new, view, edit
@@ -131,7 +132,7 @@ function InstructorPage() {
 
         try {
             await deleteRemoveInsturctor(instructor_id);
-            forceUpdate()
+            await load_instructors(departmentID, pageSize, page, firstNameMatch, middleInitialMatch, lastNameMatch)
         } catch (err) {
             setPopupOptions({
                 Heading: "Delete Failed",
