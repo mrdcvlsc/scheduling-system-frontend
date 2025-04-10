@@ -26,7 +26,8 @@ export default function InstructorDataView({
     selectedDepartment,
     selectedInstructor, setSelectedInstructor,
     mode, setMode,
-    onInstructorDataViewClose
+    onInstructorDataViewClose,
+    reloadInstructorsTable,
 }) {
     const [subjectColors, setSubjectColors] = useState({});
 
@@ -106,6 +107,18 @@ export default function InstructorDataView({
 
     const load_resources = async () => {
         try {
+            if (mode == "new") {
+                setBaseResourceTimeSlots(new InstructorTimeSlotBitMap())
+                setSemsResourceTimeSlots(new InstructorTimeSlotBitMap())
+                setSemesterIndex("")
+
+                instructorResources.current = {
+                    "base_time_slots": ["0", "0", "0"]
+                }
+
+                return
+            }
+
             setIsLoading(true)
 
             const instructor_resources = await fetchInstructorResources(selectedInstructor.InstructorID)
@@ -361,6 +374,8 @@ export default function InstructorDataView({
                     HeadingStyle: { background: "green", color: "white" },
                     Message: "a new instructor was added"
                 });
+
+                reloadInstructorsTable()
             } else {
                 console.log('mode: wrong mode detected')
                 throw new Error('there was a problem in the v2 instructor page')
@@ -444,20 +459,22 @@ export default function InstructorDataView({
                         height: 1
                     }}
                 >
-                    <FormControl sx={{ minWidth: 115 }} size="small">
-                        <InputLabel id="label-id-semester">Semester</InputLabel>
-                        <Select autoWidth
-                            labelId="label-id-semester"
-                            label="Semester"
-                            value={semesterIndex}
-                            onChange={handleSemesterChange}
-                            disabled={!Number.isInteger(selectedDepartment.DepartmentID) || mode === "edit"}
-                        >
-                            <MenuItem value=''>None</MenuItem>
-                            <MenuItem value={0}>1st Semester</MenuItem>
-                            <MenuItem value={1}>2nd Semester</MenuItem>
-                        </Select>
-                    </FormControl>
+                    {mode !== "new" ?
+                        <FormControl sx={{ minWidth: 115 }} size="small">
+                            <InputLabel id="label-id-semester">Semester</InputLabel>
+                            <Select autoWidth
+                                labelId="label-id-semester"
+                                label="Semester"
+                                value={semesterIndex}
+                                onChange={handleSemesterChange}
+                                disabled={!Number.isInteger(selectedDepartment.DepartmentID) || mode === "edit"}
+                            >
+                                <MenuItem value=''>None</MenuItem>
+                                <MenuItem value={0}>1st Semester</MenuItem>
+                                <MenuItem value={1}>2nd Semester</MenuItem>
+                            </Select>
+                        </FormControl> : null
+                    }
 
                     {mode === "view" ? (
                         <Button

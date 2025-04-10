@@ -370,6 +370,9 @@ function InstructorPage() {
                 setMode("")
                 setSelectedInstructor(null)
             }}
+            reloadInstructorsTable={async () => {
+                await load_instructors(departmentID, pageSize, page, firstNameMatch, middleInitialMatch, lastNameMatch)
+            }}
         />}
     </>);
 }
