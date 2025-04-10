@@ -52,37 +52,40 @@ export default function InstructorDataView({
 
     const handleSemesterChange = (e) => {
         setSemesterIndex(e.target.value)
-        console.log('selected semester index:', e.target.value)
 
         const semester_idx = Number.parseInt(e.target.value, 10)
 
-        setSelectedSemResourceTimeSlots(new InstructorTimeSlotBitMap(
-            instructorResources.current.semesters_time_slots[semester_idx]
-        ))
+        if (Number.isInteger(semester_idx)) {
+            console.log('selected semester index:', e.target.value)
 
-        setAllocatedSubjectAssign(
-            instructorResources.current.semesters_sub_assign[semester_idx]
-        )
-
-        const subject_colors = [];
-        let subject_count = 0;
-
-        instructorResources.current.semesters_sub_assign[semester_idx].forEach((subject) => {
-            if (!subject_colors[`${subject.SubjectCode}${subject.CourseSection}`]) {
-                subject_count++;
-                subject_colors[`${subject.SubjectCode}${subject.CourseSection}`] = `color-${subject_count}`;
-            }
-        });
-
-        setSubjectColors(subject_colors);
-
-        console.log('allocated time slots:',
-            new InstructorTimeSlotBitMap(
-                instructorResources.current.semesters_time_slots[semester_idx]
+            setAllocatedSubjectAssign(
+                instructorResources.current.semesters_sub_assign[semester_idx]
             )
-        )
 
-        console.log('subjects allocated:', instructorResources.current.semesters_sub_assign[semester_idx])
+            const subject_colors = [];
+            let subject_count = 0;
+
+            instructorResources.current.semesters_sub_assign[semester_idx].forEach((subject) => {
+                if (!subject_colors[`${subject.SubjectCode}${subject.CourseSection}`]) {
+                    subject_count++;
+                    subject_colors[`${subject.SubjectCode}${subject.CourseSection}`] = `color-${subject_count}`;
+                }
+            });
+
+            setSubjectColors(subject_colors);
+
+            console.log('allocated time slots:',
+                new InstructorTimeSlotBitMap(
+                    instructorResources.current.semesters_time_slots[semester_idx]
+                )
+            )
+
+            console.log('subjects allocated:', instructorResources.current.semesters_sub_assign[semester_idx])
+        } else {
+            console.log('selected semester index: none')
+            setAllocatedSubjectAssign([])
+            setSubjectColors([])
+        }
     }
 
     const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -95,7 +98,7 @@ export default function InstructorDataView({
 
     const instructorResources = useRef(null)
     const [baseResourceTimeSlots, setBaseResourceTimeSlots] = useState(new InstructorTimeSlotBitMap())
-    const [selectedSemResourceTimeSlots, setSelectedSemResourceTimeSlots] = useState(new InstructorTimeSlotBitMap())
+    const [semestersResourceTimeSlots, setSemestersResourceTimeSlots] = useState(new InstructorTimeSlotBitMap())
     const [allocatedSubjectAssign, setAllocatedSubjectAssign] = useState([])
 
     const load_resources = async () => {
@@ -104,18 +107,31 @@ export default function InstructorDataView({
             const instructor_resources = await fetchInstructorResources(selectedInstructor.InstructorID)
             console.log('load_resources -> fetchInstructorResources  : ', instructor_resources)
 
-            setBaseResourceTimeSlots(
-                new InstructorTimeSlotBitMap(instructor_resources.base_time_slots)
-            )
+            const base_time_slots = new InstructorTimeSlotBitMap(instructor_resources.base_time_slots)
+            const semesters_time_slots = new InstructorTimeSlotBitMap(instructor_resources.base_time_slots)
 
+            for (let i = 0; i < instructor_resources.semesters_time_slots.length; i++) {
+                const sem_time_slots = new InstructorTimeSlotBitMap(instructor_resources.semesters_time_slots[i])
+
+                for (let day = 0; day < DAYS.length; day++) {
+                    for (let time_slot = 0; time_slot < dailyTimeSlots; time_slot++) {
+                        if (!sem_time_slots.getAvailability(day, time_slot)) {
+                            semesters_time_slots.setAvailability(false, day, time_slot)
+                        }
+                    }
+                }
+            }
+
+            setBaseResourceTimeSlots(base_time_slots)
+            setSemestersResourceTimeSlots(semesters_time_slots)
             setSemesterIndex("")
 
             instructorResources.current = instructor_resources
         } catch (err) {
             setPopupOptions({
-                Heading: "Fetch Failed",
+                Heading: "Page Load Error",
                 HeadingStyle: { background: "red", color: "white" },
-                Message: "Unable to fetch instructor resources"
+                Message: `${err}`
             });
         } finally {
             setIsLoading(false)
@@ -163,7 +179,7 @@ export default function InstructorDataView({
             time_slot = Number(time_slot)
 
             const is_default_available = baseResourceTimeSlots?.getAvailability(day, time_slot)
-            const is_allocated_available = selectedSemResourceTimeSlots?.getAvailability(day, time_slot)
+            const is_allocated_available = semestersResourceTimeSlots?.getAvailability(day, time_slot)
 
             if (!is_default_available && !is_allocated_available) {
                 enabled_time_slots++
@@ -208,12 +224,12 @@ export default function InstructorDataView({
             day = Number(day)
             time_slot = Number(time_slot)
 
-            const is_default_available = selectedInstructor?.Time?.getAvailability(day, time_slot)
-            const is_allocated_available = selectedSemResourceTimeSlots?.getAvailability(day, time_slot)
+            const is_default_available = baseResourceTimeSlots?.getAvailability(day, time_slot)
+            const is_allocated_available = semestersResourceTimeSlots?.getAvailability(day, time_slot)
 
             if (!is_default_available && !is_allocated_available) {
-                selectedInstructor.Time.setAvailability(true, day, time_slot)
-                selectedSemResourceTimeSlots?.setAvailability(true, day, time_slot)
+                baseResourceTimeSlots?.setAvailability(true, day, time_slot)
+                semestersResourceTimeSlots?.setAvailability(true, day, time_slot)
             }
         }
 
@@ -233,8 +249,8 @@ export default function InstructorDataView({
             day = Number(day)
             time_slot = Number(time_slot)
 
-            const is_default_available = selectedInstructor?.Time?.getAvailability(day, time_slot)
-            const is_allocated_available = selectedSemResourceTimeSlots?.getAvailability(day, time_slot)
+            const is_default_available = baseResourceTimeSlots?.getAvailability(day, time_slot)
+            const is_allocated_available = semestersResourceTimeSlots?.getAvailability(day, time_slot)
 
             if (is_default_available && is_allocated_available) {
                 disabled_time_slots++
@@ -279,12 +295,12 @@ export default function InstructorDataView({
             day = Number(day)
             time_slot = Number(time_slot)
 
-            const is_default_available = selectedInstructor?.Time?.getAvailability(day, time_slot)
-            const is_allocated_available = selectedSemResourceTimeSlots?.getAvailability(day, time_slot)
+            const is_default_available = baseResourceTimeSlots?.getAvailability(day, time_slot)
+            const is_allocated_available = semestersResourceTimeSlots?.getAvailability(day, time_slot)
 
             if (is_default_available && is_allocated_available) {
-                selectedInstructor.Time.setAvailability(false, day, time_slot)
-                selectedSemResourceTimeSlots.setAvailability(false, day, time_slot)
+                baseResourceTimeSlots?.setAvailability(false, day, time_slot)
+                semestersResourceTimeSlots?.setAvailability(false, day, time_slot)
             }
         }
 
@@ -427,6 +443,7 @@ export default function InstructorDataView({
                             onChange={handleSemesterChange}
                             disabled={!Number.isInteger(selectedDepartment.DepartmentID)}
                         >
+                            <MenuItem value=''>None</MenuItem>
                             <MenuItem value={0}>1st Semester</MenuItem>
                             <MenuItem value={1}>2nd Semester</MenuItem>
                         </Select>
@@ -641,7 +658,7 @@ export default function InstructorDataView({
                             let selected = ""
 
                             const is_available_default = baseResourceTimeSlots?.getAvailability(day_index, time_slot_index) ? true : false
-                            const is_available_alloc = selectedSemResourceTimeSlots?.getAvailability(day_index, time_slot_index) ? true : false
+                            const is_available_alloc = semestersResourceTimeSlots?.getAvailability(day_index, time_slot_index) ? true : false
                             const has_assigned_subject = allocatedSubjectAssign.find(
                                 (subj) => subj.DayIdx === day_index && subj.TimeSlotIdx === time_slot_index
                             );
@@ -651,9 +668,9 @@ export default function InstructorDataView({
                                 return (
                                     <td key={day_index} className={`subject-cell ${subjectColors[subject_color_key]}`} rowSpan={has_assigned_subject.SubjectTimeSlots}>
                                         <div className="subject-content">
-                                            <div className="subject-name">{has_assigned_subject.SubjectCode}</div>
-                                            <div className="subject-section">{has_assigned_subject.CourseSection}</div>
-                                            <div className="subject-room">{has_assigned_subject.RoomName}</div>
+                                            <div className="subject-time-slot-line-1">{has_assigned_subject.SubjectCode}</div>
+                                            <div className="subject-time-slot-line-2">{has_assigned_subject.CourseSection}</div>
+                                            <div className="subject-time-slot-line-3">{has_assigned_subject.RoomName}</div>
                                         </div>
                                     </td>
                                 );
@@ -695,7 +712,7 @@ export default function InstructorDataView({
 
                                         console.log(`right click: class="${event.target.className}"`)
 
-                                        const available = selectedSemResourceTimeSlots?.getAvailability(day_index, time_slot_index)
+                                        const available = semestersResourceTimeSlots?.getAvailability(day_index, time_slot_index)
                                         console.log(`day(${day_index}), time_slot(${time_slot_index} = available? ${available})`)
 
                                         contextMenuState.setShow(true)

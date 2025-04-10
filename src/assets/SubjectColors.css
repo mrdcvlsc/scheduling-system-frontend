@@ -1,3 +1,16 @@
+.subject-cell {
+    font-weight: bold;
+    font-size: 0.875em;
+    border: thin solid #ddd;
+    text-align: center;
+    width: 14.2857%;
+}
+
+.subject-time-slot-line-2,
+.subject-time-slot-line-3 {
+    font-size: 0.8rem;
+    font-weight: normal;
+}
 
 .color-1 {
     background-color: red;
