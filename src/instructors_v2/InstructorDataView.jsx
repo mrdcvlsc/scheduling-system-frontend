@@ -98,12 +98,16 @@ export default function InstructorDataView({
 
     const instructorResources = useRef(null)
     const [baseResourceTimeSlots, setBaseResourceTimeSlots] = useState(new InstructorTimeSlotBitMap())
-    const [semestersResourceTimeSlots, setSemestersResourceTimeSlots] = useState(new InstructorTimeSlotBitMap())
+    const [semsResourceTimeSlots, setSemsResourceTimeSlots] = useState(new InstructorTimeSlotBitMap())
     const [allocatedSubjectAssign, setAllocatedSubjectAssign] = useState([])
+
+    const backupBaseResourceTimeSlots = useRef(null)
+    const backupSemsResourceTimeSlots = useRef(null)
 
     const load_resources = async () => {
         try {
             setIsLoading(true)
+
             const instructor_resources = await fetchInstructorResources(selectedInstructor.InstructorID)
             console.log('load_resources -> fetchInstructorResources  : ', instructor_resources)
 
@@ -123,7 +127,7 @@ export default function InstructorDataView({
             }
 
             setBaseResourceTimeSlots(base_time_slots)
-            setSemestersResourceTimeSlots(semesters_time_slots)
+            setSemsResourceTimeSlots(semesters_time_slots)
             setSemesterIndex("")
 
             instructorResources.current = instructor_resources
@@ -179,7 +183,7 @@ export default function InstructorDataView({
             time_slot = Number(time_slot)
 
             const is_default_available = baseResourceTimeSlots?.getAvailability(day, time_slot)
-            const is_allocated_available = semestersResourceTimeSlots?.getAvailability(day, time_slot)
+            const is_allocated_available = semsResourceTimeSlots?.getAvailability(day, time_slot)
 
             if (!is_default_available && !is_allocated_available) {
                 enabled_time_slots++
@@ -225,11 +229,11 @@ export default function InstructorDataView({
             time_slot = Number(time_slot)
 
             const is_default_available = baseResourceTimeSlots?.getAvailability(day, time_slot)
-            const is_allocated_available = semestersResourceTimeSlots?.getAvailability(day, time_slot)
+            const is_allocated_available = semsResourceTimeSlots?.getAvailability(day, time_slot)
 
             if (!is_default_available && !is_allocated_available) {
                 baseResourceTimeSlots?.setAvailability(true, day, time_slot)
-                semestersResourceTimeSlots?.setAvailability(true, day, time_slot)
+                semsResourceTimeSlots?.setAvailability(true, day, time_slot)
             }
         }
 
@@ -250,7 +254,7 @@ export default function InstructorDataView({
             time_slot = Number(time_slot)
 
             const is_default_available = baseResourceTimeSlots?.getAvailability(day, time_slot)
-            const is_allocated_available = semestersResourceTimeSlots?.getAvailability(day, time_slot)
+            const is_allocated_available = semsResourceTimeSlots?.getAvailability(day, time_slot)
 
             if (is_default_available && is_allocated_available) {
                 disabled_time_slots++
@@ -296,11 +300,11 @@ export default function InstructorDataView({
             time_slot = Number(time_slot)
 
             const is_default_available = baseResourceTimeSlots?.getAvailability(day, time_slot)
-            const is_allocated_available = semestersResourceTimeSlots?.getAvailability(day, time_slot)
+            const is_allocated_available = semsResourceTimeSlots?.getAvailability(day, time_slot)
 
             if (is_default_available && is_allocated_available) {
                 baseResourceTimeSlots?.setAvailability(false, day, time_slot)
-                semestersResourceTimeSlots?.setAvailability(false, day, time_slot)
+                semsResourceTimeSlots?.setAvailability(false, day, time_slot)
             }
         }
 
@@ -312,13 +316,17 @@ export default function InstructorDataView({
     /////////////////////////////////////////////////////////////////////////////////
 
     const handleEditOrNewAction = async () => {
+        console.log('handleEditOrNewAction: called')
         try {
+            console.log('handleEditOrNewAction: called 1')
 
             let new_default_time = []
 
-            for (let i = 0; i < selectedInstructor.Time.bitset.length; i++) {
-                new_default_time.push(`${selectedInstructor.Time.bitset[i]}`)
+            for (let i = 0; i < baseResourceTimeSlots.bitset.length; i++) {
+                new_default_time.push(`${baseResourceTimeSlots.bitset[i]}`)
             }
+
+            console.log('handleEditOrNewAction: called 2')
 
             const updated_instructor_time_str = {
                 InstructorID: selectedInstructor.InstructorID,
@@ -328,6 +336,8 @@ export default function InstructorDataView({
                 LastName: selectedInstructor.LastName,
                 Time: new_default_time,
             }
+
+            console.log('handleEditOrNewAction: called 3')
 
             setIsLoading(true);
 
@@ -441,7 +451,7 @@ export default function InstructorDataView({
                             label="Semester"
                             value={semesterIndex}
                             onChange={handleSemesterChange}
-                            disabled={!Number.isInteger(selectedDepartment.DepartmentID)}
+                            disabled={!Number.isInteger(selectedDepartment.DepartmentID) || mode === "edit"}
                         >
                             <MenuItem value=''>None</MenuItem>
                             <MenuItem value={0}>1st Semester</MenuItem>
@@ -455,6 +465,9 @@ export default function InstructorDataView({
                             onClick={() => {
                                 setMode("edit")
                                 setInstructorBackup(structuredClone(selectedInstructor))
+
+                                backupBaseResourceTimeSlots.current = new InstructorTimeSlotBitMap(baseResourceTimeSlots.bitset)
+                                backupSemsResourceTimeSlots.current = new InstructorTimeSlotBitMap(semsResourceTimeSlots.bitset)
                             }}
                             loading={IsLoading}
                         >
@@ -507,6 +520,9 @@ export default function InstructorDataView({
                                 selectedInstructor.MiddleInitial = instructorBackup.MiddleInitial
                                 selectedInstructor.LastName = instructorBackup.LastName
                                 selectedInstructor.Time = instructorBackup.Time
+
+                                setBaseResourceTimeSlots(backupBaseResourceTimeSlots.current)
+                                setSemsResourceTimeSlots(backupSemsResourceTimeSlots.current)
 
                                 setSelectedTimeSlots(new Set())
                             }}
@@ -658,7 +674,7 @@ export default function InstructorDataView({
                             let selected = ""
 
                             const is_available_default = baseResourceTimeSlots?.getAvailability(day_index, time_slot_index) ? true : false
-                            const is_available_alloc = semestersResourceTimeSlots?.getAvailability(day_index, time_slot_index) ? true : false
+                            const is_available_alloc = semsResourceTimeSlots?.getAvailability(day_index, time_slot_index) ? true : false
                             const has_assigned_subject = allocatedSubjectAssign.find(
                                 (subj) => subj.DayIdx === day_index && subj.TimeSlotIdx === time_slot_index
                             );
@@ -712,7 +728,7 @@ export default function InstructorDataView({
 
                                         console.log(`right click: class="${event.target.className}"`)
 
-                                        const available = semestersResourceTimeSlots?.getAvailability(day_index, time_slot_index)
+                                        const available = semsResourceTimeSlots?.getAvailability(day_index, time_slot_index)
                                         console.log(`day(${day_index}), time_slot(${time_slot_index} = available? ${available})`)
 
                                         contextMenuState.setShow(true)
