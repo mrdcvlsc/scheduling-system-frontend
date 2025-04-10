@@ -30,6 +30,8 @@ import { InstructorTimeSlotBitMap } from "../js/instructor-time-slot-bit-map"
 import InstructorDataView from "./InstructorDataView"
 import { deleteRemoveInsturctor } from "../js/instructors";
 
+import { MainHeader } from "../components/Header";
+
 function InstructorPage() {
     const [mode, setMode] = useState("") // 3 mode - new, view, edit
     const [popupOptions, setPopupOptions] = useState(null);
@@ -157,6 +159,8 @@ function InstructorPage() {
     }
 
     return (<>
+        <MainHeader />
+
         <Popup popupOptions={popupOptions} closeButtonActionHandler={() => {
             setPopupOptions(null);
         }} />
