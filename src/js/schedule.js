@@ -237,3 +237,27 @@ export async function generateSchedule(selected_semester, department_id) {
 
   return await response.text()
 }
+
+export async function surveyAddPreference(new_class_scheduled_subjects) {
+  let api_request = '/v2/add_schedule_preference'
+
+  if (DEV) {
+    console.log('call: surveyAddPreference')
+    api_request = `${base_url}/v2/add_schedule_preference`
+  }
+
+  const response = await fetch(api_request, {
+    method: 'POST',
+    headers: {
+      Accept: "text/plain",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(new_class_scheduled_subjects)
+  });
+
+  if (!response.ok) {
+    throw new Error(`${response.status} : ${await response.text()}`);
+  }
+
+  return await response.text()
+}
