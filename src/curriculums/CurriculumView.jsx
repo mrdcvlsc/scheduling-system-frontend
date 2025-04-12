@@ -610,6 +610,8 @@ function CurriculumView({
                                 let designated_instructors = formJson.ModifySubjectDialogForm_DesignatedInstructorsID
                                 let conv_array = null
 
+                                console.log('if here test debug msg 1')
+
                                 if (designated_instructors) {
                                     if (/^[\d,\s]*$/.test(designated_instructors)) {
                                         conv_array = designated_instructors.split(",").map(num => Number(num.trim()));
@@ -618,29 +620,39 @@ function CurriculumView({
                                     }
                                 }
 
+                                console.log('if here test debug msg 2')
+
                                 if (conv_array?.length !== 0) {
                                     const seen = new Set();
                                     const new_instructors = []
 
-                                    for (let num of conv_array) {
-                                        if (seen.has(num)) {
-                                            throw new Error('Detected repeating instructor IDs in designated instructors')
+                                    console.log('if here test debug msg 4', conv_array)
+
+                                    if (conv_array) {
+                                        for (let num of conv_array) {
+                                            if (seen.has(num)) {
+                                                throw new Error('Detected repeating instructor IDs in designated instructors')
+                                            }
+
+                                            seen.add(num);
                                         }
 
-                                        seen.add(num);
-                                    }
+                                        console.log('if here test debug msg 3')
 
-                                    for (let num of conv_array) {
-                                        const instructor_basic_info = await fetchInstructorBasic(num);
-                                        new_instructors.push({
-                                            InstructorID: instructor_basic_info.InstructorID,
-                                            Name: `${instructor_basic_info.FirstName} ${instructor_basic_info.MiddleInitial}. ${instructor_basic_info.LastName}`
-                                        })
+                                        for (let num of conv_array) {
+                                            const instructor_basic_info = await fetchInstructorBasic(num);
+                                            new_instructors.push({
+                                                InstructorID: instructor_basic_info.InstructorID,
+                                                Name: `${instructor_basic_info.FirstName} ${instructor_basic_info.MiddleInitial}. ${instructor_basic_info.LastName}`
+                                            })
+                                        }
                                     }
 
                                     setChipInstructors(new_instructors);
                                     subject.DesignatedInstructorsID = conv_array;
                                 }
+
+                                console.log('if here test debug msg 5')
 
                                 let updated_curriculum = structuredClone(editedCurriculum);
                                 setEditedCurriculum(updated_curriculum);
@@ -751,17 +763,17 @@ function CurriculumView({
                         </Box>
 
                         <TextField
-                                autoFocus
-                                id="ModifySubjectDialogForm_DesignatedInstructorsID"
-                                name="ModifySubjectDialogForm_DesignatedInstructorsID"
-                                label="Designated Instructor ID(s)"
-                                type="text"
-                                variant="outlined"
-                                size='small'
-                                sx={{ width: '100%' }}
-                                defaultValue={subject?.DesignatedInstructorsID?.join(", ") || ""}
-                                inputRef={designatedInstructorsRef}
-                            />
+                            autoFocus
+                            id="ModifySubjectDialogForm_DesignatedInstructorsID"
+                            name="ModifySubjectDialogForm_DesignatedInstructorsID"
+                            label="Designated Instructor ID(s)"
+                            type="text"
+                            variant="outlined"
+                            size='small'
+                            sx={{ width: '100%' }}
+                            defaultValue={subject?.DesignatedInstructorsID?.join(", ") || ""}
+                            inputRef={designatedInstructorsRef}
+                        />
 
                         <Box display={'flex'} gap={1} padding={'0.3em'}>{chipInstructors.map((instructor) => (
                             <Chip
