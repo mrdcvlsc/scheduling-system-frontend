@@ -10,8 +10,8 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
-const pages = ['schedule', 'instructors', 'rooms', 'subjects', 'curriculums'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const pages = ['schedule', 'instructors', 'rooms', 'subjects', 'curriculums', 'departments'];
+const settings = [ 'Logout' ];
 
 export function MainHeader() {
     const [anchorElNav, setAnchorElNav] = useState(null);
