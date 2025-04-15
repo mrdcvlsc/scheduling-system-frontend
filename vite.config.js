@@ -15,7 +15,6 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(root, 'index.html'),
-        about: resolve(root, 'about', 'index.html'),
         schedule: resolve(root, 'schedule', 'index.html'),
         instructors: resolve(root, 'instructors', 'index.html'),
         rooms: resolve(root, 'rooms', 'index.html'),
