@@ -238,6 +238,38 @@ export async function generateSchedule(selected_semester, department_id) {
   return await response.text()
 }
 
+export async function getValidateSchedules(semesterIndex, departmentID) {
+  let api_request = `/v2/validate_schedules?semester=${semesterIndex}&department_id=${departmentID}`
+
+  if (DEV) {
+    console.log('call: getValidateSchedules')
+    api_request = `${base_url}/v2/validate_schedules?semester=${semesterIndex}&department_id=${departmentID}`
+  }
+
+  const response = await fetch(api_request, {
+    method: 'GET',
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  switch (response.status) {
+    case 404: {
+      return await response.json()
+    }
+    case 409: {
+      return await response.json()
+    }
+    default: {
+      if (!response.ok) {
+        throw new Error(`${response.status} : ${await response.text()}`);
+      }
+    }
+  }
+
+  return await response.text()
+}
+
 export async function surveyAddPreference(new_class_scheduled_subjects) {
   let api_request = '/v2/add_schedule_preference'
 

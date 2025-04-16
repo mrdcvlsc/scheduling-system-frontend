@@ -8,12 +8,18 @@ import "./TimeTable.css";
 import "./TimeTableDropdowns.css";
 
 import { fetchAllDepartments, fetchDepartmentCurriculumsData } from "../js/departments"
-import { deserializeSchedule, fetchClassJsonSchedule, fetchSerializedClassSchedule, generateSchedule, deleteClearDepartmentSchedule, deleteClearSectionSchedule } from "../js/schedule"
+import { deserializeSchedule, fetchClassJsonSchedule, fetchSerializedClassSchedule, generateSchedule, getValidateSchedules, deleteClearDepartmentSchedule, deleteClearSectionSchedule } from "../js/schedule"
 
 import { generateTimeSlotRowLabels } from "../js/week-time-table-grid-functions";
 import { MainHeader } from "../components/Header";
+import { Box, Button } from "@mui/material";
 
 const SECTION_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz";
+
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
 
 function TimeTable() {
 
@@ -302,6 +308,42 @@ function TimeTable() {
         setIsLoading(false)
     };
 
+    const handleValidateSchedules = async () => {
+        setIsLoading(true)
+
+        try {
+            const validation_errors = await getValidateSchedules(semesterIndex, departmentID)
+
+            console.log('validation errors : ', validation_errors?.length)
+
+            for (let i = 0; i < validation_errors?.length; i++) {
+                console.log(`error ${i+1}: ${validation_errors[i]}`)
+            }
+
+            if (validation_errors.length > 0 && Array.isArray(validation_errors)) {
+                setPopupOptions({
+                    Heading: "Validation Problems",
+                    HeadingStyle: { background: "Orange", color: "black" },
+                    Message: validation_errors
+                });
+            } else {
+                setPopupOptions({
+                    Heading: "Validation Result",
+                    HeadingStyle: { background: "Green", color: "white" },
+                    Message: 'there are no problems found in the schedules'
+                });
+            }
+        } catch (err) {
+            setPopupOptions({
+                Heading: "Validation Failed",
+                HeadingStyle: { background: "red", color: "white" },
+                Message: `${err}`
+            });
+        }
+
+        setIsLoading(false)
+    }
+
     const [subjectColors, setSubjectColors] = useState({});
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -427,19 +469,51 @@ function TimeTable() {
                     </tbody>
                 </table>
 
-                <div style={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', padding: '0.5em', gap: '0.5em' }}>
-                    <button className="all-btns" style={{ width: '100%' }} onClick={generateDepartmentSchedules} disabled={!semesterIndex}>
+                <Box padding={1} gap={1} display={'flex'} justifyContent={'space-evenly'}>
+                    <Button
+                        size="small"
+                        fullWidth
+                        onClick={generateDepartmentSchedules}
+                        disabled={!semesterIndex}
+                        variant="contained"
+                        color="success"
+                    >
                         Generate Department Semester Schedules
-                    </button>
+                    </Button>
 
-                    <button className="all-btns" style={{ width: '100%' }} onClick={handleClearDepartmentSchedule} disabled={!semesterIndex}>
+                    <Button
+                        size="small"
+                        fullWidth
+                        onClick={handleValidateSchedules}
+                        disabled={!semesterIndex}
+                        variant="contained"
+                        color="warning"
+                    >
+                        Validate Schedules
+                    </Button>
+
+                    <Button
+                        size="small"
+                        fullWidth
+                        onClick={handleClearDepartmentSchedule}
+                        disabled={!semesterIndex}
+                        variant="contained"
+                        color="error"
+                    >
                         Clear Department Semester Schedules
-                    </button>
+                    </Button>
 
-                    <button className="all-btns" style={{ width: '100%' }} onClick={handleClearClassSchedule} disabled={!sectionIndex}>
+                    <Button
+                        size="small"
+                        fullWidth
+                        onClick={handleClearClassSchedule}
+                        disabled={!semesterIndex}
+                        variant="outlined"
+                        color="error"
+                    >
                         Clear Section Semester Schedule
-                    </button>
-                </div>
+                    </Button>
+                </Box>
             </div>
         </>
     );
