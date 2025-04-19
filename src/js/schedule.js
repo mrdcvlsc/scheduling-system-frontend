@@ -293,3 +293,25 @@ export async function surveyAddPreference(new_class_scheduled_subjects) {
 
   return await response.text()
 }
+
+export async function getSchedGenStatus(semesterIndex, departmentID) {
+  let api_request = `/v1/dept_gen_result?semester=${semesterIndex}&department_id=${departmentID}`
+
+  if (DEV) {
+    console.log('call: getSchedGenStatus')
+    api_request = `${base_url}/v1/dept_gen_result?semester=${semesterIndex}&department_id=${departmentID}`
+  }
+
+  const response = await fetch(api_request, {
+    method: 'GET',
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`${response.status} : ${await response.text()}`);
+  }
+
+  return await response.json()
+}
