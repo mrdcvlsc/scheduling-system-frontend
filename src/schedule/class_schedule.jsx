@@ -8,11 +8,11 @@ import "./TimeTable.css";
 import "./TimeTableDropdowns.css";
 
 import { fetchAllDepartments, fetchDepartmentCurriculumsData } from "../js/departments"
-import { deserializeSchedule, fetchClassJsonSchedule, fetchSerializedClassSchedule, generateSchedule, getValidateSchedules, deleteClearDepartmentSchedule, deleteClearSectionSchedule } from "../js/schedule"
+import { deserializeSchedule, fetchClassJsonSchedule, fetchSerializedClassSchedule, generateSchedule, getValidateSchedules, deleteClearDepartmentSchedule, deleteClearSectionSchedule, getSchedGenStatus } from "../js/schedule"
 
 import { generateTimeSlotRowLabels } from "../js/week-time-table-grid-functions";
 import { MainHeader } from "../components/Header";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 
 const SECTION_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz";
 
@@ -27,6 +27,7 @@ function TimeTable() {
     //                     LOAD GUARD COMPONENT STATES
     /////////////////////////////////////////////////////////////////////////////////
 
+    const [schedGenStatus, setSchedGenStatus] = useState(null)
     const [IsLoading, setIsLoading] = useState(false);
     const [popupOptions, setPopupOptions] = useState(null);
 
@@ -111,6 +112,12 @@ function TimeTable() {
         setYearLevelIndex("");
         setSectionIndex("");
         setClassAssignedSubjects([]);
+
+        if (intervalID) {
+            clearInterval(intervalID);
+        }
+
+        setSchedGenStatus(null);
     }
 
     const updateCurriculumData = async (semester) => {
@@ -132,6 +139,21 @@ function TimeTable() {
             try {
                 await updateCurriculumData(event.target.value);
 
+                if (intervalID) {
+                    clearInterval(intervalID);
+                }
+
+                setIntervalID(
+                    setInterval(() => {
+                        getSchedGenStatus(event.target.value, departmentID).then((sched_gen_status) => {
+                            setSchedGenStatus(sched_gen_status);
+                        });
+                    }, 1357)
+                )
+
+                const sched_gen_status = await getSchedGenStatus(event.target.value, departmentID);
+                setSchedGenStatus(sched_gen_status);
+
                 setIsLoading(false);
             } catch (err) {
                 setPopupOptions({
@@ -144,6 +166,8 @@ function TimeTable() {
             }
         }
     };
+
+    const [intervalID, setIntervalID] = useState(null);
 
     const handleCurriculumChange = (event) => {
         console.log(`selected curriculumIndex: ${event.target.value}`);
@@ -317,7 +341,7 @@ function TimeTable() {
             console.log('validation errors : ', validation_errors?.length)
 
             for (let i = 0; i < validation_errors?.length; i++) {
-                console.log(`error ${i+1}: ${validation_errors[i]}`)
+                console.log(`error ${i + 1}: ${validation_errors[i]}`)
             }
 
             if (validation_errors.length > 0 && Array.isArray(validation_errors)) {
@@ -515,6 +539,17 @@ function TimeTable() {
                     </Button>
                 </Box>
             </div>
+
+            {schedGenStatus ?
+                <Box>
+                    <Typography variant="h6" style={{ color: 'green', textAlign: 'center' }}>
+                        {schedGenStatus.Status}
+                    </Typography>
+                    <Typography variant="body2" style={{ color: 'black', textAlign: 'center' }}>
+                        {schedGenStatus.Message}
+                    </Typography>
+                </Box>
+                : null}
         </>
     );
 }

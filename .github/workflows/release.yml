@@ -29,7 +29,9 @@ jobs:
       run: npm install
 
     - name: Set js fetch scripts to production mode
-      run: sed -i 's/const DEV = true/const DEV = false/' src/js/basics.js
+      run: | 
+        sed -i 's/const DEV = true/const DEV = false/' src/js/basics.js
+        sed -i 's/}, 1357)/}, 60000)' src/schedule/class_schedule.jsx
 
     - name: Run Build
       run: npm run build
