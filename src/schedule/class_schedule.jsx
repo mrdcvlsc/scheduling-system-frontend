@@ -1,4 +1,4 @@
-import { StrictMode, useState, useEffect } from "react";
+import { StrictMode, useState, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
 
 import { Loading, Popup } from "../components/Loading";
@@ -113,11 +113,13 @@ function TimeTable() {
         setSectionIndex("");
         setClassAssignedSubjects([]);
 
-        if (intervalID) {
-            clearInterval(intervalID);
-        }
-
         setSchedGenStatus(null);
+
+        // clear any old polling loop
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+        }
     }
 
     const updateCurriculumData = async (semester) => {
@@ -133,23 +135,17 @@ function TimeTable() {
         setSectionIndex("");
         setClassAssignedSubjects([]);
 
+        // clear any old polling loop
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+        }
+
         if (event.target.value) {
             setIsLoading(true);
 
             try {
                 await updateCurriculumData(event.target.value);
-
-                if (intervalID) {
-                    clearInterval(intervalID);
-                }
-
-                setIntervalID(
-                    setInterval(() => {
-                        getSchedGenStatus(event.target.value, departmentID).then((sched_gen_status) => {
-                            setSchedGenStatus(sched_gen_status);
-                        });
-                    }, 1357)
-                )
 
                 const sched_gen_status = await getSchedGenStatus(event.target.value, departmentID);
                 setSchedGenStatus(sched_gen_status);
@@ -167,14 +163,18 @@ function TimeTable() {
         }
     };
 
-    const [intervalID, setIntervalID] = useState(null);
-
     const handleCurriculumChange = (event) => {
         console.log(`selected curriculumIndex: ${event.target.value}`);
         setCurriculumIndex(event.target.value);
         setYearLevelIndex("");
         setSectionIndex("");
         setClassAssignedSubjects([]);
+
+        // clear any old polling loop
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+        }
     };
 
     const handleYearLevelChange = (event) => {
@@ -182,70 +182,98 @@ function TimeTable() {
         setYearLevelIndex(event.target.value);
         setSectionIndex("");
         setClassAssignedSubjects([]);
+
+        // clear any old polling loop
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+        }
     };
 
+    const intervalRef = useRef(null);
+
     const handleSectionChange = async (event) => {
-        console.log(`selected sectionSchedIndex: ${event.target.value}`);
+        const newSection = event.target.value;
+        setSectionIndex(newSection);
 
-        console.log(
-            `fetching : DepartmentID=${departmentID}, SemesterIndex=${semesterIndex}, ScheduleIndex=${event.target.value}`
-        );
+        // clear any old polling loop
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+        }
 
-        setSectionIndex(event.target.value);
-        setClassAssignedSubjects([]);
+        if (!newSection) return;
 
-        if (event.target.value) {
-            setIsLoading(true);
+        // fetch initial status & load once
+        const initialStatus = await getSchedGenStatus(semesterIndex, departmentID);
+        setSchedGenStatus(initialStatus);
+        await load_schedule(newSection);
 
-            try {
-                const class_scheduled_subjects = await fetchClassJsonSchedule(
-                    departmentID,
-                    semesterIndex,
-                    departmentCurriculumsData[curriculumIndex].CurriculumID,
-                    yearLevelIndex,
-                    event.target.value
-                );
+        // if it’s still "in progress" or "queued" start up a new loop
+        if (["in progress", "on queue"].includes(initialStatus.Status)) {
+            intervalRef.current = window.setInterval(async () => {
+                const currentStatus = await getSchedGenStatus(semesterIndex, departmentID);
+                setSchedGenStatus(currentStatus);
 
-                // DEBUG BLOCK: START
-                // console.log('debug prints - remove later : start')
-                // const class_serialized_scheduled = await fetchSerializedClassSchedule(departmentID, semesterIndex, event.target.value);
-                // const class_deserialized_sched = await deserializeSchedule(class_serialized_scheduled);
-
-                // console.log('deserialized schedule :');
-                // console.log(class_deserialized_sched);
-                // console.log('json sched :');
-                // console.log(class_scheduled_subjects);
-                // console.log('debug prints - remove later : end')
-                // DEBUG BLOCK: END
-
-                setClassAssignedSubjects(class_scheduled_subjects);
-
-                const subject_colors = [];
-                let subject_count = 0;
-
-                class_scheduled_subjects.forEach((subject) => {
-                    if (!subject_colors[subject.SubjectCode]) {
-                        subject_count++;
-                        subject_colors[subject.SubjectCode] = `color-${subject_count}`;
+                if (["in progress", "on queue"].includes(currentStatus.Status)) {
+                    await load_schedule(newSection);
+                } else {
+                    if (intervalRef.current) {
+                        clearInterval(intervalRef.current);
+                        intervalRef.current = null;
                     }
-                });
+                }
+            }, 1_357);
+        }
+    };
 
-                setSubjectColors(subject_colors);
+    // make sure we also clear when the component unmounts
+    useEffect(() => () => {
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+        }
+    }, []);
 
-                setIsLoading(false);
+    const load_schedule = async (sectionIndex) => {
+        try {
+            // Fetch the latest schedule data
+            const classScheduledSubjects = await fetchClassJsonSchedule(
+                departmentID,
+                semesterIndex,
+                departmentCurriculumsData[curriculumIndex].CurriculumID,
+                yearLevelIndex,
+                sectionIndex
+            );
 
-                window.scrollTo({
-                    top: document.documentElement.scrollHeight,
-                    behavior: 'smooth'
-                });
-            } catch (err) {
-                setPopupOptions({
-                    Heading: "Failed To Retrieve Schedule",
-                    HeadingStyle: { background: "red", color: "white" },
-                    Message: `${err}`
-                });
-                setIsLoading(false);
-            }
+            // Update state to trigger re-render with new data
+            setClassAssignedSubjects(classScheduledSubjects);
+            console.log(classScheduledSubjects)
+
+            // Assign colors to subjects for display
+            const subjectColors = {};
+            let subjectCount = 0;
+
+            classScheduledSubjects.forEach((subject) => {
+                if (!subjectColors[subject.SubjectCode]) {
+                    subjectCount++;
+                    subjectColors[subject.SubjectCode] = `color-${subjectCount}`;
+                }
+            });
+
+            setSubjectColors(subjectColors);
+
+            // Scroll to the bottom of the page
+            window.scrollTo({
+                top: document.documentElement.scrollHeight,
+                behavior: 'smooth',
+            });
+        } catch (err) {
+            console.error("Error loading schedule:", err);
+            setPopupOptions({
+                Heading: "Failed to Load Schedule",
+                HeadingStyle: { background: "red", color: "white" },
+                Message: `${err}`,
+            });
         }
     };
 
@@ -312,9 +340,11 @@ function TimeTable() {
 
         try {
             const msg = await generateSchedule(semesterIndex, departmentID)
+            const res = await getSchedGenStatus(semesterIndex, departmentID)
 
             setSectionIndex("");
             setClassAssignedSubjects([]);
+            setSchedGenStatus(res)
 
             setPopupOptions({
                 Heading: "Generating Schedule...",
