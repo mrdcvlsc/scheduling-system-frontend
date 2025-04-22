@@ -31,7 +31,7 @@ jobs:
     - name: Set js fetch scripts to production mode
       run: | 
         sed -i 's/const DEV = true/const DEV = false/' src/js/basics.js
-        sed -i 's/}, 1357)/}, 60000)/' src/schedule/class_schedule.jsx
+        sed -i 's/}, 1357)/}, 15000)/' src/schedule/class_schedule.jsx
 
     - name: Run Build
       run: npm run build
