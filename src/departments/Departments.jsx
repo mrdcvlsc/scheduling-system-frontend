@@ -122,7 +122,7 @@ function Departments() {
 
     return (<>
 
-        <MainHeader />
+        <MainHeader pageName={'departments'}/>
 
         <Popup popupOptions={popupOptions} closeButtonActionHandler={() => setPopupOptions(null)} />
 

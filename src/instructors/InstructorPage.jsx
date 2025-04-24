@@ -159,7 +159,7 @@ function InstructorPage() {
     }
 
     return (<>
-        <MainHeader />
+        <MainHeader pageName={'instructors'}/>
 
         <Popup popupOptions={popupOptions} closeButtonActionHandler={() => {
             setPopupOptions(null);

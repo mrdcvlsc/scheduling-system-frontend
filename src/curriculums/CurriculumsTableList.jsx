@@ -125,7 +125,7 @@ function CurriculumsTableList() {
     const [curriculumBasicInfo, setCurriculumBasicInfo] = useState(null)
 
     return (<>
-        <MainHeader />
+        <MainHeader pageName={'curriculums'}/>
 
         <Popup popupOptions={popupOptions} closeButtonActionHandler={() => setPopupOptions(null)} />
 

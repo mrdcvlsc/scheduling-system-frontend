@@ -157,7 +157,7 @@ function Rooms() {
     const [department, setDepartment] = useState("")
 
     return (<>
-        <MainHeader />
+        <MainHeader pageName={'rooms'}/>
 
         <Popup popupOptions={popupOptions} closeButtonActionHandler={() => {
             setPopupOptions(null);

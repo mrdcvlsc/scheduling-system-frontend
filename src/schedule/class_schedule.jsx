@@ -406,7 +406,7 @@ function TimeTable() {
 
     return (
         <>
-            <MainHeader />
+            <MainHeader pageName={'schedule'}/>
             {/*================================= Loading Component =================================*/}
 
             <Popup popupOptions={popupOptions} closeButtonActionHandler={() => {

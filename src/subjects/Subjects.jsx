@@ -119,7 +119,7 @@ function Subjects() {
 
     return (<>
 
-        <MainHeader />
+        <MainHeader pageName={'subjects'}/>
 
         <Popup popupOptions={popupOptions} closeButtonActionHandler={() => setPopupOptions(null)} />
 

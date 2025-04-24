@@ -13,7 +13,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 const pages = ['schedule', 'instructors', 'rooms', 'subjects', 'curriculums', 'departments'];
 const settings = [ 'Logout' ];
 
-export function MainHeader() {
+export function MainHeader({ pageName }) {
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
 
@@ -61,7 +61,7 @@ export function MainHeader() {
                             <Button
                                 key={page}
                                 onClick={handleCloseNavMenu}
-                                sx={{ my: 1, color: 'white', display: 'block' }}
+                                sx={{ my: 1, color: 'white', display: 'block', backgroundColor: pageName === page ? '#00000032' : '' }}
                                 href={`/${page}/`}
                             >
                                 {page}
