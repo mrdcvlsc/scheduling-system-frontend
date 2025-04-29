@@ -797,7 +797,7 @@ function TimeTable() {
             </div>
 
             {schedGenStatus ?
-                <Box>
+                <Box padding={1}>
                     <Typography variant="h6" style={{ color: 'green', textAlign: 'center' }}>
                         {schedGenStatus.Status}
                     </Typography>
