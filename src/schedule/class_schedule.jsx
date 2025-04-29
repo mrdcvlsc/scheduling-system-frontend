@@ -48,6 +48,9 @@ function TimeTable() {
     const [departmentCurriculumsData, setDepartmentCurriculumsData] = useState([]);              // fetch on semester selection
     const [classAssignedSubjects, setClassAssignedSubjects] = useState([]) // fetch on section selection
 
+    const [pickedUpSubject, setPickedUpSubject] = useState(null);
+    const [pickedUpColor, setPickedUpColor] = useState(null);
+
     /////////////////////////////////////////////////////////////////////////////////
     //                       DROPDOWN SELECTION STATES
     /////////////////////////////////////////////////////////////////////////////////
@@ -86,7 +89,7 @@ function TimeTable() {
             const all_departments = await fetchAllDepartments();
 
             setAllDepartment(all_departments);
-            console.log(all_departments);
+            console.log('fetched departments: ', all_departments);
 
             setIsLoading(false);
         } catch (err) {
@@ -112,7 +115,7 @@ function TimeTable() {
         setYearLevelIndex("");
         setSectionIndex("");
         setClassAssignedSubjects([]);
-
+        setPickedUpSubject(null);
         setSchedGenStatus(null);
 
         // clear any old polling loop
@@ -134,6 +137,7 @@ function TimeTable() {
         setYearLevelIndex("");
         setSectionIndex("");
         setClassAssignedSubjects([]);
+        setPickedUpSubject(null);
 
         // clear any old polling loop
         if (intervalRef.current) {
@@ -169,6 +173,7 @@ function TimeTable() {
         setYearLevelIndex("");
         setSectionIndex("");
         setClassAssignedSubjects([]);
+        setPickedUpSubject(null);
 
         // clear any old polling loop
         if (intervalRef.current) {
@@ -182,6 +187,7 @@ function TimeTable() {
         setYearLevelIndex(event.target.value);
         setSectionIndex("");
         setClassAssignedSubjects([]);
+        setPickedUpSubject(null);
 
         // clear any old polling loop
         if (intervalRef.current) {
@@ -195,6 +201,7 @@ function TimeTable() {
     const handleSectionChange = async (event) => {
         const newSection = event.target.value;
         setSectionIndex(newSection);
+        setPickedUpSubject(null);
 
         // clear any old polling loop
         if (intervalRef.current) {
@@ -247,7 +254,7 @@ function TimeTable() {
 
             // Update state to trigger re-render with new data
             setClassAssignedSubjects(classScheduledSubjects);
-            console.log(classScheduledSubjects)
+            console.log('fetched subjects: ', classScheduledSubjects)
 
             // Assign colors to subjects for display
             const subjectColors = {};
@@ -284,12 +291,14 @@ function TimeTable() {
             const msg = await deleteClearDepartmentSchedule(departmentID, semesterIndex)
 
             setClassAssignedSubjects([]);
+            setPickedUpSubject(null);
 
             setPopupOptions({
                 Heading: "Cleared Department Schedule",
                 HeadingStyle: { background: "green", color: "white" },
                 Message: msg
             });
+
         } catch (err) {
             setPopupOptions({
                 Heading: "Clear Department Schedule Failed",
@@ -314,12 +323,14 @@ function TimeTable() {
             )
 
             setClassAssignedSubjects([]);
+            setPickedUpSubject(null);
 
             setPopupOptions({
                 Heading: "Cleared Section Schedule",
                 HeadingStyle: { background: "green", color: "white" },
                 Message: msg
             });
+
         } catch (err) {
             setPopupOptions({
                 Heading: "Clear Section Schedule Failed",
@@ -368,12 +379,6 @@ function TimeTable() {
         try {
             const validation_errors = await getValidateSchedules(semesterIndex, departmentID)
 
-            console.log('validation errors : ', validation_errors?.length)
-
-            for (let i = 0; i < validation_errors?.length; i++) {
-                console.log(`error ${i + 1}: ${validation_errors[i]}`)
-            }
-
             if (validation_errors.length > 0 && Array.isArray(validation_errors)) {
                 setPopupOptions({
                     Heading: "Validation Problems",
@@ -404,9 +409,71 @@ function TimeTable() {
     //                              COMPONENT UI CODE
     /////////////////////////////////////////////////////////////////////////////////
 
+    const handlePickupSubject = (picked_up_subject) => {
+
+        let current_assigned_subjects = structuredClone(classAssignedSubjects);
+        let current_picked_up_subject = structuredClone(pickedUpSubject);
+
+        if (current_picked_up_subject) {
+            current_assigned_subjects.push(current_picked_up_subject)
+            current_picked_up_subject = null
+        }
+
+        current_picked_up_subject = picked_up_subject
+
+        const new_assigned_subjects = current_assigned_subjects.filter(subj => {
+            return !(picked_up_subject.DayIdx == subj.DayIdx && picked_up_subject.TimeSlotIdx == subj.TimeSlotIdx);
+        })
+
+        const heights = Array.from(
+            document.querySelectorAll('table tr'),
+            row => row.offsetHeight
+        );
+
+        const max_height = Math.max(...heights);
+        setCellHeight(max_height * 0.875);
+
+        console.log('max height : ', max_height)
+
+        setClassAssignedSubjects(new_assigned_subjects);
+        setPickedUpSubject(current_picked_up_subject);
+
+        console.log('picked up subject: ', current_picked_up_subject);
+        console.log('new assigned subject: ', new_assigned_subjects);
+    }
+
+    const handleCancelPickupSubject = () => {
+        let new_assigned_subjects = structuredClone(classAssignedSubjects);
+
+        if (pickedUpSubject) {
+            new_assigned_subjects.push(pickedUpSubject)
+            setPickedUpSubject(null);
+        }
+
+        setClassAssignedSubjects(new_assigned_subjects);
+    }
+
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+
+    useEffect(() => {
+        const handleMouseMove = (event) => {
+            setPosition({ x: event.clientX, y: event.clientY });
+        };
+
+        // Listen for mousemove on the whole window
+        window.addEventListener('mousemove', handleMouseMove);
+
+        // Clean up on unmount
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+        };
+    }, []);
+
+    const [cellHeight, setCellHeight] = useState(0);
+
     return (
         <>
-            <MainHeader pageName={'schedule'}/>
+            <MainHeader pageName={'schedule'} />
             {/*================================= Loading Component =================================*/}
 
             <Popup popupOptions={popupOptions} closeButtonActionHandler={() => {
@@ -423,7 +490,7 @@ function TimeTable() {
 
                 <div className="dropdown-container" style={{ display: 'flex', flexDirection: 'column' }}>
                     <div id="left-dropdown-container" style={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', padding: '0.2em', gap: '0.5em' }}>
-                        <select className="dropdown" style={{ width: '100%' }} value={departmentID} onChange={handleDepartmentChange}>
+                        <select className="dropdown" style={{ width: '100%' }} value={departmentID} onChange={handleDepartmentChange} disabled={pickedUpSubject}>
                             <option value="">Department</option>
                             {allDepartments ?
                                 allDepartments.map((department, index) => (
@@ -432,13 +499,13 @@ function TimeTable() {
                             }
                         </select>
 
-                        <select className="dropdown" style={{ width: '100%' }} value={semesterIndex} onChange={handleSemesterChange} disabled={!departmentID}>
+                        <select className="dropdown" style={{ width: '100%' }} value={semesterIndex} onChange={handleSemesterChange} disabled={!departmentID || pickedUpSubject}>
                             <option value="">Semester</option>
                             <option value={0}>1st Semester</option>
                             <option value={1}>2nd Semester</option>
                         </select>
 
-                        <select className="dropdown" style={{ width: '100%' }} value={curriculumIndex} onChange={handleCurriculumChange} disabled={!semesterIndex}>
+                        <select className="dropdown" style={{ width: '100%' }} value={curriculumIndex} onChange={handleCurriculumChange} disabled={!semesterIndex || pickedUpSubject}>
                             <option value="">Course</option>
                             {departmentCurriculumsData ?
                                 departmentCurriculumsData.map((curriculum, index) => (
@@ -449,7 +516,7 @@ function TimeTable() {
                             }
                         </select>
 
-                        <select className="dropdown" style={{ width: '100%' }} value={yearLevelIndex} onChange={handleYearLevelChange} disabled={!curriculumIndex}>
+                        <select className="dropdown" style={{ width: '100%' }} value={yearLevelIndex} onChange={handleYearLevelChange} disabled={!curriculumIndex || pickedUpSubject}>
                             <option value="">Year Level</option>
                             {curriculumIndex ?
                                 departmentCurriculumsData[curriculumIndex].YearLevels.map((year_level, index) => (
@@ -460,7 +527,7 @@ function TimeTable() {
                             }
                         </select>
 
-                        <select className="dropdown" style={{ width: '100%' }} value={sectionIndex} onChange={handleSectionChange} disabled={!yearLevelIndex}>
+                        <select className="dropdown" style={{ width: '100%' }} value={sectionIndex} onChange={handleSectionChange} disabled={!yearLevelIndex || pickedUpSubject}>
                             <option value="">Section</option>
                             {yearLevelIndex ?
                                 Array.from({ length: departmentCurriculumsData[curriculumIndex].YearLevels[yearLevelIndex].Sections }, (_, index) => (
@@ -474,6 +541,31 @@ function TimeTable() {
                 </div>
 
                 {/*================================= TimeTable Table =================================*/}
+
+
+                {pickedUpSubject ?
+                    <div className={`${pickedUpColor} subject-cursor`}
+                        style={{
+                            height: `${pickedUpSubject.SubjectTimeSlots * cellHeight}px`,
+                            width: '13.5%',
+                            border: '1px solid black',
+                            display: 'flex', flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            position: 'fixed',
+                            top: `${position.y + 2}px`,
+                            left: `${position.x + 2}px`,
+                        }}
+                    >
+                        <div
+                            className="subject-content"
+                        >
+                            <div className="subject-name">{pickedUpSubject.SubjectCode}</div>
+                            <div className="instructor">{pickedUpSubject.InstructorLastName}</div>
+                            <div className="room">{pickedUpSubject.RoomName}</div>
+                        </div>
+                    </div> : null
+                }
 
                 <table className="time-table" style={{ display: sectionIndex ? 'revert' : 'none' }}>
                     <thead>
@@ -495,7 +587,15 @@ function TimeTable() {
 
                                     if (has_assigned_subject) {
                                         return (
-                                            <td key={day_idx} className={`subject-cell ${subjectColors[has_assigned_subject.SubjectCode]}`} rowSpan={has_assigned_subject.SubjectTimeSlots}>
+                                            <td
+                                                key={day_idx}
+                                                className={`subject-cell ${subjectColors[has_assigned_subject.SubjectCode]}`}
+                                                rowSpan={has_assigned_subject.SubjectTimeSlots}
+                                                onClick={() => {
+                                                    handlePickupSubject(has_assigned_subject)
+                                                    setPickedUpColor(`subject-cell ${subjectColors[has_assigned_subject.SubjectCode]}`)
+                                                }}
+                                            >
                                                 <div className="subject-content">
                                                     <div className="subject-name">{has_assigned_subject.SubjectCode}</div>
                                                     <div className="instructor">{has_assigned_subject.InstructorLastName}</div>
@@ -528,7 +628,7 @@ function TimeTable() {
                         size="small"
                         fullWidth
                         onClick={generateDepartmentSchedules}
-                        disabled={!semesterIndex}
+                        disabled={!semesterIndex || pickedUpSubject}
                         variant="contained"
                         color="success"
                     >
@@ -539,7 +639,7 @@ function TimeTable() {
                         size="small"
                         fullWidth
                         onClick={handleValidateSchedules}
-                        disabled={!semesterIndex}
+                        disabled={!semesterIndex || pickedUpSubject}
                         variant="contained"
                         color="warning"
                     >
@@ -550,7 +650,7 @@ function TimeTable() {
                         size="small"
                         fullWidth
                         onClick={handleClearDepartmentSchedule}
-                        disabled={!semesterIndex}
+                        disabled={!semesterIndex || pickedUpSubject}
                         variant="contained"
                         color="error"
                     >
@@ -561,12 +661,23 @@ function TimeTable() {
                         size="small"
                         fullWidth
                         onClick={handleClearClassSchedule}
-                        disabled={!semesterIndex}
+                        disabled={!semesterIndex || pickedUpSubject}
                         variant="outlined"
                         color="error"
                     >
                         Clear Section Semester Schedule
                     </Button>
+
+                    {pickedUpSubject ? <Button
+                        size="small"
+                        fullWidth
+                        onClick={handleCancelPickupSubject}
+                        disabled={!pickedUpSubject}
+                        variant="contained"
+                        color="primary"
+                    >
+                        Cancel Move
+                    </Button> : null}
                 </Box>
             </div>
 
