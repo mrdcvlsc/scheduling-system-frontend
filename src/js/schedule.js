@@ -315,3 +315,27 @@ export async function getSchedGenStatus(semesterIndex, departmentID) {
 
   return await response.json()
 }
+
+export async function fetchSubjectTimeSlotMoveAvailability(subject_json, department_id, selected_semester, curriculum_id, year_level_idx, section_idx) {
+  let api_request = `/v2/available_subject_moves?department_id=${department_id}&semester=${selected_semester}&curriculum_id=${curriculum_id}&year_level_idx=${year_level_idx}&section_idx=${section_idx}`
+
+  if (DEV) {
+    console.log('call: fetchSubjectTimeSlotMoveAvailability')
+    api_request = `${base_url}/v2/available_subject_moves?department_id=${department_id}&semester=${selected_semester}&curriculum_id=${curriculum_id}&year_level_idx=${year_level_idx}&section_idx=${section_idx}`
+  }
+
+  const response = await fetch(api_request, {
+    headers: {
+      Accept: "text/plain",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(subject_json),
+    method: 'POST'
+  });
+
+  if (!response.ok) {
+    throw Error(`${response.status} : ${await response.text()}`);
+  }
+
+  return await response.json();
+}

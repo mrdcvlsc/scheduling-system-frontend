@@ -8,7 +8,7 @@ import "./TimeTable.css";
 import "./TimeTableDropdowns.css";
 
 import { fetchAllDepartments, fetchDepartmentCurriculumsData } from "../js/departments"
-import { deserializeSchedule, fetchClassJsonSchedule, fetchSerializedClassSchedule, generateSchedule, getValidateSchedules, deleteClearDepartmentSchedule, deleteClearSectionSchedule, getSchedGenStatus } from "../js/schedule"
+import { deserializeSchedule, fetchClassJsonSchedule, fetchSubjectTimeSlotMoveAvailability, fetchSerializedClassSchedule, generateSchedule, getValidateSchedules, deleteClearDepartmentSchedule, deleteClearSectionSchedule, getSchedGenStatus } from "../js/schedule"
 
 import { generateTimeSlotRowLabels } from "../js/week-time-table-grid-functions";
 import { MainHeader } from "../components/Header";
@@ -116,6 +116,7 @@ function TimeTable() {
         setSectionIndex("");
         setClassAssignedSubjects([]);
         setPickedUpSubject(null);
+        setAvailableSubjectTimeSlotMove(null)
         setSchedGenStatus(null);
 
         // clear any old polling loop
@@ -138,6 +139,7 @@ function TimeTable() {
         setSectionIndex("");
         setClassAssignedSubjects([]);
         setPickedUpSubject(null);
+        setAvailableSubjectTimeSlotMove(null)
 
         // clear any old polling loop
         if (intervalRef.current) {
@@ -174,6 +176,7 @@ function TimeTable() {
         setSectionIndex("");
         setClassAssignedSubjects([]);
         setPickedUpSubject(null);
+        setAvailableSubjectTimeSlotMove(null)
 
         // clear any old polling loop
         if (intervalRef.current) {
@@ -188,6 +191,7 @@ function TimeTable() {
         setSectionIndex("");
         setClassAssignedSubjects([]);
         setPickedUpSubject(null);
+        setAvailableSubjectTimeSlotMove(null)
 
         // clear any old polling loop
         if (intervalRef.current) {
@@ -202,6 +206,7 @@ function TimeTable() {
         const newSection = event.target.value;
         setSectionIndex(newSection);
         setPickedUpSubject(null);
+        setAvailableSubjectTimeSlotMove(null)
 
         // clear any old polling loop
         if (intervalRef.current) {
@@ -292,6 +297,7 @@ function TimeTable() {
 
             setClassAssignedSubjects([]);
             setPickedUpSubject(null);
+            setAvailableSubjectTimeSlotMove(null)
 
             setPopupOptions({
                 Heading: "Cleared Department Schedule",
@@ -324,6 +330,7 @@ function TimeTable() {
 
             setClassAssignedSubjects([]);
             setPickedUpSubject(null);
+            setAvailableSubjectTimeSlotMove(null)
 
             setPopupOptions({
                 Heading: "Cleared Section Schedule",
@@ -409,7 +416,32 @@ function TimeTable() {
     //                              COMPONENT UI CODE
     /////////////////////////////////////////////////////////////////////////////////
 
-    const handlePickupSubject = (picked_up_subject) => {
+    const [availableSubjectTimeSlotMove, setAvailableSubjectTimeSlotMove] = useState(null);
+
+    const handlePickupSubject = async (picked_up_subject) => {
+
+        try {
+            const subject_move_time_slot_availability = await fetchSubjectTimeSlotMoveAvailability(
+                picked_up_subject,
+                departmentID,
+                semesterIndex,
+                departmentCurriculumsData[curriculumIndex].CurriculumID,
+                yearLevelIndex,
+                sectionIndex
+            );
+
+            console.log('subject_move_time_slot_availability : ', subject_move_time_slot_availability)
+            setAvailableSubjectTimeSlotMove(subject_move_time_slot_availability)
+        } catch (err) {
+            setPopupOptions({
+                Heading: "Time Slot Availability Check Unavailable",
+                HeadingStyle: { background: "red", color: "white" },
+                Message: `${err}`
+            });
+
+            return
+        }
+
 
         let current_assigned_subjects = structuredClone(classAssignedSubjects);
         let current_picked_up_subject = structuredClone(pickedUpSubject);
@@ -448,6 +480,7 @@ function TimeTable() {
         if (pickedUpSubject) {
             new_assigned_subjects.push(pickedUpSubject)
             setPickedUpSubject(null);
+            setAvailableSubjectTimeSlotMove(null)
         }
 
         setClassAssignedSubjects(new_assigned_subjects);
@@ -615,6 +648,12 @@ function TimeTable() {
                                         const has_hit_subject_in_col = day_idx == subject.DayIdx;
                                         return has_hit_subject_in_row && has_hit_subject_in_col;
                                     });
+
+                                    if (availableSubjectTimeSlotMove) {
+                                        if (availableSubjectTimeSlotMove[day_idx][row_idx]) {
+                                            return <td key={day_idx} className="empty-slot free-move-slot"></td>;
+                                        }
+                                    }
 
                                     return is_occupied ? null : <td key={day_idx} className="empty-slot"></td>;
                                 })}
