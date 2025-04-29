@@ -8,7 +8,7 @@ import "./TimeTable.css";
 import "./TimeTableDropdowns.css";
 
 import { fetchAllDepartments, fetchDepartmentCurriculumsData } from "../js/departments"
-import { deserializeSchedule, fetchClassJsonSchedule, fetchSubjectTimeSlotMoveAvailability, fetchSerializedClassSchedule, generateSchedule, getValidateSchedules, deleteClearDepartmentSchedule, deleteClearSectionSchedule, getSchedGenStatus } from "../js/schedule"
+import { deserializeSchedule, fetchClassJsonSchedule, fetchSubjectTimeSlotMoveAvailability, fetchSubjectTimeSlotMove, fetchSerializedClassSchedule, generateSchedule, getValidateSchedules, deleteClearDepartmentSchedule, deleteClearSectionSchedule, getSchedGenStatus } from "../js/schedule"
 
 import { generateTimeSlotRowLabels } from "../js/week-time-table-grid-functions";
 import { MainHeader } from "../components/Header";
@@ -486,6 +486,78 @@ function TimeTable() {
         setClassAssignedSubjects(new_assigned_subjects);
     }
 
+    const handleDropPickedUpSubject = async (selected_day, selected_time_slot) => {
+        if (!pickedUpSubject) {
+            console.log('nothing to move')
+            return;
+        }
+
+        if (!availableSubjectTimeSlotMove) {
+            setPopupOptions({
+                Heading: "Time Slot Move Error",
+                HeadingStyle: { background: "red", color: "white" },
+                Message: `time slot availability array not found`
+            });
+            return;
+        }
+
+        let is_movable = true;
+        let total_free_time_slots = 0
+
+        for (let i = 0; i < pickedUpSubject.SubjectTimeSlots; i++) {
+            if (!availableSubjectTimeSlotMove[selected_day][selected_time_slot + i]) {
+                is_movable = false;
+                break;
+            }
+
+            total_free_time_slots++
+        }
+
+        if (!is_movable) {
+            setPopupOptions({
+                Heading: "Move Not Allowed",
+                HeadingStyle: { background: "red", color: "white" },
+                Message: `the subject to be move has a total of ${pickedUpSubject.SubjectTimeSlots} time slots, while the selected time slot only have ${total_free_time_slots} free time slots from the starting and preceding time slots`
+            });
+            return;
+        }
+
+        const movedSubject = structuredClone(pickedUpSubject)
+        movedSubject.DayIdx = Number(selected_day)
+        movedSubject.TimeSlotIdx = Number(selected_time_slot)
+
+        try {
+            const msg = await fetchSubjectTimeSlotMove(
+                movedSubject,
+                departmentID,
+                semesterIndex,
+                departmentCurriculumsData[curriculumIndex].CurriculumID,
+                yearLevelIndex,
+                sectionIndex
+            );
+
+            setPopupOptions({
+                Heading: "Time Slot Move Success",
+                HeadingStyle: { background: "green", color: "white" },
+                Message: msg
+            });
+
+            const newClassAssignedSubject = structuredClone(classAssignedSubjects)
+            newClassAssignedSubject.push(movedSubject)
+
+            setClassAssignedSubjects(newClassAssignedSubject);
+            setPickedUpSubject(null);
+            setAvailableSubjectTimeSlotMove(null)
+        } catch (err) {
+            setPopupOptions({
+                Heading: "Time Slot Move Error",
+                HeadingStyle: { background: "red", color: "white" },
+                Message: `${err}`
+            });
+            return;
+        }
+    }
+
     const [position, setPosition] = useState({ x: 0, y: 0 });
 
     useEffect(() => {
@@ -651,7 +723,11 @@ function TimeTable() {
 
                                     if (availableSubjectTimeSlotMove) {
                                         if (availableSubjectTimeSlotMove[day_idx][row_idx]) {
-                                            return <td key={day_idx} className="empty-slot free-move-slot"></td>;
+                                            return <td
+                                                key={day_idx}
+                                                className="empty-slot free-move-slot"
+                                                onClick={() => handleDropPickedUpSubject(day_idx, row_idx)}
+                                            ></td>;
                                         }
                                     }
 
