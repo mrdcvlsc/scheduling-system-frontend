@@ -203,6 +203,8 @@ function TimeTable() {
     const intervalRef = useRef(null);
 
     const handleSectionChange = async (event) => {
+        setIsLoading(true);
+
         const newSection = event.target.value;
         setSectionIndex(newSection);
         setPickedUpSubject(null);
@@ -214,7 +216,10 @@ function TimeTable() {
             intervalRef.current = null;
         }
 
-        if (!newSection) return;
+        if (!newSection) {
+            setIsLoading(false);
+            return;
+        }
 
         // fetch initial status & load once
         const initialStatus = await getSchedGenStatus(semesterIndex, departmentID);
@@ -237,6 +242,8 @@ function TimeTable() {
                 }
             }, 1_357);
         }
+
+        setIsLoading(false);
     };
 
     // make sure we also clear when the component unmounts
@@ -419,6 +426,7 @@ function TimeTable() {
     const [availableSubjectTimeSlotMove, setAvailableSubjectTimeSlotMove] = useState(null);
 
     const handlePickupSubject = async (picked_up_subject) => {
+        setIsLoading(true);
 
         try {
             const subject_move_time_slot_availability = await fetchSubjectTimeSlotMoveAvailability(
@@ -439,6 +447,7 @@ function TimeTable() {
                 Message: `${err}`
             });
 
+            setIsLoading(false);
             return
         }
 
@@ -472,6 +481,8 @@ function TimeTable() {
 
         console.log('picked up subject: ', current_picked_up_subject);
         console.log('new assigned subject: ', new_assigned_subjects);
+
+        setIsLoading(false);
     }
 
     const handleCancelPickupSubject = () => {
@@ -487,8 +498,11 @@ function TimeTable() {
     }
 
     const handleDropPickedUpSubject = async (selected_day, selected_time_slot) => {
+        setIsLoading(true);
+
         if (!pickedUpSubject) {
             console.log('nothing to move')
+            setIsLoading(false);
             return;
         }
 
@@ -498,6 +512,7 @@ function TimeTable() {
                 HeadingStyle: { background: "red", color: "white" },
                 Message: `time slot availability array not found`
             });
+            setIsLoading(false);
             return;
         }
 
@@ -519,6 +534,7 @@ function TimeTable() {
                 HeadingStyle: { background: "red", color: "white" },
                 Message: `the subject to be move has a total of ${pickedUpSubject.SubjectTimeSlots} time slots, while the selected time slot only have ${total_free_time_slots} free time slots from the starting and preceding time slots`
             });
+            setIsLoading(false);
             return;
         }
 
@@ -554,8 +570,11 @@ function TimeTable() {
                 HeadingStyle: { background: "red", color: "white" },
                 Message: `${err}`
             });
+            setIsLoading(false);
             return;
         }
+
+        setIsLoading(false);
     }
 
     const [position, setPosition] = useState({ x: 0, y: 0 });
