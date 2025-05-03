@@ -47,6 +47,10 @@
     width: 14.2857%;
 }
 
+.subject-cell:hover {
+    cursor: grab;
+}
+
 /* .subject-content {
     padding: 0.2em;
 } */
@@ -58,7 +62,12 @@
 }
 
 .free-move-slot {
-    background-color: greenyellow;
+    background-color: rgb(143, 239, 0);
+}
+
+.free-move-slot:hover {
+    background-color: rgb(59, 197, 0);
+    cursor: pointer;
 }
 
 /* ========== Subject colors ========== */
