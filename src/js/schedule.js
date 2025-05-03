@@ -363,3 +363,25 @@ export async function fetchSubjectTimeSlotMove(subject_json, department_id, sele
 
   return await response.text();
 }
+
+export async function fetchResourceEstimates(department_id, selected_semester) {
+  let api_request = `/v2/estimate_resources?department_id=${department_id}&semester=${selected_semester}`
+
+  if (DEV) {
+    console.log('call: fetchResourceEstimates')
+    api_request = `${base_url}/v2/estimate_resources?department_id=${department_id}&semester=${selected_semester}`
+  }
+
+  const response = await fetch(api_request, {
+    headers: {
+      Accept: "text/plain",
+    },
+    method: 'GET'
+  });
+
+  if (!response.ok) {
+    throw Error(`${response.status} : ${await response.text()}`);
+  }
+
+  return await response.text()
+}

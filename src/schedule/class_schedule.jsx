@@ -8,7 +8,7 @@ import "./TimeTable.css";
 import "./TimeTableDropdowns.css";
 
 import { fetchAllDepartments, fetchDepartmentCurriculumsData } from "../js/departments"
-import { deserializeSchedule, fetchClassJsonSchedule, fetchSubjectTimeSlotMoveAvailability, fetchSubjectTimeSlotMove, fetchSerializedClassSchedule, generateSchedule, getValidateSchedules, deleteClearDepartmentSchedule, deleteClearSectionSchedule, getSchedGenStatus } from "../js/schedule"
+import { deserializeSchedule, fetchClassJsonSchedule, fetchSubjectTimeSlotMoveAvailability, fetchSubjectTimeSlotMove, fetchResourceEstimates, fetchSerializedClassSchedule, generateSchedule, getValidateSchedules, deleteClearDepartmentSchedule, deleteClearSectionSchedule, getSchedGenStatus } from "../js/schedule"
 
 import { generateTimeSlotRowLabels } from "../js/week-time-table-grid-functions";
 import { MainHeader } from "../components/Header";
@@ -65,6 +65,8 @@ function TimeTable() {
     //                       PAGE LOAD PROCESS
     /////////////////////////////////////////////////////////////////////////////////
 
+    const [resourceEstimates, setResourceEstimates] = useState("")
+
     useEffect(() => {
 
         // TODO: fetch basic const values (data below is just temporary);
@@ -119,6 +121,8 @@ function TimeTable() {
         setAvailableSubjectTimeSlotMove(null)
         setSchedGenStatus(null);
 
+        setResourceEstimates("")
+
         // clear any old polling loop
         if (intervalRef.current) {
             clearInterval(intervalRef.current);
@@ -155,6 +159,9 @@ function TimeTable() {
 
                 const sched_gen_status = await getSchedGenStatus(event.target.value, departmentID);
                 setSchedGenStatus(sched_gen_status);
+
+                const resource_estimate_msg = await fetchResourceEstimates(departmentID, event.target.value)
+                setResourceEstimates(resource_estimate_msg)
 
                 setIsLoading(false);
             } catch (err) {
@@ -205,6 +212,8 @@ function TimeTable() {
     const handleSectionChange = async (event) => {
         setIsLoading(true);
 
+        try {
+            
         const newSection = event.target.value;
         setSectionIndex(newSection);
         setPickedUpSubject(null);
@@ -241,6 +250,17 @@ function TimeTable() {
                     }
                 }
             }, 1_357);
+        }
+
+        const resource_estimate_msg = await fetchResourceEstimates(departmentID, event.target.value)
+        setResourceEstimates(resource_estimate_msg)
+
+        } catch (err) {
+            setPopupOptions({
+                Heading: "Error Retrieving Section Schedule",
+                HeadingStyle: { background: "red", color: "white" },
+                Message: `${err}`
+            });
         }
 
         setIsLoading(false);
@@ -816,12 +836,20 @@ function TimeTable() {
             </div>
 
             {schedGenStatus ?
-                <Box padding={1}>
+                <Box padding={2}>
                     <Typography variant="h6" style={{ color: 'green', textAlign: 'center' }}>
                         {schedGenStatus.Status}
                     </Typography>
                     <Typography variant="body2" style={{ color: 'black', textAlign: 'center' }}>
                         {schedGenStatus.Message}
+                    </Typography>
+                </Box>
+                : null}
+
+            {resourceEstimates ?
+                <Box padding={2}>
+                    <Typography variant="body1" style={{ color: 'black', textAlign: 'center' }}>
+                        {resourceEstimates}
                     </Typography>
                 </Box>
                 : null}
