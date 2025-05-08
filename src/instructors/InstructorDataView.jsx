@@ -28,6 +28,7 @@ export default function InstructorDataView({
     mode, setMode,
     onInstructorDataViewClose,
     reloadInstructorsTable,
+    departments,
 }) {
     const [subjectColors, setSubjectColors] = useState({});
 
@@ -616,7 +617,32 @@ export default function InstructorDataView({
                         </>
                     ) : <p>green btn error: unknown mode</p>))}
                 </Box>
-                <Typography variant="body2" fontStyle={'italic'}>{`${selectedDepartment.Name}`}</Typography>
+                
+                {mode === "edit" ?
+                    <FormControl sx={{ width: 130 }} size="small" fullWidth>
+                        <InputLabel id="label-id-edit-department">Department</InputLabel>
+                        <Select
+                            id="id-edit-department" labelId="label-id-edit-department" label="Department"
+                            defaultValue={selectedInstructor?.DepartmentID}
+                            onChange={(e) => {
+                                selectedInstructor.DepartmentID = Number(e.target.value)
+                            }}
+                        >
+                            {departments ?
+                                departments.map((department, index) => {
+                                    if (selectedInstructor?.DepartmentID > 0) {
+                                        return <MenuItem key={index} value={department.DepartmentID}>{`${department.Code} - ${department.Name}`}</MenuItem>
+                                    }
+
+                                    return null
+                                }) : null
+                            }
+                        </Select>
+                    </FormControl>
+                    : <Typography align='right' width={'100%'} variant='body1' fontStyle={'italic'}>
+                        {departments.find(dept => dept.DepartmentID == selectedInstructor?.DepartmentID)?.Name || 'Department not found'}
+                    </Typography>
+                }
             </Box>
 
         </Box>

@@ -377,6 +377,7 @@ function InstructorPage() {
             reloadInstructorsTable={async () => {
                 await load_instructors(departmentID, pageSize, page, firstNameMatch, middleInitialMatch, lastNameMatch)
             }}
+            departments={departments}
         />}
     </>);
 }
