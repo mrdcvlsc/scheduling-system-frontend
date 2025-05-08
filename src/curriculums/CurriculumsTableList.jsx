@@ -320,6 +320,8 @@ function CurriculumsTableList() {
             reloadList={async () => {
                 await load_curriculums(pageSize, page, departmentID, codeMatch, nameMatch);
             }}
+
+            allDepartment={allDepartment}
         /> : null}
     </>);
 }

@@ -21,7 +21,11 @@ import {
     DialogContentText,
     ListItem,
     Chip,
-    Tooltip
+    Tooltip,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
@@ -59,6 +63,7 @@ function CurriculumView({
     onClose,
     popupOptions, setPopupOptions,
     reloadList,
+    allDepartment,
 }) {
     const [isLoading, setIsLoading] = useState(false)
 
@@ -267,7 +272,34 @@ function CurriculumView({
                         }}
                     />)
                 }
-                <Typography align='right' width={'100%'} variant='body1' fontStyle={'italic'}>{`${department?.Name}`}</Typography>
+
+                {mode === "edit" ?
+                    <FormControl sx={{ width: 130 }} size="small" fullWidth>
+                        <InputLabel id="label-id-edit-department">Department</InputLabel>
+                        <Select
+                            id="id-edit-department" labelId="label-id-edit-department" label="Department"
+                            defaultValue={department?.DepartmentID}
+                            onChange={(e) => {
+                                let new_edit_curriculum = editedCurriculum
+                                new_edit_curriculum.DepartmentID = Number(e.target.value)
+                                setEditedCurriculum(new_edit_curriculum)
+                            }}
+                        >
+                            {allDepartment ?
+                                allDepartment.map((department, index) => {
+                                    if (department?.DepartmentID > 0) {
+                                        return <MenuItem key={index} value={department.DepartmentID}>{`${department.Code} - ${department.Name}`}</MenuItem>
+                                    }
+                                    
+                                    return null
+                                }) : null
+                            }
+                        </Select>
+                    </FormControl>
+                    : <Typography align='right' width={'100%'} variant='body1' fontStyle={'italic'}>
+                        {allDepartment.find(dept => dept.DepartmentID == curriculum?.DepartmentID)?.Name || 'Department not found'}
+                    </Typography>
+                }
             </Box>
 
             <Box>
