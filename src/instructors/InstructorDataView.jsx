@@ -617,7 +617,7 @@ export default function InstructorDataView({
                         </>
                     ) : <p>green btn error: unknown mode</p>))}
                 </Box>
-                
+
                 {mode === "edit" ?
                     <FormControl sx={{ width: 130 }} size="small" fullWidth>
                         <InputLabel id="label-id-edit-department">Department</InputLabel>
@@ -625,16 +625,18 @@ export default function InstructorDataView({
                             id="id-edit-department" labelId="label-id-edit-department" label="Department"
                             defaultValue={selectedInstructor?.DepartmentID}
                             onChange={(e) => {
+                                console.log('change department : ', departments)
                                 selectedInstructor.DepartmentID = Number(e.target.value)
+                            }}
+
+                            onClick={() => {
+                                console.log('change department : ', departments)
+                                console.log('instructor : ', selectedInstructor)
                             }}
                         >
                             {departments ?
                                 departments.map((department, index) => {
-                                    if (selectedInstructor?.DepartmentID > 0) {
-                                        return <MenuItem key={index} value={department.DepartmentID}>{`${department.Code} - ${department.Name}`}</MenuItem>
-                                    }
-
-                                    return null
+                                    return <MenuItem key={index} value={department.DepartmentID}>{`${department.Code} - ${department.Name}`}</MenuItem>
                                 }) : null
                             }
                         </Select>

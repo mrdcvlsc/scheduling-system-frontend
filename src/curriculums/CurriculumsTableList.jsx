@@ -125,7 +125,7 @@ function CurriculumsTableList() {
     const [curriculumBasicInfo, setCurriculumBasicInfo] = useState(null)
 
     return (<>
-        <MainHeader pageName={'curriculums'}/>
+        <MainHeader pageName={'curriculums'} />
 
         <Popup popupOptions={popupOptions} closeButtonActionHandler={() => setPopupOptions(null)} />
 
@@ -148,11 +148,14 @@ function CurriculumsTableList() {
                                 }
                             }}
                         >
-                            <MenuItem value=""><em>none</em></MenuItem>
                             {allDepartment ?
-                                allDepartment.map((department, index) => (
-                                    <MenuItem key={index} value={department.DepartmentID}>{`${department.Code} - ${department.Name}`}</MenuItem>
-                                )) : null
+                                allDepartment.map((department, index) => {
+                                    if (department.DepartmentID > 0) {
+                                        return <MenuItem key={index} value={department.DepartmentID}>{`${department.Code} - ${department.Name}`}</MenuItem>
+                                    }
+
+                                    return null
+                                }) : null
                             }
                         </Select>
                     </FormControl>
