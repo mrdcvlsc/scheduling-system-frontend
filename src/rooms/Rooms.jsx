@@ -157,7 +157,7 @@ function Rooms() {
     const [department, setDepartment] = useState("")
 
     return (<>
-        <MainHeader pageName={'rooms'}/>
+        <MainHeader pageName={'rooms'} />
 
         <Popup popupOptions={popupOptions} closeButtonActionHandler={() => {
             setPopupOptions(null);
@@ -187,7 +187,6 @@ function Rooms() {
                             await load_rooms(department_id, pageSize, page)
                         }}
                     >
-                        <MenuItem value=""><em>none</em></MenuItem>
                         {departmentList ?
                             departmentList.map((department_iter, index) => (
                                 <MenuItem key={index} value={department_iter.DepartmentID}>{`${department_iter.Code}`}</MenuItem>
@@ -352,7 +351,7 @@ function Rooms() {
                         const formData = new FormData(event.currentTarget);
                         const formJson = Object.fromEntries(formData.entries());
 
-                        formJson.DepartmentID = departmentID
+                        formJson.DepartmentID = Number(formJson.DepartmentID)
                         formJson.Capacity = Number(formJson.Capacity)
                         formJson.RoomType = Number(formJson.RoomType)
 
@@ -459,6 +458,34 @@ function Rooms() {
                             ROOM_TYPES.map((room_type, index) => (
                                 <MenuItem key={index} value={room_type}>{`${RoomTypeName(room_type)}`}</MenuItem>
                             )) : null
+                        }
+                    </Select>
+                </FormControl>
+
+                <FormControl
+                    fullWidth
+                    margin="dense"
+                >
+                    <InputLabel id="label-id-edit-department">Department</InputLabel>
+                    <Select
+                        onFocus={false}
+                        required
+                        variant="standard"
+                        name="DepartmentID"
+                        label="DepartmentID"
+                        id="id-edit-department" labelId="label-id-edit-department"
+                        value={Number.isInteger(room?.DepartmentID) ? room?.DepartmentID : ""}
+                        onChange={(e) => {
+                            const new_room = structuredClone(room)
+                            console.log('e.target.value =', e.target.value)
+                            new_room.DepartmentID = e.target.value
+                            setRoom(new_room)
+                        }}
+                    >
+                        {departmentList ?
+                            departmentList.map((department, index) => {
+                                return <MenuItem key={index} value={department.DepartmentID}>{`${department.Code} - ${department.Name}`}</MenuItem>
+                            }) : null
                         }
                     </Select>
                 </FormControl>
