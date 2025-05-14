@@ -213,43 +213,43 @@ function TimeTable() {
         setIsLoading(true);
 
         try {
-        const newSection = event.target.value;
-        setSectionIndex(newSection);
-        setPickedUpSubject(null);
-        setAvailableSubjectTimeSlotMove(null)
+            const newSection = event.target.value;
+            setSectionIndex(newSection);
+            setPickedUpSubject(null);
+            setAvailableSubjectTimeSlotMove(null)
 
-        // clear any old polling loop
-        if (intervalRef.current) {
-            clearInterval(intervalRef.current);
-            intervalRef.current = null;
-        }
+            // clear any old polling loop
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+                intervalRef.current = null;
+            }
 
-        if (!newSection) {
-            setIsLoading(false);
-            return;
-        }
+            if (!newSection) {
+                setIsLoading(false);
+                return;
+            }
 
-        // fetch initial status & load once
-        const initialStatus = await getSchedGenStatus(semesterIndex, departmentID);
-        setSchedGenStatus(initialStatus);
-        await load_schedule(newSection);
+            // fetch initial status & load once
+            const initialStatus = await getSchedGenStatus(semesterIndex, departmentID);
+            setSchedGenStatus(initialStatus);
+            await load_schedule(newSection);
 
-        // if it’s still "in progress" or "queued" start up a new loop
-        if (["in progress", "on queue"].includes(initialStatus.Status)) {
-            intervalRef.current = window.setInterval(async () => {
-                const currentStatus = await getSchedGenStatus(semesterIndex, departmentID);
-                setSchedGenStatus(currentStatus);
+            // if it’s still "in progress" or "queued" start up a new loop
+            if (["in progress", "on queue"].includes(initialStatus.Status)) {
+                intervalRef.current = window.setInterval(async () => {
+                    const currentStatus = await getSchedGenStatus(semesterIndex, departmentID);
+                    setSchedGenStatus(currentStatus);
 
-                if (["in progress", "on queue"].includes(currentStatus.Status)) {
-                    await load_schedule(newSection);
-                } else {
-                    if (intervalRef.current) {
-                        clearInterval(intervalRef.current);
-                        intervalRef.current = null;
+                    if (["in progress", "on queue"].includes(currentStatus.Status)) {
+                        await load_schedule(newSection);
+                    } else {
+                        if (intervalRef.current) {
+                            clearInterval(intervalRef.current);
+                            intervalRef.current = null;
+                        }
                     }
-                }
-            }, 1_357);
-        }
+                }, 1_357);
+            }
         } catch (err) {
             setPopupOptions({
                 Heading: "Error Retrieving Section Schedule",
