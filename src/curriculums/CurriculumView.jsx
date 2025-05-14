@@ -44,6 +44,7 @@ import { Loading, Popup } from "../components/Loading";
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { CheckBox } from '@mui/icons-material';
 import SubjectSelection from './SubjectSelection';
+import InstructorSelection from './InstructorSelection';
 
 const truncateText = (text, maxLength) => {
     if (text.length > maxLength) {
@@ -125,7 +126,6 @@ function CurriculumView({
 
     const [yearSemSubjectTarget, setYearSemSubjectTarget] = useState(null)
 
-    const designatedInstructorsRef = useRef(null);
     const [chipInstructors, setChipInstructors] = useState([]);
 
     return (<>
@@ -207,6 +207,7 @@ function CurriculumView({
                             endIcon={<CancelIcon />} size="small" color="error" variant="outlined"
                             onClick={() => {
                                 setMode("view")
+                                setCurriculum(curriculum)
                                 setEditedCurriculum(structuredClone(curriculum))
                             }}
                         >
@@ -290,7 +291,7 @@ function CurriculumView({
                                     if (department?.DepartmentID > 0) {
                                         return <MenuItem key={index} value={department.DepartmentID}>{`${department.Code} - ${department.Name}`}</MenuItem>
                                     }
-                                    
+
                                     return null
                                 }) : null
                             }
@@ -493,6 +494,12 @@ function CurriculumView({
                                                         onClick={async () => {
                                                             setSubject(subject);
 
+                                                            setYearSemSubjectTarget({
+                                                                index_year_level: index_year_level,
+                                                                index_semester: index_semester,
+                                                                subject_index: index_subject,
+                                                            })
+
                                                             try {
                                                                 console.log('modify subject')
                                                                 const new_instructors = []
@@ -533,7 +540,7 @@ function CurriculumView({
                                                         onClick={() => {
                                                             setIsLoading(true)
                                                             semester?.Subjects.splice(index_subject, 1)
-                                                            setCurriculum(structuredClone(editedCurriculum))
+                                                            setEditedCurriculum(structuredClone(editedCurriculum))
                                                             setIsLoading(false)
                                                         }}
                                                     >
@@ -639,50 +646,13 @@ function CurriculumView({
                                 subject.LecHours = parseInt(formJson.ModifySubjectDialogForm_LecHours, 10)
                                 subject.LabHours = parseInt(formJson.ModifySubjectDialogForm_LabHours, 10)
 
-                                let designated_instructors = formJson.ModifySubjectDialogForm_DesignatedInstructorsID
-                                let conv_array = null
+                                const new_designated_instructor_ids = []
 
-                                console.log('if here test debug msg 1')
-
-                                if (designated_instructors) {
-                                    if (/^[\d,\s]*$/.test(designated_instructors)) {
-                                        conv_array = designated_instructors.split(",").map(num => Number(num.trim()));
-                                    } else {
-                                        throw new Error('Invalid designated instructor IDs detected, the only allowed characters are numbers, spaces, and commas')
-                                    }
+                                for (let i = 0; i < chipInstructors?.length; i++) {
+                                    new_designated_instructor_ids.push(parseInt(chipInstructors[i].InstructorID, 10))
                                 }
 
-                                console.log('if here test debug msg 2')
-
-                                if (conv_array?.length !== 0) {
-                                    const seen = new Set();
-                                    const new_instructors = []
-
-                                    console.log('if here test debug msg 4', conv_array)
-
-                                    if (conv_array) {
-                                        for (let num of conv_array) {
-                                            if (seen.has(num)) {
-                                                throw new Error('Detected repeating instructor IDs in designated instructors')
-                                            }
-
-                                            seen.add(num);
-                                        }
-
-                                        console.log('if here test debug msg 3')
-
-                                        for (let num of conv_array) {
-                                            const instructor_basic_info = await fetchInstructorBasic(num);
-                                            new_instructors.push({
-                                                InstructorID: instructor_basic_info.InstructorID,
-                                                Name: `${instructor_basic_info.FirstName} ${instructor_basic_info.MiddleInitial}. ${instructor_basic_info.LastName}`
-                                            })
-                                        }
-                                    }
-
-                                    setChipInstructors(new_instructors);
-                                    subject.DesignatedInstructorsID = conv_array;
-                                }
+                                subject.DesignatedInstructorsID = new_designated_instructor_ids;
 
                                 console.log('if here test debug msg 5')
 
@@ -734,87 +704,30 @@ function CurriculumView({
 
                     <Box marginTop={'1em'} display={'flex'} flexDirection={'column'} gap={1}>
                         <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
-                            <Typography variant='caption'>Add one or more ID number(s) of the instructor you want to assign to this subject (separated by comma if many):</Typography>
-                            <Button size='small' variant='contained' color='secondary'
-                                onClick={async () => {
-                                    setIsLoading(true);
-
-                                    try {
-                                        console.log('verify subjects')
-                                        const designated_instructors = designatedInstructorsRef.current.value;
-                                        let conv_array = null
-
-                                        if (designated_instructors) {
-                                            if (/^[\d,\s]*$/.test(designated_instructors)) {
-                                                conv_array = designated_instructors.split(",").map(num => Number(num.trim()));
-                                            } else {
-                                                throw new Error('Invalid designated instructor IDs detected, the only allowed characters are numbers, spaces, and commas')
-                                            }
-                                        }
-
-                                        if (conv_array?.length !== 0) {
-                                            const seen = new Set();
-                                            const new_instructors = []
-
-                                            for (let num of conv_array) {
-                                                if (seen.has(num)) {
-                                                    throw new Error('Detected repeating instructor IDs in designated instructors')
-                                                }
-
-                                                seen.add(num);
-                                            }
-
-                                            for (let num of conv_array) {
-                                                const instructor_basic_info = await fetchInstructorBasic(num);
-                                                new_instructors.push({
-                                                    InstructorID: instructor_basic_info.InstructorID,
-                                                    Name: `${instructor_basic_info.FirstName} ${instructor_basic_info.MiddleInitial}. ${instructor_basic_info.LastName}`
-                                                })
-                                            }
-
-                                            setChipInstructors(new_instructors);
-                                            subject.DesignatedInstructorsID = conv_array;
-                                        }
-
-
-                                        let updated_curriculum = structuredClone(editedCurriculum);
-                                        setEditedCurriculum(updated_curriculum);
-                                    } catch (err) {
-                                        setPopupOptions({
-                                            Heading: "Read Subject Error",
-                                            HeadingStyle: { background: "yellow", color: "black" },
-                                            Message: `${err}`,
-                                        });
-                                    }
-
-                                    setIsLoading(false);
-                                }}
-                            >
-                                Verify IDs
-                            </Button>
+                            <Typography variant='caption'>Add one or more instructor(s) you want to assign to this subject</Typography>
                         </Box>
-
-                        <TextField
-                            autoFocus
-                            id="ModifySubjectDialogForm_DesignatedInstructorsID"
-                            name="ModifySubjectDialogForm_DesignatedInstructorsID"
-                            label="Designated Instructor ID(s)"
-                            type="text"
-                            variant="outlined"
-                            size='small'
-                            sx={{ width: '100%' }}
-                            defaultValue={subject?.DesignatedInstructorsID?.join(", ") || ""}
-                            inputRef={designatedInstructorsRef}
-                        />
-
-                        <Box display={'flex'} gap={1} padding={'0.3em'}>{chipInstructors.map((instructor) => (
+                        <Box display={'flex'} flexWrap={'wrap'} gap={1} padding={'0.3em'}>{chipInstructors.map((instructor) => (
                             <Chip
                                 key={`chip-key-${instructor.InstructorID}`}
                                 label={`${instructor.InstructorID} | ${instructor.Name}`}
+                                onDelete={() => {
+                                    setChipInstructors(
+                                        chipInstructors.filter(iter_instructor => iter_instructor?.InstructorID != instructor?.InstructorID)
+                                    ) 
+                                }}
                             />
                         ))}
                         </Box>
                     </Box>
+
+                    <InstructorSelection
+                        open={true}
+                        curriculum={editedCurriculum}
+                        setEditedCurriculum={setEditedCurriculum}
+                        yearSemSubjectTarget={yearSemSubjectTarget}
+                        chipInstructors={chipInstructors}
+                        setChipInstructors={setChipInstructors}
+                    />
                 </DialogContent>
                 <DialogActions>
                     <Button type="submit">Save Subject</Button>
