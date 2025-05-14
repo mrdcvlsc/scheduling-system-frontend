@@ -213,7 +213,6 @@ function TimeTable() {
         setIsLoading(true);
 
         try {
-            
         const newSection = event.target.value;
         setSectionIndex(newSection);
         setPickedUpSubject(null);
@@ -251,10 +250,6 @@ function TimeTable() {
                 }
             }, 1_357);
         }
-
-        const resource_estimate_msg = await fetchResourceEstimates(departmentID, event.target.value)
-        setResourceEstimates(resource_estimate_msg)
-
         } catch (err) {
             setPopupOptions({
                 Heading: "Error Retrieving Section Schedule",
