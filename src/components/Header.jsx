@@ -1,4 +1,4 @@
-import { StrictMode, useState } from 'react'
+import { StrictMode, useEffect, useState } from 'react'
 
 import { AppBar, Box, Container, Link, Toolbar, Typography } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
@@ -10,27 +10,40 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
+import { fetchWho } from '../js/departments.js'
+
+import Identicon from 'identicon.js';
+import { DEV } from '../js/basics.js';
+
 const pages = ['schedule', 'instructors', 'rooms', 'subjects', 'curriculums', 'departments'];
-const settings = [ 'Logout' ];
 
 export function MainHeader({ pageName }) {
+
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
 
-    const handleOpenNavMenu = (event) => {
-        setAnchorElNav(event.currentTarget);
-    };
-    const handleOpenUserMenu = (event) => {
-        setAnchorElUser(event.currentTarget);
-    };
+    useEffect(() => {
+        const useEffectAsync = async () => {
+            const who = await fetchWho();
 
-    const handleCloseNavMenu = () => {
-        setAnchorElNav(null);
-    };
+            if (who == 'no one is logged in') {
+                window.location.href = '/login';
+            } else {
+                const msg_buffer = new TextEncoder().encode(message);
+                const hash_buffer = await window.crypto.subtle.digest('SHA-256', msg_buffer);
 
-    const handleCloseUserMenu = () => {
-        setAnchorElUser(null);
-    };
+                const hash_array = Array.from(new Uint8Array(hash_buffer));
+                const has_hex = hash_array.map(b => b.toString(16).padStart(2, '0')).join('');
+                console.log('has_hex = ', has_hex)
+            }
+
+        }
+
+        if (!DEV) {
+            useEffectAsync();
+        }
+
+    }, []);
 
     return (<>
         <AppBar position="static">
@@ -60,7 +73,7 @@ export function MainHeader({ pageName }) {
                         {pages.map((page) => (
                             <Button
                                 key={page}
-                                onClick={handleCloseNavMenu}
+                                onClick={() => { }}
                                 sx={{ my: 1, color: 'white', display: 'block', backgroundColor: pageName === page ? '#00000032' : '' }}
                                 href={`/${page}/`}
                             >
@@ -71,7 +84,7 @@ export function MainHeader({ pageName }) {
 
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
-                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                            <IconButton onClick={() => { }} sx={{ p: 0 }}>
                                 <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
                             </IconButton>
                         </Tooltip>
@@ -89,13 +102,25 @@ export function MainHeader({ pageName }) {
                                 horizontal: 'right',
                             }}
                             open={Boolean(anchorElUser)}
-                            onClose={handleCloseUserMenu}
+                            onClose={() => { }}
                         >
-                            {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                    <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
-                                </MenuItem>
-                            ))}
+                            <MenuItem
+                                key={'Login'}
+                                onClick={() => {
+                                    console.log('login')
+                                }}
+                            >
+                                <Typography sx={{ textAlign: 'center' }}>{'Login'}</Typography>
+                            </MenuItem>
+
+                            <MenuItem
+                                key={'Logout'}
+                                onClick={() => {
+                                    console.log('logout')
+                                }}
+                            >
+                                <Typography sx={{ textAlign: 'center' }}>{'Logout'}</Typography>
+                            </MenuItem>
                         </Menu>
                     </Box>
                 </Toolbar>
