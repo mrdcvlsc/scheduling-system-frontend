@@ -129,10 +129,6 @@ function CurriculumView({
     const [chipInstructors, setChipInstructors] = useState([]);
 
     return (<>
-        <Popup popupOptions={popupOptions} closeButtonActionHandler={() => {
-            setPopupOptions(null);
-        }} />
-
         <Loading
             IsLoading={isLoading}
         />
@@ -226,18 +222,20 @@ function CurriculumView({
 
                                 try {
                                     await postCreateCurriculum(new_curriculum)
+
+                                    setEditedCurriculum(new_curriculum)
+                                    setCurriculum(new_curriculum)
+                                    reloadList()
+                                    setMode("view")
                                 } catch (err) {
                                     setPopupOptions({
                                         Heading: "Failed to add curriculum",
                                         HeadingStyle: { background: "red", color: "white" },
                                         Message: `${err}`
                                     });
-                                }
 
-                                setEditedCurriculum(new_curriculum)
-                                setCurriculum(new_curriculum)
-                                reloadList()
-                                setMode("view")
+                                    onClose()
+                                }
                             }}
                         >
                             Save
@@ -713,7 +711,7 @@ function CurriculumView({
                                 onDelete={() => {
                                     setChipInstructors(
                                         chipInstructors.filter(iter_instructor => iter_instructor?.InstructorID != instructor?.InstructorID)
-                                    ) 
+                                    )
                                 }}
                             />
                         ))}
