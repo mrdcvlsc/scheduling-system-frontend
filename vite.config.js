@@ -21,6 +21,7 @@ export default defineConfig({
         subjects: resolve(root, 'subjects', 'index.html'),
         curriculums: resolve(root, 'curriculums', 'index.html'),
         departments: resolve(root, 'departments', 'index.html'),
+        login: resolve(root, 'login', 'index.html'),
       }
     }
   }
