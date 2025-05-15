@@ -378,6 +378,8 @@ function InstructorPage() {
                 await load_instructors(departmentID, pageSize, page, firstNameMatch, middleInitialMatch, lastNameMatch)
             }}
             departments={departments}
+            popupOptions={popupOptions}
+            setPopupOptions={setPopupOptions}
         />}
     </>);
 }

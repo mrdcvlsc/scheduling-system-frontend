@@ -29,10 +29,9 @@ export default function InstructorDataView({
     onInstructorDataViewClose,
     reloadInstructorsTable,
     departments,
+    popupOptions, setPopupOptions,
 }) {
     const [subjectColors, setSubjectColors] = useState({});
-
-    const [popupOptions, setPopupOptions] = useState(null);
 
     /////////////////////////////////////////////////////////////////////////////////
     //                       SELECTED TIME SLOT CELL
@@ -395,10 +394,6 @@ export default function InstructorDataView({
     }
 
     return (<>
-        <Popup popupOptions={popupOptions} closeButtonActionHandler={() => {
-            setPopupOptions(null);
-        }} />
-
         <ContextMenu
             closeAfterClick={true}
             conextMenuState={contextMenuState}
