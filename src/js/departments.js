@@ -1,5 +1,52 @@
 import { DEV, API_VERSION, base_url } from "./basics.js";
 
+export async function loginDepartment(payload) {
+  console.log('login department ', payload)
+
+  let api_request = `/auth`
+
+  if (DEV) {
+    console.log('call: fetchAllDepartments')
+    api_request = `${base_url}/auth`
+  }
+
+  const response = await fetch(api_request, {
+    method: 'POST',
+    credentials: "include",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+
+  return response
+}
+
+export async function fetchWho() {
+  console.log('who? ')
+
+  let api_request = `/who`
+
+  if (DEV) {
+    console.log('call: fetchWho')
+    api_request = `${base_url}/who`
+  }
+
+  const response = await fetch(api_request, {
+    method: 'GET',
+    credentials: "include",
+    headers: {
+      Accept: "text/plain",
+    }
+  });
+
+  if (!response.ok) {
+    throw Error(`${response.status} :${await response.text()}`);
+  }
+
+  return response.text()
+}
+
 export async function fetchAllDepartments() {
   let api_request = `/${API_VERSION}/all_departments`
 
@@ -12,6 +59,7 @@ export async function fetchAllDepartments() {
     headers: {
       Accept: "application/json",
     },
+    credentials: "include",
     method: 'GET'
   });
 
@@ -34,6 +82,7 @@ export async function fetchDepartmentCurriculumsData(department_id, semester) {
     headers: {
       Accept: "application/json",
     },
+    credentials: "include",
     method: 'GET'
   });
 
@@ -59,6 +108,7 @@ export async function fetchDepartmentsPaginated(page_size, page, code_match = ""
     headers: {
       Accept: "application/json",
     },
+    credentials: "include",
     method: 'GET'
   });
 
@@ -78,6 +128,7 @@ export async function deleteRemoveDepartment(department_id) {
   }
 
   const response = await fetch(api_request, {
+    credentials: "include",
     method: 'DELETE',
     headers: {
       Accept: "text/plain",
@@ -98,6 +149,7 @@ export async function postCreateDepartment(department) {
   }
 
   const response = await fetch(api_request, {
+    credentials: "include",
     method: 'POST',
     headers: {
       Accept: "text/plain",
@@ -121,6 +173,7 @@ export async function patchUpdateDepartment(department) {
   }
 
   const response = await fetch(api_request, {
+    credentials: "include",
     method: 'PATCH',
     headers: {
       Accept: "text/plain",

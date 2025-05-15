@@ -12,6 +12,7 @@ export async function fetchConst() {
     headers: {
       Accept: "application/json",
     },
+    credentials: "include",
     method: 'GET'
   });
 
@@ -34,6 +35,7 @@ export async function fetchSerializedUniversitySchedule(selected_semester) {
     headers: {
       Accept: "text/plain",
     },
+    credentials: "include",
     method: 'GET'
   });
 
@@ -56,6 +58,7 @@ export async function fetchSerializedClassSchedule(department_id, selected_semes
     headers: {
       Accept: "text/plain",
     },
+    credentials: "include",
     method: 'GET'
   });
 
@@ -78,6 +81,7 @@ export async function deleteClearSectionSchedule(department_id, selected_semeste
     headers: {
       Accept: "text/plain",
     },
+    credentials: "include",
     method: 'DELETE'
   });
 
@@ -100,6 +104,7 @@ export async function deleteClearDepartmentSchedule(department_id, selected_seme
     headers: {
       Accept: "text/plain",
     },
+    credentials: "include",
     method: 'DELETE'
   });
 
@@ -122,6 +127,7 @@ export async function fetchClassJsonSchedule(department_id, selected_semester, c
     headers: {
       Accept: "application/json",
     },
+    credentials: "include",
     method: 'GET'
   });
 
@@ -141,6 +147,7 @@ export async function sendSerializedSchedule(selected_semester, serialized_sched
   }
 
   const response = await fetch(api_request, {
+    credentials: "include",
     method: 'POST',
     headers: {
       Accept: "text/plain",
@@ -225,6 +232,7 @@ export async function generateSchedule(selected_semester, department_id) {
   }
 
   const response = await fetch(api_request, {
+    credentials: "include",
     method: 'POST',
     headers: {
       Accept: "text/plain",
@@ -247,6 +255,7 @@ export async function getValidateSchedules(semesterIndex, departmentID) {
   }
 
   const response = await fetch(api_request, {
+    credentials: "include",
     method: 'GET',
     headers: {
       Accept: "application/json",
@@ -279,6 +288,7 @@ export async function surveyAddPreference(new_class_scheduled_subjects) {
   }
 
   const response = await fetch(api_request, {
+    credentials: "include",
     method: 'POST',
     headers: {
       Accept: "text/plain",
@@ -303,6 +313,7 @@ export async function getSchedGenStatus(semesterIndex, departmentID) {
   }
 
   const response = await fetch(api_request, {
+    credentials: "include",
     method: 'GET',
     headers: {
       Accept: "application/json",
@@ -330,6 +341,7 @@ export async function fetchSubjectTimeSlotMoveAvailability(subject_json, departm
       "Content-Type": "application/json",
     },
     body: JSON.stringify(subject_json),
+    credentials: "include",
     method: 'POST'
   });
 
@@ -354,6 +366,7 @@ export async function fetchSubjectTimeSlotMove(subject_json, department_id, sele
       "Content-Type": "application/json",
     },
     body: JSON.stringify(subject_json),
+    credentials: "include",
     method: 'POST'
   });
 
@@ -376,6 +389,7 @@ export async function fetchResourceEstimates(department_id, selected_semester) {
     headers: {
       Accept: "text/plain",
     },
+    credentials: "include",
     method: 'GET'
   });
 

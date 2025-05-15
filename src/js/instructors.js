@@ -9,6 +9,7 @@ export async function deleteRemoveInsturctor(instructor_id) {
   }
 
   const response = await fetch(api_request, {
+    credentials: "include",
     method: 'DELETE',
     headers: {
       Accept: "text/plain",
@@ -29,6 +30,7 @@ export async function postCreateInsturctor(instructor) {
   }
 
   const response = await fetch(api_request, {
+    credentials: "include",
     method: 'POST',
     headers: {
       Accept: "text/plain",
@@ -52,6 +54,7 @@ export async function patchUpdateInsturctor(instructor) {
   }
 
   const response = await fetch(api_request, {
+    credentials: "include",
     method: 'PATCH',
     headers: {
       Accept: "text/plain",
@@ -78,6 +81,7 @@ export async function fetchDepartmentInstructorsDefaults(department_id, semester
     headers: {
       Accept: "application/json",
     },
+    credentials: "include",
     method: 'GET'
   });
 
@@ -100,6 +104,7 @@ export async function fetchDepartmentInstructorsAllocated(department_id, semeste
     headers: {
       Accept: "application/json",
     },
+    credentials: "include",
     method: 'GET'
   });
 

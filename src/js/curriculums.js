@@ -15,6 +15,7 @@ export async function fetchCurriculumPageList(page_size, page, department_id, co
     headers: {
       Accept: "application/json",
     },
+    credentials: "include",
     method: 'GET'
   });
 
@@ -37,6 +38,7 @@ export async function loadCurriculum(curriculum_id) {
     headers: {
       Accept: "application/json",
     },
+    credentials: "include",
     method: 'GET'
   });
 
@@ -56,6 +58,7 @@ export async function deleteRemoveCurriculum(curriculum_id) {
   }
 
   const response = await fetch(api_request, {
+    credentials: "include",
     method: 'DELETE',
     headers: {
       Accept: "text/plain",
@@ -76,6 +79,7 @@ export async function postCreateCurriculum(curriculum) {
   }
 
   const response = await fetch(api_request, {
+    credentials: "include",
     method: 'POST',
     headers: {
       Accept: "text/plain",
@@ -99,6 +103,7 @@ export async function patchUpdateCurriculum(curriculum) {
   }
 
   const response = await fetch(api_request, {
+    credentials: "include",
     method: 'PATCH',
     headers: {
       Accept: "text/plain",

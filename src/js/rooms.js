@@ -12,6 +12,7 @@ export async function fetchDepartmentRooms(department_id, page_size, page) {
     headers: {
       Accept: "application/json",
     },
+    credentials: "include",
     method: 'GET'
   });
 
@@ -31,6 +32,7 @@ export async function deleteRemoveRoom(room_id) {
   }
 
   const response = await fetch(api_request, {
+    credentials: "include",
     method: 'DELETE',
     headers: {
       Accept: "text/plain",
@@ -51,6 +53,7 @@ export async function postCreateRoom(room) {
   }
 
   const response = await fetch(api_request, {
+    credentials: "include",
     method: 'POST',
     headers: {
       Accept: "text/plain",
@@ -74,6 +77,7 @@ export async function patchUpdateRoom(room) {
   }
 
   const response = await fetch(api_request, {
+    credentials: "include",
     method: 'PATCH',
     headers: {
       Accept: "text/plain",

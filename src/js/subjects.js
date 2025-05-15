@@ -15,6 +15,7 @@ export async function fetchSubjects(page_size, page, code_match = "", name_match
     headers: {
       Accept: "application/json",
     },
+    credentials: "include",
     method: 'GET'
   });
 
@@ -35,6 +36,7 @@ export async function deleteRemoveSubject(subject_id) {
 
   const response = await fetch(api_request, {
     method: 'DELETE',
+    credentials: "include",
     headers: {
       Accept: "text/plain",
     },
@@ -55,6 +57,7 @@ export async function postCreateSubject(subject) {
 
   const response = await fetch(api_request, {
     method: 'POST',
+    credentials: "include",
     headers: {
       Accept: "text/plain",
       "Content-Type": "application/json",
@@ -78,6 +81,7 @@ export async function patchUpdateSubject(subject) {
 
   const response = await fetch(api_request, {
     method: 'PATCH',
+    credentials: "include",
     headers: {
       Accept: "text/plain",
       "Content-Type": "application/json",

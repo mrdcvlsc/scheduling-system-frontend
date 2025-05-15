@@ -18,6 +18,7 @@ export async function fetchInstructors(department_id, page_size, page, firstname
     headers: {
       Accept: "application/json",
     },
+    credentials: "include",
     method: 'GET'
   });
 
@@ -40,6 +41,7 @@ export async function fetchInstructorResources(instructor_id) {
     headers: {
       Accept: "application/json",
     },
+    credentials: "include",
     method: 'GET'
   });
 
@@ -62,6 +64,7 @@ export async function fetchInstructorBasic(instructor_id) {
     headers: {
       Accept: "application/json",
     },
+    credentials: "include",
     method: 'GET'
   });
 
