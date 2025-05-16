@@ -3,11 +3,11 @@ import { DEV, API_VERSION, base_url } from "./basics.js";
 export async function loginDepartment(payload) {
   console.log('login department ', payload)
 
-  let api_request = `/auth`
+  let api_request = `/auth_gasss_login`
 
   if (DEV) {
-    console.log('call: fetchAllDepartments')
-    api_request = `${base_url}/auth`
+    console.log('call: loginDepartment')
+    api_request = `${base_url}/auth_gasss_login`
   }
 
   const response = await fetch(api_request, {
@@ -17,6 +17,24 @@ export async function loginDepartment(payload) {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(payload)
+  });
+
+  return response
+}
+
+export async function logoutDepartment() {
+  console.log('logout department ')
+
+  let api_request = `/auth_gasss_logout`
+
+  if (DEV) {
+    console.log('call: logoutDepartment')
+    api_request = `${base_url}/auth_gasss_logout`
+  }
+
+  const response = await fetch(api_request, {
+    method: 'DELETE',
+    credentials: "include"
   });
 
   return response
