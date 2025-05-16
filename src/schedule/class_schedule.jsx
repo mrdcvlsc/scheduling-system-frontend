@@ -658,11 +658,17 @@ function TimeTable() {
                         <select className="dropdown" style={{ width: '100%' }} value={yearLevelIndex} onChange={handleYearLevelChange} disabled={!curriculumIndex || pickedUpSubject}>
                             <option value="">Year Level</option>
                             {curriculumIndex ?
-                                departmentCurriculumsData[curriculumIndex].YearLevels.map((year_level, index) => (
-                                    <option key={index} value={index}>
-                                        {year_level.Name}
-                                    </option>
-                                )) : null
+                                departmentCurriculumsData[curriculumIndex].YearLevels.map((year_level, index) => {
+                                    if (year_level.Name) {
+                                        return (
+                                            <option key={index} value={index}>
+                                                {year_level.Name}
+                                            </option>
+                                        )
+                                    }
+
+                                    return null
+                                }) : null
                             }
                         </select>
 
@@ -810,7 +816,7 @@ function TimeTable() {
                         size="small"
                         fullWidth
                         onClick={handleClearClassSchedule}
-                        disabled={!semesterIndex || pickedUpSubject}
+                        disabled={!sectionIndex || pickedUpSubject}
                         variant="outlined"
                         color="error"
                     >
