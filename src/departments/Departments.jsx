@@ -122,7 +122,7 @@ function Departments() {
 
     return (<>
 
-        <MainHeader pageName={'departments'}/>
+        <MainHeader pageName={'departments'} />
 
         <Popup popupOptions={popupOptions} closeButtonActionHandler={() => setPopupOptions(null)} />
 
@@ -303,15 +303,10 @@ function Departments() {
                         const formData = new FormData(event.currentTarget);
                         const formJson = Object.fromEntries(formData.entries());
 
-                        const isGym = formJson.isGym === "on";
                         const departmentData = {
                             Code: formJson.Code,
                             Name: formJson.Name,
-
-
-                            BitFlags: isGym ? 1 : 0,
-                            // note to self: designated instructors will only be populated in a department instance in the curriculum's department not here.
-                            DesignatedInstructors: [],
+                            SaltedHashedPassword: formJson.SaltedHashedPassword
                         };
 
                         if (mode === "edit") {
@@ -320,6 +315,11 @@ function Departments() {
 
                         try {
                             setIsLoading(true);
+
+                            if (formJson.SaltedHashedPassword !== formJson.RetypedPassword) {
+                                throw Error('password not the same')
+                            }
+
                             if (mode === "new") {
                                 await postCreateDepartment(departmentData);
                                 setPopupOptions({
@@ -355,6 +355,7 @@ function Departments() {
                 <DialogContentText>
                     {mode === "new" ? "Enter the department details and save it to add a new department." : "Edit the current department information and apply your changes"}
                 </DialogContentText>
+
                 <TextField
                     autoFocus
                     required
@@ -367,6 +368,7 @@ function Departments() {
                     variant="standard"
                     defaultValue={department?.Code || ""}
                 />
+
                 <TextField
                     required
                     margin="dense"
@@ -378,6 +380,31 @@ function Departments() {
                     variant="standard"
                     defaultValue={department?.Name || ""}
                 />
+
+                <TextField
+                    required={mode === "new"}
+                    margin="dense"
+                    id="SaltedHashedPassword"
+                    name="SaltedHashedPassword"
+                    label={mode === "new" ? "Password" : "New Password"}
+                    type="password"
+                    fullWidth
+                    variant="standard"
+                    defaultValue={""}
+                />
+
+                <TextField
+                    required={mode === "new"}
+                    margin="dense"
+                    id="retype-password"
+                    name="RetypedPassword"
+                    label={mode === "new" ? "Re-Type Password" : "New Re-Type Password"}
+                    type="password"
+                    fullWidth
+                    variant="standard"
+                    defaultValue={""}
+                />
+
             </DialogContent>
             <DialogActions>
                 <Button type="submit">{mode === "new" ? "Save" : "Apply Changes"}</Button>
