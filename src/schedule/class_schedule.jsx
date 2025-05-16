@@ -642,6 +642,7 @@ function TimeTable() {
                             <option value="">Semester</option>
                             <option value={0}>1st Semester</option>
                             <option value={1}>2nd Semester</option>
+                            <option value={2}>Mid-year</option>
                         </select>
 
                         <select className="dropdown" style={{ width: '100%' }} value={curriculumIndex} onChange={handleCurriculumChange} disabled={!semesterIndex || pickedUpSubject}>

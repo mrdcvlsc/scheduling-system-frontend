@@ -55,7 +55,7 @@ const truncateText = (text, maxLength) => {
 };
 
 const YEAR_LEVEL_NAMES = ["1st Year", "2nd Year", "3rd Year", "4th Year", "5th Year", "6th Year", "7th Year", "8th Year"]
-const SEMESTER_NAMES = ["1st Semester", "2nd Semester"]
+const SEMESTER_NAMES = ["1st Semester", "2nd Semester", "Mid-year"]
 
 function CurriculumView({
     mode, setMode,

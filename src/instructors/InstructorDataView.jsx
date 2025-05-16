@@ -468,6 +468,7 @@ export default function InstructorDataView({
                                 <MenuItem value=''>None</MenuItem>
                                 <MenuItem value={0}>1st Semester</MenuItem>
                                 <MenuItem value={1}>2nd Semester</MenuItem>
+                                <MenuItem value={2}>Mid-year</MenuItem>
                             </Select>
                         </FormControl> : null
                     }
