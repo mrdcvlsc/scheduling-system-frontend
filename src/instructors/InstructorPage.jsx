@@ -14,7 +14,6 @@ import "../assets/main.css";
 import "./TimeTable.css";
 import DeleteIcon from '@mui/icons-material/Delete';
 
-
 import "./TimeTableDropdowns.css";
 import "./instructors.css";
 
@@ -23,7 +22,7 @@ import { fetchInstructors, fetchInstructorResources } from "../js/instructors_v2
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 
-import { Box, FormControl, InputLabel, MenuItem, Select, Button, Typography, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, CircularProgress, TablePagination, Dialog, DialogTitle, DialogContentText, DialogContent, DialogActions, TextField } from "@mui/material";
+import { Box, FormControl, InputLabel, MenuItem, Select, Button, Typography, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, CircularProgress, TablePagination, Dialog, DialogTitle, DialogContentText, DialogContent, DialogActions, TextField, ThemeProvider } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 
 import { InstructorTimeSlotBitMap } from "../js/instructor-time-slot-bit-map"
@@ -31,6 +30,7 @@ import InstructorDataView from "./InstructorDataView"
 import { deleteRemoveInsturctor } from "../js/instructors";
 
 import { MainHeader } from "../components/Header";
+import theme from "../components/Theme";
 
 function InstructorPage() {
     const [mode, setMode] = useState("") // 3 mode - new, view, edit
@@ -159,7 +159,7 @@ function InstructorPage() {
     }
 
     return (<>
-        <MainHeader pageName={'instructors'}/>
+        <MainHeader pageName={'instructors'} />
 
         <Popup popupOptions={popupOptions} closeButtonActionHandler={() => {
             setPopupOptions(null);
@@ -281,7 +281,7 @@ function InstructorPage() {
                         </TableRow>
                     ) : (
                         instructors.map((instructor, index) => (
-                            <TableRow key={instructor.InstructorID} sx={{ border: '1px solid yellow' }}>
+                            <TableRow key={instructor.InstructorID}>
                                 <TableCell>{instructor.InstructorID}</TableCell>
                                 <TableCell>{instructor.LastName}</TableCell>
                                 <TableCell>{instructor.FirstName}</TableCell>
@@ -386,6 +386,8 @@ function InstructorPage() {
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
-        <InstructorPage />
+        <ThemeProvider theme={theme}>
+            <InstructorPage />
+        </ThemeProvider>
     </StrictMode>
 );

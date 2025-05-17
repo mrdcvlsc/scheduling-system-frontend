@@ -8,7 +8,8 @@ import '@fontsource/roboto/700.css';
 
 import {
     Box, TextField, Button, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination,
-    Paper, CircularProgress, Dialog, DialogContent, DialogContentText, DialogTitle, DialogActions, Select, MenuItem, FormControl, InputLabel
+    Paper, CircularProgress, Dialog, DialogContent, DialogContentText, DialogTitle, DialogActions, Select, MenuItem, FormControl, InputLabel,
+    ThemeProvider
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -20,6 +21,7 @@ import { Popup } from '../components/Loading';
 
 import CurriculumView from './CurriculumView'
 import { MainHeader } from '../components/Header';
+import theme from '../components/Theme';
 
 const truncateText = (text, maxLength) => {
     if (text.length > maxLength) {
@@ -331,6 +333,8 @@ function CurriculumsTableList() {
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
-        <CurriculumsTableList />
+        <ThemeProvider theme={theme}>
+            <CurriculumsTableList />
+        </ThemeProvider>
     </StrictMode>
 );

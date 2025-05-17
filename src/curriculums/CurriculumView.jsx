@@ -320,8 +320,8 @@ function CurriculumView({
                         }}
                     >
                         <Box margin={'0px'} display={'flex'} justifyContent={'space-between'} minWidth={'11em'}>
-                            <Typography variant='body1' component="span">{year_level.Name}</Typography>
-                            {(mode === "view") ? (<Typography variant='body1' component="span">{year_level?.IsActive ? '(Active)' : '(Inactive)'}</Typography>) : null}
+                            <Typography variant='h6' component="span">Year Level - {year_level.Name}</Typography>
+                            {(mode === "view") ? (<Typography variant='h6' component="span">{year_level?.IsActive ? ' (Active)' : ' (Inactive)'}</Typography>) : null}
                         </Box>
                     </AccordionSummary>
                     <AccordionDetails sx={{ minHeight: '0px', padding: '0.2em 1em 0.5em 1em' }}>

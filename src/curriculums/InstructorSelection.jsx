@@ -186,7 +186,7 @@ export default function InstructorSelection({
                         </TableRow>
                     ) : (
                         instructors.map((instructor, index) => (
-                            <TableRow key={instructor.InstructorID} sx={{ border: '1px solid yellow' }}>
+                            <TableRow key={instructor.InstructorID}>
                                 <TableCell>{instructor.InstructorID}</TableCell>
                                 <TableCell>{instructor.LastName}</TableCell>
                                 <TableCell>{instructor.FirstName}</TableCell>

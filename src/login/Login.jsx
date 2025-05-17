@@ -9,11 +9,13 @@ import {
     Button,
     CircularProgress,
     Snackbar,
-    Alert
+    Alert,
+    ThemeProvider
 } from "@mui/material";
 
 import LoginIcon from "@mui/icons-material/Login";
 import { loginDepartment, fetchWho } from "../js/departments";
+import theme from "../components/Theme";
 
 export default function Login() {
     const [form, setForm] = useState({ id: "", code: "", password: "" });
@@ -157,6 +159,8 @@ export default function Login() {
 const root = createRoot(document.getElementById("root"));
 root.render(
     <StrictMode>
-        <Login />
+        <ThemeProvider theme={theme}>
+            <Login />
+        </ThemeProvider>
     </StrictMode>
 );

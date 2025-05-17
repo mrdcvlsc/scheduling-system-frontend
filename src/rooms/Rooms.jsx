@@ -20,6 +20,7 @@ import {
 
     createTheme,
     Alert,
+    ThemeProvider,
 } from "@mui/material";
 
 import { Popup } from "../components/Loading";
@@ -39,6 +40,7 @@ import "../assets/main.css";
 import { fetchAllDepartments } from "../js/departments"
 import { fetchDepartmentRooms, deleteRemoveRoom, patchUpdateRoom, postCreateRoom } from "../js/rooms"
 import { MainHeader } from "../components/Header";
+import theme from "../components/Theme";
 
 function RoomTypeName(room_type) {
     switch (room_type) {
@@ -502,6 +504,8 @@ function Rooms() {
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
-        <Rooms />
+        <ThemeProvider theme={theme}>
+            <Rooms />
+        </ThemeProvider>
     </StrictMode>
 );

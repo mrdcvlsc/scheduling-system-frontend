@@ -11,6 +11,7 @@ import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination,
     Paper, CircularProgress, Dialog, DialogContent, DialogContentText, DialogTitle, DialogActions,
     FormControlLabel, Checkbox,
+    ThemeProvider,
 } from "@mui/material";
 
 import DoneIcon from '@mui/icons-material/Done';
@@ -24,6 +25,7 @@ import "../assets/main.css";
 import { fetchDepartmentsPaginated, deleteRemoveDepartment, patchUpdateDepartment, postCreateDepartment } from "../js/departments";
 import { Popup } from "../components/Loading";
 import { MainHeader } from "../components/Header";
+import theme from "../components/Theme";
 
 const truncateText = (text, maxLength) => {
     if (text.length > maxLength) {
@@ -416,6 +418,8 @@ function Departments() {
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
-        <Departments />
+        <ThemeProvider theme={theme}>
+            <Departments />
+        </ThemeProvider>
     </StrictMode>
 );
