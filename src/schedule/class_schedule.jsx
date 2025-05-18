@@ -634,9 +634,13 @@ function TimeTable() {
                         <select className="dropdown" style={{ width: '100%' }} value={departmentID} onChange={handleDepartmentChange} disabled={pickedUpSubject}>
                             <option value="">Department</option>
                             {allDepartments ?
-                                allDepartments.map((department, index) => (
-                                    <option key={index} value={department.DepartmentID}>{department.Code}</option>
-                                )) : null
+                                allDepartments.map((department, index) => {
+                                    if (department.DepartmentID == 0) {
+                                        return null
+                                    }
+
+                                    return <option key={index} value={department.DepartmentID}>{department.Code}</option>
+                                }) : null
                             }
                         </select>
 
@@ -780,6 +784,11 @@ function TimeTable() {
                         ))}
                     </tbody>
                 </table>
+
+                {(!sectionIndex) ?
+                    <Box height={200}></Box> :
+                    null
+                }
 
                 <Box padding={1} gap={1} display={'flex'} justifyContent={'space-evenly'}>
                     <Button
