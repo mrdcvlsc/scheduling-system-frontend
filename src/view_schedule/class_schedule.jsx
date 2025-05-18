@@ -8,11 +8,9 @@ import "./TimeTable.css";
 import "./TimeTableDropdowns.css";
 
 import { fetchAllDepartments, fetchDepartmentCurriculumsData } from "../js/departments"
-import { deserializeSchedule, fetchClassJsonSchedule, fetchSubjectTimeSlotMoveAvailability, fetchSubjectTimeSlotMove, fetchResourceEstimates, fetchSerializedClassSchedule, generateSchedule, getValidateSchedules, deleteClearDepartmentSchedule, deleteClearSectionSchedule, getSchedGenStatus } from "../js/schedule"
+import { fetchClassJsonSchedule, fetchResourceEstimates, generateSchedule, getValidateSchedules, deleteClearDepartmentSchedule, deleteClearSectionSchedule, getSchedGenStatus } from "../js/schedule"
 
 import { generateTimeSlotRowLabels } from "../js/week-time-table-grid-functions";
-import { MainHeader } from "../components/Header";
-import { Box, Button, Typography } from "@mui/material";
 
 const SECTION_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz";
 
@@ -22,6 +20,7 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import { ThemeProvider } from "@emotion/react";
 import theme from "../components/Theme";
+import { Box, Typography } from "@mui/material";
 
 function TimeTable() {
 
@@ -29,7 +28,6 @@ function TimeTable() {
     //                     LOAD GUARD COMPONENT STATES
     /////////////////////////////////////////////////////////////////////////////////
 
-    const [schedGenStatus, setSchedGenStatus] = useState(null)
     const [IsLoading, setIsLoading] = useState(false);
     const [popupOptions, setPopupOptions] = useState(null);
 
@@ -66,8 +64,6 @@ function TimeTable() {
     /////////////////////////////////////////////////////////////////////////////////
     //                       PAGE LOAD PROCESS
     /////////////////////////////////////////////////////////////////////////////////
-
-    const [resourceEstimates, setResourceEstimates] = useState("")
 
     useEffect(() => {
 
@@ -121,9 +117,6 @@ function TimeTable() {
         setClassAssignedSubjects([]);
         setPickedUpSubject(null);
         setAvailableSubjectTimeSlotMove(null)
-        setSchedGenStatus(null);
-
-        setResourceEstimates("")
 
         // clear any old polling loop
         if (intervalRef.current) {
@@ -158,12 +151,6 @@ function TimeTable() {
 
             try {
                 await updateCurriculumData(event.target.value);
-
-                const sched_gen_status = await getSchedGenStatus(event.target.value, departmentID);
-                setSchedGenStatus(sched_gen_status);
-
-                const resource_estimate_msg = await fetchResourceEstimates(departmentID, event.target.value)
-                setResourceEstimates(resource_estimate_msg)
 
                 setIsLoading(false);
             } catch (err) {
@@ -233,14 +220,11 @@ function TimeTable() {
 
             // fetch initial status & load once
             const initialStatus = await getSchedGenStatus(semesterIndex, departmentID);
-            setSchedGenStatus(initialStatus);
             await load_schedule(newSection);
 
             // if it’s still "in progress" or "queued" start up a new loop
             if (["in progress", "on queue"].includes(initialStatus.Status)) {
                 intervalRef.current = window.setInterval(async () => {
-                    const currentStatus = await getSchedGenStatus(semesterIndex, departmentID);
-                    setSchedGenStatus(currentStatus);
 
                     if (["in progress", "on queue"].includes(currentStatus.Status)) {
                         await load_schedule(newSection);
@@ -313,126 +297,9 @@ function TimeTable() {
         }
     };
 
-    const handleClearDepartmentSchedule = async () => {
-        setIsLoading(true)
-
-        try {
-            const msg = await deleteClearDepartmentSchedule(departmentID, semesterIndex)
-
-            setClassAssignedSubjects([]);
-            setPickedUpSubject(null);
-            setAvailableSubjectTimeSlotMove(null)
-
-            setPopupOptions({
-                Heading: "Cleared Department Schedule",
-                HeadingStyle: { background: "green", color: "white" },
-                Message: msg
-            });
-
-        } catch (err) {
-            setPopupOptions({
-                Heading: "Clear Department Schedule Failed",
-                HeadingStyle: { background: "red", color: "white" },
-                Message: `${err}`
-            });
-        }
-
-        setIsLoading(false)
-    }
-
-    const handleClearClassSchedule = async () => {
-        setIsLoading(true)
-
-        try {
-            const msg = await deleteClearSectionSchedule(
-                departmentID,
-                semesterIndex,
-                departmentCurriculumsData[curriculumIndex].CurriculumID,
-                yearLevelIndex,
-                sectionIndex
-            )
-
-            setClassAssignedSubjects([]);
-            setPickedUpSubject(null);
-            setAvailableSubjectTimeSlotMove(null)
-
-            setPopupOptions({
-                Heading: "Cleared Section Schedule",
-                HeadingStyle: { background: "green", color: "white" },
-                Message: msg
-            });
-
-        } catch (err) {
-            setPopupOptions({
-                Heading: "Clear Section Schedule Failed",
-                HeadingStyle: { background: "red", color: "white" },
-                Message: `${err}`
-            });
-        }
-
-        setIsLoading(false)
-    }
-
     /////////////////////////////////////////////////////////////////////////////////
     //                             DROPDOWN HANDLERS
     /////////////////////////////////////////////////////////////////////////////////
-
-    const generateDepartmentSchedules = async () => {
-        setIsLoading(true)
-
-        try {
-            const msg = await generateSchedule(semesterIndex, departmentID)
-            const res = await getSchedGenStatus(semesterIndex, departmentID)
-
-            setSectionIndex("");
-            setClassAssignedSubjects([]);
-            setSchedGenStatus(res)
-
-            setPopupOptions({
-                Heading: "Generating Schedule...",
-                HeadingStyle: { background: "Yellow", color: "black" },
-                Message: msg
-            });
-        } catch (err) {
-            setPopupOptions({
-                Heading: "Failed to generate schedule for the department",
-                HeadingStyle: { background: "red", color: "white" },
-                Message: `${err}`
-            });
-        }
-
-        setIsLoading(false)
-    };
-
-    const handleValidateSchedules = async () => {
-        setIsLoading(true)
-
-        try {
-            const validation_errors = await getValidateSchedules(semesterIndex, departmentID)
-
-            if (validation_errors.length > 0 && Array.isArray(validation_errors)) {
-                setPopupOptions({
-                    Heading: "Validation Problems",
-                    HeadingStyle: { background: "Orange", color: "black" },
-                    Message: validation_errors
-                });
-            } else {
-                setPopupOptions({
-                    Heading: "Validation Result",
-                    HeadingStyle: { background: "Green", color: "white" },
-                    Message: 'there are no problems found in the schedules'
-                });
-            }
-        } catch (err) {
-            setPopupOptions({
-                Heading: "Validation Failed",
-                HeadingStyle: { background: "red", color: "white" },
-                Message: `${err}`
-            });
-        }
-
-        setIsLoading(false)
-    }
 
     const [subjectColors, setSubjectColors] = useState({});
 
@@ -442,180 +309,11 @@ function TimeTable() {
 
     const [availableSubjectTimeSlotMove, setAvailableSubjectTimeSlotMove] = useState(null);
 
-    const handlePickupSubject = async (picked_up_subject) => {
-        setIsLoading(true);
-
-        try {
-            const subject_move_time_slot_availability = await fetchSubjectTimeSlotMoveAvailability(
-                picked_up_subject,
-                departmentID,
-                semesterIndex,
-                departmentCurriculumsData[curriculumIndex].CurriculumID,
-                yearLevelIndex,
-                sectionIndex
-            );
-
-            console.log('subject_move_time_slot_availability : ', subject_move_time_slot_availability)
-            setAvailableSubjectTimeSlotMove(subject_move_time_slot_availability)
-        } catch (err) {
-            setPopupOptions({
-                Heading: "Time Slot Availability Check Unavailable",
-                HeadingStyle: { background: "red", color: "white" },
-                Message: `${err}`
-            });
-
-            setIsLoading(false);
-            return
-        }
-
-
-        let current_assigned_subjects = structuredClone(classAssignedSubjects);
-        let current_picked_up_subject = structuredClone(pickedUpSubject);
-
-        if (current_picked_up_subject) {
-            current_assigned_subjects.push(current_picked_up_subject)
-            current_picked_up_subject = null
-        }
-
-        current_picked_up_subject = picked_up_subject
-
-        const new_assigned_subjects = current_assigned_subjects.filter(subj => {
-            return !(picked_up_subject.DayIdx == subj.DayIdx && picked_up_subject.TimeSlotIdx == subj.TimeSlotIdx);
-        })
-
-        const heights = Array.from(
-            document.querySelectorAll('table tr'),
-            row => row.offsetHeight
-        );
-
-        const max_height = Math.max(...heights);
-        setCellHeight(max_height * 0.875);
-
-        console.log('max height : ', max_height)
-
-        setClassAssignedSubjects(new_assigned_subjects);
-        setPickedUpSubject(current_picked_up_subject);
-
-        console.log('picked up subject: ', current_picked_up_subject);
-        console.log('new assigned subject: ', new_assigned_subjects);
-
-        setIsLoading(false);
-    }
-
-    const handleCancelPickupSubject = () => {
-        let new_assigned_subjects = structuredClone(classAssignedSubjects);
-
-        if (pickedUpSubject) {
-            new_assigned_subjects.push(pickedUpSubject)
-            setPickedUpSubject(null);
-            setAvailableSubjectTimeSlotMove(null)
-        }
-
-        setClassAssignedSubjects(new_assigned_subjects);
-    }
-
-    const handleDropPickedUpSubject = async (selected_day, selected_time_slot) => {
-        setIsLoading(true);
-
-        if (!pickedUpSubject) {
-            console.log('nothing to move')
-            setIsLoading(false);
-            return;
-        }
-
-        if (!availableSubjectTimeSlotMove) {
-            setPopupOptions({
-                Heading: "Time Slot Move Error",
-                HeadingStyle: { background: "red", color: "white" },
-                Message: `time slot availability array not found`
-            });
-            setIsLoading(false);
-            return;
-        }
-
-        let is_movable = true;
-        let total_free_time_slots = 0
-
-        for (let i = 0; i < pickedUpSubject.SubjectTimeSlots; i++) {
-            if (!availableSubjectTimeSlotMove[selected_day][selected_time_slot + i]) {
-                is_movable = false;
-                break;
-            }
-
-            total_free_time_slots++
-        }
-
-        if (!is_movable) {
-            setPopupOptions({
-                Heading: "Move Not Allowed",
-                HeadingStyle: { background: "red", color: "white" },
-                Message: `the subject to be move has a total of ${pickedUpSubject.SubjectTimeSlots} time slots, while the selected time slot only have ${total_free_time_slots} free time slots from the starting and preceding time slots`
-            });
-            setIsLoading(false);
-            return;
-        }
-
-        const movedSubject = structuredClone(pickedUpSubject)
-        movedSubject.DayIdx = Number(selected_day)
-        movedSubject.TimeSlotIdx = Number(selected_time_slot)
-
-        try {
-            const msg = await fetchSubjectTimeSlotMove(
-                movedSubject,
-                departmentID,
-                semesterIndex,
-                departmentCurriculumsData[curriculumIndex].CurriculumID,
-                yearLevelIndex,
-                sectionIndex
-            );
-
-            setPopupOptions({
-                Heading: "Time Slot Move Success",
-                HeadingStyle: { background: "green", color: "white" },
-                Message: msg
-            });
-
-            const newClassAssignedSubject = structuredClone(classAssignedSubjects)
-            newClassAssignedSubject.push(movedSubject)
-
-            setClassAssignedSubjects(newClassAssignedSubject);
-            setPickedUpSubject(null);
-            setAvailableSubjectTimeSlotMove(null)
-        } catch (err) {
-            setPopupOptions({
-                Heading: "Time Slot Move Error",
-                HeadingStyle: { background: "red", color: "white" },
-                Message: `${err}`
-            });
-            setIsLoading(false);
-            return;
-        }
-
-        setIsLoading(false);
-    }
-
-    const [position, setPosition] = useState({ x: 0, y: 0 });
-
-    useEffect(() => {
-        const handleMouseMove = (event) => {
-            setPosition({ x: event.clientX, y: event.clientY });
-        };
-
-        // Listen for mousemove on the whole window
-        window.addEventListener('mousemove', handleMouseMove);
-
-        // Clean up on unmount
-        return () => {
-            window.removeEventListener('mousemove', handleMouseMove);
-        };
-    }, []);
-
-    const [cellHeight, setCellHeight] = useState(0);
-
     return (
         <>
-            <MainHeader pageName={'schedule'} />
-            {/*================================= Loading Component =================================*/}
+            <Box display={'flex'} justifyContent={'center'} alignItems={'center'} padding={1} bgcolor={'#800080'}>
+                <Typography variant="h6" color="#00ff00">Cavite Statue University - Silang Campus Schedules</Typography>
+            </Box>
 
             <Popup popupOptions={popupOptions} closeButtonActionHandler={() => {
                 setPopupOptions(null);
@@ -694,31 +392,6 @@ function TimeTable() {
 
                 {/*================================= TimeTable Table =================================*/}
 
-
-                {pickedUpSubject ?
-                    <div className={`${pickedUpColor} subject-cursor`}
-                        style={{
-                            height: `${pickedUpSubject.SubjectTimeSlots * cellHeight}px`,
-                            width: '13.5%',
-                            border: '1px solid black',
-                            display: 'flex', flexDirection: 'column',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            position: 'fixed',
-                            top: `${position.y + 2}px`,
-                            left: `${position.x + 2}px`,
-                        }}
-                    >
-                        <div
-                            className="subject-content"
-                        >
-                            <div className="subject-name">{pickedUpSubject.SubjectCode}</div>
-                            <div className="instructor">{pickedUpSubject.InstructorLastName}</div>
-                            <div className="room">{pickedUpSubject.RoomName}</div>
-                        </div>
-                    </div> : null
-                }
-
                 <table className="time-table" style={{ display: sectionIndex ? 'revert' : 'none' }}>
                     <thead>
                         <tr>
@@ -784,92 +457,7 @@ function TimeTable() {
                         ))}
                     </tbody>
                 </table>
-
-                {(!sectionIndex) ?
-                    <Box height={200}></Box> :
-                    null
-                }
-
-                <Box padding={1} gap={1} display={'flex'} justifyContent={'space-evenly'}>
-                    <Button
-                        size="small"
-                        fullWidth
-                        onClick={generateDepartmentSchedules}
-                        disabled={!semesterIndex || pickedUpSubject}
-                        variant="contained"
-                        color="success"
-                    >
-                        Generate Department Semester Schedules
-                    </Button>
-
-                    <Button
-                        size="small"
-                        fullWidth
-                        onClick={handleValidateSchedules}
-                        disabled={!semesterIndex || pickedUpSubject}
-                        variant="contained"
-                        color="warning"
-                    >
-                        Validate Schedules
-                    </Button>
-
-                    <Button
-                        size="small"
-                        fullWidth
-                        onClick={handleClearDepartmentSchedule}
-                        disabled={!semesterIndex || pickedUpSubject}
-                        variant="contained"
-                        color="error"
-                    >
-                        Clear Department Semester Schedules
-                    </Button>
-
-                    <Button
-                        size="small"
-                        fullWidth
-                        onClick={handleClearClassSchedule}
-                        disabled={!sectionIndex || pickedUpSubject}
-                        variant="outlined"
-                        color="error"
-                    >
-                        Clear Section Semester Schedule
-                    </Button>
-
-                    {pickedUpSubject ? <Button
-                        size="small"
-                        fullWidth
-                        onClick={handleCancelPickupSubject}
-                        disabled={!pickedUpSubject}
-                        variant="contained"
-                        color="primary"
-                    >
-                        Cancel Move
-                    </Button> : null}
-                </Box>
             </div>
-
-            {schedGenStatus ?
-                <Box padding={2}>
-                    <Typography variant="h6" style={{ color: 'green', textAlign: 'center' }}>
-                        {schedGenStatus.Status}
-                    </Typography>
-                    <Typography variant="body2" style={{ color: 'black', textAlign: 'center' }}>
-                        {schedGenStatus.Message}
-                    </Typography>
-                </Box>
-                : null}
-
-            {resourceEstimates ?
-                <Box padding={2}>
-                    <Typography variant="body1" style={{ color: 'black', textAlign: 'center' }}>
-                        {resourceEstimates}
-                    </Typography>
-                </Box>
-                : null}
-
-            <Box display={'flex'} justifyContent={'center'} alignItems={'center'} padding={5}>
-                <a href="/view_schedule/">link for publicly accessible schedule page view</a>
-            </Box>
         </>
     );
 }

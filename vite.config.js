@@ -22,6 +22,9 @@ export default defineConfig({
         curriculums: resolve(root, 'curriculums', 'index.html'),
         departments: resolve(root, 'departments', 'index.html'),
         login: resolve(root, 'login', 'index.html'),
+
+        view_schedule: resolve(root, 'view_schedule', 'index.html'),
+        view_instructors: resolve(root, 'view_instructors', 'index.html'),
       }
     }
   }

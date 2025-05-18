@@ -18,18 +18,15 @@ import "./TimeTableDropdowns.css";
 import "./instructors.css";
 
 import { fetchAllDepartments } from "../js/departments"
-import { fetchInstructors, fetchInstructorResources } from "../js/instructors_v2"
+import { fetchInstructors } from "../js/instructors_v2"
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 
-import { Box, FormControl, InputLabel, MenuItem, Select, Button, Typography, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, CircularProgress, TablePagination, Dialog, DialogTitle, DialogContentText, DialogContent, DialogActions, TextField, ThemeProvider, Link } from "@mui/material";
-import AddIcon from '@mui/icons-material/Add';
+import { Box, FormControl, InputLabel, MenuItem, Select, Button, Typography, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, CircularProgress, TablePagination, Dialog, DialogTitle, DialogContentText, DialogContent, DialogActions, TextField, ThemeProvider } from "@mui/material";
 
-import { InstructorTimeSlotBitMap } from "../js/instructor-time-slot-bit-map"
 import InstructorDataView from "./InstructorDataView"
 import { deleteRemoveInsturctor } from "../js/instructors";
 
-import { MainHeader } from "../components/Header";
 import theme from "../components/Theme";
 
 function InstructorPage() {
@@ -159,8 +156,10 @@ function InstructorPage() {
     }
 
     return (<>
-        <MainHeader pageName={'instructors'} />
-
+        <Box display={'flex'} justifyContent={'center'} alignItems={'center'} padding={1} bgcolor={'#800080'}>
+            <Typography variant="h6" color="#00ff00">Cavite Statue University - Silang Campus : Instructor Schedules</Typography>
+        </Box>
+        
         <Popup popupOptions={popupOptions} closeButtonActionHandler={() => {
             setPopupOptions(null);
         }} />
@@ -218,44 +217,6 @@ function InstructorPage() {
                         load_instructors(departmentID, pageSize, 0, firstNameMatch, middleInitialMatch, lastNameMatch);
                     }}
                 ><SearchIcon /></Button>
-
-                {/* <FormControl sx={{ minWidth: 115 }} size="small">
-                    <InputLabel id="label-id-semester">Semester</InputLabel>
-                    <Select autoWidth
-                        labelId="label-id-semester"
-                        label="Semester"
-                        value={semesterIndex}
-                        onChange={handleSemesterChange}
-                        disabled={!Number.isInteger(departmentID)}
-                    >
-                        <MenuItem value={0}>1st Semester</MenuItem>
-                        <MenuItem value={1}>2nd Semester</MenuItem>
-                    </Select>
-                </FormControl> */}
-
-                <Box style={{ width: '100%', display: 'flex', justifyContent: 'right' }}>
-                    <Button disabled={!Number.isInteger(departmentID)}
-                        endIcon={<AddIcon />} size="small" color="secondary" variant="contained"
-                        onClick={() => {
-                            setIsLoading(true)
-
-                            const new_instructor = {
-                                DepartmentID: departmentID,
-                                FirstName: "",
-                                LastName: "",
-                                MiddleInitial: "",
-                            }
-
-                            setSelectedInstructor(new_instructor)
-                            setIsLoading(false)
-
-                            setMode("new")
-                        }}
-                        loading={IsLoading}
-                    >
-                        Add New Instructor
-                    </Button>
-                </Box>
             </Box>
 
             <Typography marginInline={'0.5em'} variant="h5" sx={{ textAlign: 'left' }} >Instructors</Typography>
@@ -381,10 +342,6 @@ function InstructorPage() {
             popupOptions={popupOptions}
             setPopupOptions={setPopupOptions}
         />}
-
-        <Box display={'flex'} justifyContent={'center'} alignItems={'center'} padding={5}>
-            <a href="/view_instructors/">link for publicly accessible instructors’ page view</a>
-        </Box>
     </>);
 }
 
