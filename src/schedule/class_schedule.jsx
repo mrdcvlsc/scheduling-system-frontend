@@ -12,7 +12,7 @@ import { deserializeSchedule, fetchClassJsonSchedule, fetchSubjectTimeSlotMoveAv
 
 import { generateTimeSlotRowLabels } from "../js/week-time-table-grid-functions";
 import { MainHeader } from "../components/Header";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, LinearProgress, Typography } from "@mui/material";
 
 const SECTION_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz";
 
@@ -23,7 +23,52 @@ import '@fontsource/roboto/700.css';
 import { ThemeProvider } from "@emotion/react";
 import theme from "../components/Theme";
 
+function LinearProgressWithLabel(props) {
+    return (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ width: '100%', mr: 1 }}>
+                <LinearProgress variant="determinate" {...props} />
+            </Box>
+            <Box sx={{ minWidth: 35 }}>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                    {`${Math.round(props.value)}%`}
+                </Typography>
+            </Box>
+        </Box>
+    );
+}
+
+function extractGenerationNumber(text) {
+    if (typeof text !== 'string') {
+        throw new TypeError('Expected a string');
+    }
+
+    const regex = /generation\s+(\d{1,2})/i;
+    const is_match = text.match(regex);
+
+    if (is_match) {
+        return parseInt(is_match[1], 10);
+    }
+
+    return null;
+}
+
+function getScheduleGenerationStatusColor(status) {
+    switch (status) {
+        case "success": return 'green';
+        case "in progress": return 'blue';
+        case "failed": return 'red';
+        case "internal server error": return 'red';
+        case "on queue": return 'orange';
+        case "not started": return 'black';
+    }
+}
+
 function TimeTable() {
+
+    const focusRef = useRef(null)
+
+    const scrollToTable = () => focusRef.current.scrollIntoView()
 
     /////////////////////////////////////////////////////////////////////////////////
     //                     LOAD GUARD COMPONENT STATES
@@ -299,10 +344,12 @@ function TimeTable() {
             setSubjectColors(subjectColors);
 
             // Scroll to the bottom of the page
-            window.scrollTo({
-                top: document.documentElement.scrollHeight,
-                behavior: 'smooth',
-            });
+            // window.scrollTo({
+            //     top: document.documentElement.scrollHeight,
+            //     behavior: 'smooth',
+            // });
+
+            scrollToTable()
         } catch (err) {
             console.error("Error loading schedule:", err);
             setPopupOptions({
@@ -629,7 +676,7 @@ function TimeTable() {
 
                 {/*================================= Dropdown Container =================================*/}
 
-                <div className="dropdown-container" style={{ display: 'flex', flexDirection: 'column' }}>
+                <div className="dropdown-container" style={{ display: 'flex', flexDirection: 'column' }} ref={focusRef}>
                     <div id="left-dropdown-container" style={{ width: '100%', display: 'flex', justifyContent: 'space-evenly', padding: '0.2em', gap: '0.5em' }}>
                         <select className="dropdown" style={{ width: '100%' }} value={departmentID} onChange={handleDepartmentChange} disabled={pickedUpSubject}>
                             <option value="">Department</option>
@@ -849,14 +896,33 @@ function TimeTable() {
             </div>
 
             {schedGenStatus ?
-                <Box padding={2}>
-                    <Typography variant="h6" style={{ color: 'green', textAlign: 'center' }}>
-                        {schedGenStatus.Status}
-                    </Typography>
-                    <Typography variant="body2" style={{ color: 'black', textAlign: 'center' }}>
-                        {schedGenStatus.Message}
-                    </Typography>
-                </Box>
+                <>
+                    <Box padding={2}>
+                        <Typography
+                            variant="h6"
+                            style={{
+                                color: getScheduleGenerationStatusColor(schedGenStatus.Status),
+                                textAlign: 'center'
+                            }}
+                        >
+                            {schedGenStatus.Status}
+                        </Typography>
+                        <Typography variant="body2" style={{ color: 'black', textAlign: 'center' }}>
+                            {schedGenStatus.Message}
+                        </Typography>
+
+                        {sectionIndex ?
+                            <LinearProgressWithLabel
+                                value={
+                                    Number.isNaN(Number.parseInt(extractGenerationNumber(schedGenStatus.Message), 10)) ?
+                                        0 : (Number.parseInt(extractGenerationNumber(schedGenStatus.Message), 10) / 16) * 100
+                                }
+                            />
+                            : null
+                        }
+
+                    </Box>
+                </>
                 : null}
 
             {resourceEstimates ?
