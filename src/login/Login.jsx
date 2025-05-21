@@ -95,9 +95,12 @@ export default function Login() {
             p={2}
         >
             <Paper elevation={3} sx={{ p: 4, maxWidth: 400, width: "100%" }}>
-                <Typography variant="h5" gutterBottom align="center">
-                    Department Login
-                </Typography>
+                <Box marginBottom={2} display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
+                    <img src='../assets/cvsu-silang.jpg' height={'50px'} />
+                    <Typography color="purple" fontWeight={'bold'} variant="body1" gutterBottom align="center">
+                        Department Login
+                    </Typography>
+                </Box>
                 <Box
                     component="form"
                     onSubmit={handleSubmit}

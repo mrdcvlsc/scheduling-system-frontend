@@ -11,8 +11,10 @@ function App() {
     return (
         <>
             <MainHeader />
-            <Box display={'flex'} alignItems={'center'} justifyContent={'center'} height={'80vh'}>
-                <Typography variant='h5'>Subject Scheduling System Using Genetic Algorithm</Typography>
+            <Box display={'flex'} flexDirection={'column'} alignItems={'center'} justifyContent={'center'} height={'80vh'}>
+                <img src='../assets/cvsu-logo.png' height={'150px'}/>
+                <Typography variant='body1' fontWeight={'bold'} color='green'>Cavite State University - Silang Campus</Typography>
+                <Typography variant='h6' marginTop={2}>Subject Scheduling System Using Genetic Algorithm</Typography>
             </Box>
         </>
     )
