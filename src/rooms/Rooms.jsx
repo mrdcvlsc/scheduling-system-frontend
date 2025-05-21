@@ -21,6 +21,10 @@ import {
     createTheme,
     Alert,
     ThemeProvider,
+    OutlinedInput,
+    Checkbox,
+    ListItemText,
+    Chip,
 } from "@mui/material";
 
 import { Popup } from "../components/Loading";
@@ -152,11 +156,17 @@ function Rooms() {
             })
         }
 
+        setSharingDepartmentIDs([])
+        setSharingDepartments([])
+
         setLoading(false);
     }
 
     const [departmentID, setDepartmentID] = useState("")
     const [department, setDepartment] = useState("")
+
+    const [sharingDepartmentIDs, setSharingDepartmentIDs] = useState([])
+    const [sharingDepartments, setSharingDepartments] = useState([])
 
     return (<>
         <MainHeader pageName={'rooms'} />
@@ -186,7 +196,8 @@ function Rooms() {
                                 }
                             }
 
-                            await load_rooms(department_id, pageSize, page)
+                            setPage(0);
+                            await load_rooms(department_id, pageSize, 0)
                         }}
                     >
                         {departmentList ?
@@ -206,6 +217,9 @@ function Rooms() {
                             Capacity: null,
                             RoomType: null,
                         }
+
+                        setSharingDepartmentIDs([])
+                        setSharingDepartments([])
 
                         setRoom(new_empty_room_fields)
                         console.log('new_empty_room_fields =', new_empty_room_fields)
@@ -234,12 +248,13 @@ function Rooms() {
                             <TableCell>Name</TableCell>
                             <TableCell>Capacity</TableCell>
                             <TableCell>Room Type</TableCell>
+                            {departmentID == 0 ? <TableCell>Department Sharing</TableCell> : null}
                             <TableCell align="right">Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>{loading ? (
                         <TableRow>
-                            <TableCell colSpan={5} align="center">
+                            <TableCell colSpan={departmentID == 0 ? 6 : 5} align="center">
                                 <CircularProgress />
                             </TableCell>
                         </TableRow>
@@ -249,12 +264,28 @@ function Rooms() {
                             <TableCell>{room.Name}</TableCell>
                             <TableCell>{room.Capacity}</TableCell>
                             <TableCell>{RoomTypeName(room.RoomType)}</TableCell>
+                            {departmentID == 0 ? <TableCell>{room?.SharingDepartments ? `${room?.SharingDepartments?.length}x` : 'all'}</TableCell> : null}
                             <TableCell align="right">
                                 <Button
                                     variant="contained" color="primary" size="small"
                                     style={{ marginRight: 8 }}
                                     startIcon={<EditIcon />}
                                     onClick={() => {
+                                        if (room.SharingDepartments) {
+                                            setSharingDepartmentIDs(room.SharingDepartments)
+
+                                            const current_sharing_departments = room.SharingDepartments?.map((id) => {
+                                                return departmentList.find((find_dept) => {
+                                                    return id == find_dept.DepartmentID;
+                                                })
+                                            })
+
+                                            setSharingDepartments(current_sharing_departments)
+                                        } else {
+                                            setSharingDepartmentIDs([])
+                                            setSharingDepartments([])
+                                        }
+
                                         setRoom(room)
                                         console.log(room)
                                         setMode("edit")
@@ -353,7 +384,19 @@ function Rooms() {
                         const formData = new FormData(event.currentTarget);
                         const formJson = Object.fromEntries(formData.entries());
 
-                        formJson.DepartmentID = Number(formJson.DepartmentID)
+                        if (mode === "new") {
+                            console.log('adding new room to department id : ', departmentID)
+                            formJson.DepartmentID = departmentID
+                        } else {
+                            formJson.DepartmentID = Number(formJson.DepartmentID)
+                        }
+
+                        if (departmentID == 0) {
+                            formJson.SharingDepartments = sharingDepartmentIDs
+                        } else {
+                            formJson.SharingDepartments = []
+                        }
+
                         formJson.Capacity = Number(formJson.Capacity)
                         formJson.RoomType = Number(formJson.RoomType)
 
@@ -390,6 +433,9 @@ function Rooms() {
                                 Message: `${err}`
                             });
                             setLoading(false);
+                        } finally {
+                            setSharingDepartmentIDs([])
+                            setSharingDepartments([])
                         }
 
                         setIsDialogFormOpen(false)
@@ -464,39 +510,111 @@ function Rooms() {
                     </Select>
                 </FormControl>
 
-                <FormControl
-                    fullWidth
-                    margin="dense"
-                >
-                    <InputLabel id="label-id-edit-department">Department</InputLabel>
-                    <Select
-                        onFocus={false}
-                        required
-                        variant="standard"
-                        name="DepartmentID"
-                        label="DepartmentID"
-                        id="id-edit-department" labelId="label-id-edit-department"
-                        value={Number.isInteger(room?.DepartmentID) ? room?.DepartmentID : ""}
-                        onChange={(e) => {
-                            const new_room = structuredClone(room)
-                            console.log('e.target.value =', e.target.value)
-                            new_room.DepartmentID = e.target.value
-                            setRoom(new_room)
-                        }}
+                {mode === "edit" ?
+                    <FormControl
+                        fullWidth
+                        margin="dense"
                     >
-                        {departmentList ?
-                            departmentList.map((department, index) => {
-                                return <MenuItem key={index} value={department.DepartmentID}>{`${department.Code} - ${department.Name}`}</MenuItem>
-                            }) : null
-                        }
-                    </Select>
-                </FormControl>
+                        <InputLabel id="label-id-edit-department">Move to Department</InputLabel>
+                        <Select
+                            onFocus={false}
+                            required
+                            variant="standard"
+                            name="DepartmentID"
+                            label="DepartmentID"
+                            id="id-edit-department" labelId="label-id-edit-department"
+                            value={Number.isInteger(room?.DepartmentID) ? room?.DepartmentID : ""}
+                            onChange={(e) => {
+                                const new_room = structuredClone(room)
+                                console.log('e.target.value =', e.target.value)
+                                new_room.DepartmentID = e.target.value
+                                setRoom(new_room)
+                            }}
+                        >
+                            {departmentList ?
+                                departmentList.map((department, index) => {
+                                    return <MenuItem key={index} value={department.DepartmentID}>{`${department.Code} - ${department.Name}`}</MenuItem>
+                                }) : null
+                            }
+                        </Select>
+                    </FormControl> : null
+                }
+
+                {(departmentID == 0 && departmentList) ? (<>
+                    <FormControl sx={{ m: 1 }} fullWidth>
+                        <InputLabel id="multiple-department-checkbox-label">Sharing Departments</InputLabel>
+                        <Select
+                            labelId="multiple-department-checkbox-label"
+                            id="multiple-department-checkbox"
+                            multiple
+                            name="SharingDepartments"
+                            value={sharingDepartmentIDs}
+                            onChange={(event) => {
+                                const {
+                                    target: { value },
+                                } = event;
+
+                                console.log('value : ', value)
+                                console.log('event : ', event)
+
+                                setSharingDepartmentIDs(
+                                    typeof value === 'string' ? value.split(',') : value,
+                                );
+
+                                const current_sharing_departments = value.map((id) => {
+                                    return departmentList.find((find_dept) => {
+                                        return id == find_dept.DepartmentID;
+                                    })
+                                })
+
+                                setSharingDepartments(current_sharing_departments)
+
+                                console.log('current sharing departments :', sharingDepartmentIDs)
+                                console.log('current sharing departments :', current_sharing_departments)
+                            }}
+                            input={<OutlinedInput label="Sharing Departments" />}
+                            renderValue={(selected) => (selected?.length === 0) ? 'Shared to All' : selected.join(', ')}
+                        >
+                            {departmentList.map((department) => (
+                                <MenuItem key={department.DepartmentID} value={Number.parseInt(department.DepartmentID, 10)}>
+                                    <Checkbox checked={sharingDepartmentIDs.includes(Number.parseInt(department.DepartmentID, 10))} />
+                                    <ListItemText primary={department.Name} />
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+
+                    <Box display={'flex'} flexWrap={'wrap'} gap={1} padding={'0.3em'}>{(sharingDepartments?.length > 0) ? sharingDepartments.map((department) => (
+                        <Chip
+                            key={`chip-key-${department.DepartmentID}`}
+                            label={`${department.DepartmentID} | ${department.Name}`}
+                            onDelete={() => {
+                                setSharingDepartments(
+                                    sharingDepartments.filter(iter_dept => iter_dept?.DepartmentID != department?.DepartmentID)
+                                )
+
+                                setSharingDepartmentIDs(
+                                    sharingDepartmentIDs.filter(id => id != department?.DepartmentID)
+                                )
+                            }}
+                        />
+                    )) : <Typography>Shared By All Departments</Typography>}
+                    </Box>
+                </>) : null
+
+                }
+
+
             </DialogContent>
             <DialogActions>
                 <Button type="submit">{
                     mode === "new" ? ('Save') : (mode === "edit" ? ('Apply Changes') : 'Temp Success')
                 }</Button>
-                <Button onClick={() => setIsDialogFormOpen(false)}>Cancel</Button>
+                <Button onClick={() => {
+                    setSharingDepartmentIDs([])
+                    setSharingDepartments([])
+                    setIsDialogFormOpen(false)
+                }}>Cancel</Button>
             </DialogActions>
         </Dialog>
     </>)
