@@ -25,7 +25,6 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Box, FormControl, InputLabel, MenuItem, Select, Button, Typography, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, CircularProgress, TablePagination, Dialog, DialogTitle, DialogContentText, DialogContent, DialogActions, TextField, ThemeProvider } from "@mui/material";
 
 import InstructorDataView from "./InstructorDataView"
-import { deleteRemoveInsturctor } from "../js/instructors";
 
 import theme from "../components/Theme";
 
@@ -124,28 +123,6 @@ function InstructorPage() {
         setPage(0); // go back to first page when page row size was changed
     };
 
-    const [isDialogDeleteShow, setIsDialogDeleteShow] = useState(false)
-    const [instructorToDelete, setInstructorToDelete] = useState(null)
-    const handleInstructorDelete = async (instructor_id) => {
-        setLoading(true);
-
-        try {
-            await deleteRemoveInsturctor(instructor_id);
-            await load_instructors(departmentID, pageSize, page, firstNameMatch, middleInitialMatch, lastNameMatch)
-        } catch (err) {
-            setPopupOptions({
-                Heading: "Delete Failed",
-                HeadingStyle: { background: "red", color: "white" },
-                Message: `${err}`
-            })
-        }
-
-        setLoading(false);
-        setIsDialogDeleteShow(false)
-
-        console.log(`call: handleInstructorDelete(${instructor_id})`)
-    }
-
     const [firstNameMatch, setFirstNameMatch] = useState("");
     const [middleInitialMatch, setMiddleInitialMatch] = useState("");
     const [lastNameMatch, setLastNameMatch] = useState("");
@@ -159,7 +136,7 @@ function InstructorPage() {
         <Box display={'flex'} justifyContent={'center'} alignItems={'center'} padding={1} bgcolor={'#800080'}>
             <Typography variant="h6" color="#00ff00">Cavite Statue University - Silang Campus : Instructor Schedules</Typography>
         </Box>
-        
+
         <Popup popupOptions={popupOptions} closeButtonActionHandler={() => {
             setPopupOptions(null);
         }} />
@@ -286,44 +263,6 @@ function InstructorPage() {
                 onRowsPerPageChange={handleChangeRowsPerPage}
             />
         </TableContainer> : null}
-
-        <Dialog
-            open={isDialogDeleteShow}
-            onClose={() => {
-                setIsDialogDeleteShow(false)
-                setInstructorToDelete(null)
-            }}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-        >
-            <DialogTitle id="alert-dialog-title">
-                Remove Instructor
-            </DialogTitle>
-
-            <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                    {`Are you sure you want to remove "${instructorToDelete?.FirstName} ${instructorToDelete?.MiddleInitial} ${instructorToDelete?.LastName}"?`}
-                </DialogContentText>
-            </DialogContent>
-
-            <DialogActions>
-                <Button
-                    onClick={() => {
-                        handleInstructorDelete(instructorToDelete?.InstructorID)
-                    }}
-                >Yes
-                </Button>
-
-                <Button
-                    onClick={() => {
-                        setIsDialogDeleteShow(false)
-                        console.log("delete dialog 'No' click : red -", reducer)
-                    }}
-                >
-                    No
-                </Button>
-            </DialogActions>
-        </Dialog>
 
         {mode === "" ? null : <InstructorDataView
             mode={mode}
