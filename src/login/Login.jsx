@@ -17,6 +17,8 @@ import LoginIcon from "@mui/icons-material/Login";
 import { loginDepartment, fetchWho } from "../js/departments";
 import theme from "../components/Theme";
 
+import LOGIN_LOGO from '../assets/cvsu-silang.jpg'
+
 export default function Login() {
     const [form, setForm] = useState({ id: "", code: "", password: "" });
     const [loading, setLoading] = useState(false);
@@ -96,7 +98,7 @@ export default function Login() {
         >
             <Paper elevation={3} sx={{ p: 4, maxWidth: 400, width: "100%" }}>
                 <Box marginBottom={2} display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
-                    <img src='../assets/cvsu-silang.jpg' height={'50px'} />
+                    <img src={LOGIN_LOGO} height={'50px'} />
                     <Typography color="purple" fontWeight={'bold'} variant="body1" gutterBottom align="center">
                         Department Login
                     </Typography>
