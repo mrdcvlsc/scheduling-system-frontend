@@ -230,15 +230,18 @@ function Rooms() {
                     Add New Room
                 </Button>
             </Box>
+            
             <Box
-                padding={'1em'}
+                paddingInlineStart={0}
+                paddingInlineEnd={3}
                 display={'flex'}
                 justifyContent={'space-between'}
             >
-                <Typography>Rooms</Typography>
+                <Typography marginInline={'0.5em'} variant="h6">Rooms</Typography>
                 <Typography fontStyle={'italic'}>{department ? `${department?.Name}` : null}</Typography>
             </Box>
 
+            <Box paddingInline={1}>
             <TableContainer>
                 <Table size="small">
                     <TableHead>
@@ -328,6 +331,7 @@ function Rooms() {
                     }}
                 />
             </TableContainer>
+            </Box>
         </Box>
 
         {/* delete dialog */}

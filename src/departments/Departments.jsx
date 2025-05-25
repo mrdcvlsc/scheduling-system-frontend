@@ -172,10 +172,16 @@ function Departments() {
                 </Button>
             </Box>
 
-            <Box sx={{ display: 'flex', padding: '0.5em' }}>
-                <Typography>Departments</Typography>
+            <Box
+                paddingInlineStart={0}
+                paddingInlineEnd={3}
+                display={'flex'}
+                justifyContent={'space-between'}
+            >
+                <Typography marginInline={'0.5em'} variant="h6">Departments</Typography>
             </Box>
 
+            <Box paddingInline={1}>
             <TableContainer component={Paper}>
                 <Table size="small">
                     <TableHead>
@@ -274,6 +280,7 @@ function Departments() {
                     </Box>
                 </Box>
             </TableContainer>
+            </Box>
         </Box>
 
         <Dialog

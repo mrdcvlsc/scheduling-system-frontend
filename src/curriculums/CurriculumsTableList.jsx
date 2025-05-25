@@ -132,7 +132,7 @@ function CurriculumsTableList() {
         <Popup popupOptions={popupOptions} closeButtonActionHandler={() => setPopupOptions(null)} />
 
         <Box display={!isView ? 'block' : 'none'}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Box padding={1} sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Box display={'flex'} gap={'0.5em'}>
                     <FormControl sx={{ width: 130 }} size="small">
                         <InputLabel id="label-id-department">Department</InputLabel>
@@ -205,11 +205,17 @@ function CurriculumsTableList() {
                 </Button>
             </Box>
 
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: '0.5em' }}>
-                <Typography>Curriculums</Typography>
+            <Box
+                paddingInlineStart={0}
+                paddingInlineEnd={3}
+                display={'flex'}
+                justifyContent={'space-between'}
+            >
+                <Typography marginInline={'0.5em'} variant="h6">Curriculums</Typography>
                 <Typography fontStyle={'italic'}>{selectedDepartment ? `${selectedDepartment?.Name}` : null}</Typography>
             </Box>
 
+            <Box paddingInline={1}>
             <TableContainer component={Paper}>
                 <Table size="small">
                     <TableHead>
@@ -290,6 +296,7 @@ function CurriculumsTableList() {
                     />
                 </Box>
             </TableContainer>
+            </Box>
         </Box>
 
         <Dialog

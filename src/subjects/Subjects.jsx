@@ -169,10 +169,11 @@ function Subjects() {
                 </Button>
             </Box>
 
-            <Box sx={{ display: 'flex', padding: '0.5em' }}>
-                <Typography>Subjects</Typography>
+            <Box padding={0}>
+                <Typography marginInline={'0.5em'} variant="h6">Subjects</Typography>
             </Box>
 
+            <Box paddingInline={1}>
             <TableContainer component={Paper}>
                 <Table size="small">
                     <TableHead>
@@ -273,6 +274,7 @@ function Subjects() {
                     </Box>
                 </Box>
             </TableContainer>
+            </Box>
         </Box>
 
         <Dialog

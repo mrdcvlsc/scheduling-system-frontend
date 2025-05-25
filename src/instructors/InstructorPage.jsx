@@ -170,7 +170,7 @@ function InstructorPage() {
         />
 
         <Box display={!mode ? 'block' : 'none'}>
-            <Box sx={{ display: "flex", flexDirection: "row", gap: 2, padding: '1em' }}>
+            <Box padding={1} sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
                 <FormControl sx={{ minWidth: 130 }} size="small">
                     <InputLabel id="label-id-department">Department</InputLabel>
                     <Select
@@ -258,9 +258,10 @@ function InstructorPage() {
                 </Box>
             </Box>
 
-            <Typography marginInline={'0.5em'} variant="h5" sx={{ textAlign: 'left' }} >Instructors</Typography>
+            <Typography marginInline={'0.5em'} variant="h6" sx={{ textAlign: 'left' }} >Instructors</Typography>
         </Box >
 
+        <Box paddingInline={1}>
         {mode === "" ? <TableContainer component={Paper}>
             <Table size="small">
                 <TableHead>
@@ -325,6 +326,7 @@ function InstructorPage() {
                 onRowsPerPageChange={handleChangeRowsPerPage}
             />
         </TableContainer> : null}
+        </Box>
 
         <Dialog
             open={isDialogDeleteShow}
