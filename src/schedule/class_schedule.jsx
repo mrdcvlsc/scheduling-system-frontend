@@ -23,6 +23,8 @@ import '@fontsource/roboto/700.css';
 import { ThemeProvider } from "@emotion/react";
 import theme from "../components/Theme";
 
+const NUMBER_OF_GENERATIONS = 32
+
 function LinearProgressWithLabel(props) {
     return (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -915,7 +917,7 @@ function TimeTable() {
                             <LinearProgressWithLabel
                                 value={
                                     Number.isNaN(Number.parseInt(extractGenerationNumber(schedGenStatus.Message), 10)) ?
-                                        0 : (Number.parseInt(extractGenerationNumber(schedGenStatus.Message), 10) / 16) * 100
+                                        0 : (Number.parseInt(extractGenerationNumber(schedGenStatus.Message), 10) / NUMBER_OF_GENERATIONS) * 100
                                 }
                             />
                             : null
