@@ -372,9 +372,11 @@ function InstructorPage() {
             selectedDepartment={selectedDepartment}
             selectedInstructor={selectedInstructor}
             setSelectedInstructor={setSelectedInstructor}
-            onInstructorDataViewClose={() => {
+            onInstructorDataViewClose={async () => {
                 setMode("")
                 setSelectedInstructor(null)
+                await load_instructors(departmentID, pageSize, page, firstNameMatch, middleInitialMatch, lastNameMatch)
+
             }}
             reloadInstructorsTable={async () => {
                 await load_instructors(departmentID, pageSize, page, firstNameMatch, middleInitialMatch, lastNameMatch)

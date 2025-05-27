@@ -364,6 +364,8 @@ export default function InstructorDataView({
                     HeadingStyle: { background: "green", color: "white" },
                     Message: "changes to the instructor data are saved"
                 });
+
+                reloadInstructorsTable()
             } else if (mode === "new") {
                 console.log('mode: new - save new instructor')
 
