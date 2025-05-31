@@ -13,6 +13,7 @@ import { deserializeSchedule, fetchClassJsonSchedule, fetchSubjectTimeSlotMoveAv
 import { generateTimeSlotRowLabels } from "../js/week-time-table-grid-functions";
 import { MainHeader } from "../components/Header";
 import { Box, Button, LinearProgress, Typography } from "@mui/material";
+import PrintIcon from '@mui/icons-material/Print';
 
 const SECTION_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz";
 
@@ -23,7 +24,17 @@ import '@fontsource/roboto/700.css';
 import { ThemeProvider } from "@emotion/react";
 import theme from "../components/Theme";
 
+import "../assets/SubjectColors.css";
+
+import { useReactToPrint } from "react-to-print";
+
 const NUMBER_OF_GENERATIONS = 32
+
+const SEMESTER_NAMES = [
+    "1st Semester",
+    "2nd Semester",
+    "Mid-year",
+]
 
 function LinearProgressWithLabel(props) {
     return (
@@ -67,7 +78,6 @@ function getScheduleGenerationStatusColor(status) {
 }
 
 function TimeTable() {
-
     const focusRef = useRef(null)
 
     const scrollToTable = () => focusRef.current.scrollIntoView()
@@ -344,12 +354,6 @@ function TimeTable() {
             });
 
             setSubjectColors(subjectColors);
-
-            // Scroll to the bottom of the page
-            // window.scrollTo({
-            //     top: document.documentElement.scrollHeight,
-            //     behavior: 'smooth',
-            // });
 
             scrollToTable()
         } catch (err) {
@@ -661,6 +665,40 @@ function TimeTable() {
 
     const [cellHeight, setCellHeight] = useState(0);
 
+
+    /////////////////////////////////////////////////////////////////////////////////
+    // printing states & refs - start
+
+    const [isPrinting, setIsPrinting] = useState(false);
+    const contentRef = useRef(null);
+
+    const promiseResolveRef = useRef(null);
+
+    useEffect(() => {
+        if (isPrinting && promiseResolveRef.current) {
+            promiseResolveRef.current();
+        }
+    }, [isPrinting]);
+
+    const reactToPrintFn = useReactToPrint({
+        contentRef,
+        documentTitle: `${departmentCurriculumsData[curriculumIndex]?.CurriculumName} - ${SEMESTER_NAMES[semesterIndex]} - Section ${SECTION_CHARACTERS[sectionIndex]}`,
+        onBeforePrint: () => {
+            return new Promise((resolve) => {
+                promiseResolveRef.current = resolve;
+                setIsPrinting(true);
+            });
+        },
+        onAfterPrint: () => {
+            promiseResolveRef.current = null;
+            setIsPrinting(false);
+        }
+        ,
+    });
+
+    // printing states & refs - end
+    /////////////////////////////////////////////////////////////////////////////////
+
     return (
         <>
             <MainHeader pageName={'schedule'} />
@@ -768,76 +806,101 @@ function TimeTable() {
                     </div> : null
                 }
 
-                <table className="time-table" style={{ display: sectionIndex ? 'revert' : 'none' }}>
-                    <thead>
-                        <tr>
-                            <th className="time-slot-header">Time Slot</th>
-                            {DAYS.map((day) => (
-                                <th key={day} className="day-header">{day}</th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {generateTimeSlotRowLabels(startHour, timeSlotMinuteInterval, dailyTimeSlots).map((time_slot_label, row_idx) => (
-                            <tr key={row_idx}>
-                                <td className="time-slot">{time_slot_label}</td>
-                                {DAYS.map((_, day_idx) => {
-                                    const has_assigned_subject = classAssignedSubjects.find(
-                                        (subj) => subj.DayIdx === day_idx && subj.TimeSlotIdx === row_idx
-                                    );
+                <div ref={contentRef} style={{ padding: (isPrinting && Number.isInteger(Number.parseInt(sectionIndex, 10))) ? '1em' : '0px' }}>
 
-                                    if (has_assigned_subject) {
-                                        return (
-                                            <td
-                                                key={day_idx}
-                                                className={`subject-cell ${subjectColors[has_assigned_subject.SubjectCode]}`}
-                                                rowSpan={has_assigned_subject.SubjectTimeSlots}
-                                                onClick={() => {
-                                                    handlePickupSubject(has_assigned_subject)
-                                                    setPickedUpColor(`subject-cell ${subjectColors[has_assigned_subject.SubjectCode]}`)
-                                                }}
-                                            >
-                                                <div className="subject-content">
-                                                    <div className="subject-name">{has_assigned_subject.SubjectCode}</div>
-                                                    <div className="instructor">{has_assigned_subject.InstructorLastName}</div>
-                                                    <div className="room">{has_assigned_subject.RoomName}</div>
-                                                </div>
-                                            </td>
-                                        );
-                                    }
+                    {(isPrinting && Number.isInteger(Number.parseInt(sectionIndex, 10))) ? (<>
+                        <Box display={'flex'} justifyContent={'center'} alignItems={'center'} padding={1} bgcolor={'green'} marginBottom={2}>
+                            <Typography variant="h5" color={'white'}>Cavite Statue University - Silang Campus</Typography>
+                        </Box>
 
-                                    // row spans occupy space in a tr despite not having the td element spanning in that tr,
-                                    // that's why this logic is needed because if we didn't do this, we will add empty slots
-                                    // to the rows with cells that are affected by a row spans, which could lead to new empty
-                                    // slots that can go outside of the table.
+                        <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} marginBottom={1}>
+                            <Typography variant="h6">{
+                                `${departmentCurriculumsData[curriculumIndex].CurriculumName} - ${SEMESTER_NAMES[semesterIndex]}`
+                            }</Typography>
 
-                                    const is_occupied = classAssignedSubjects.some((subject) => {
-                                        const has_hit_subject_in_row = row_idx >= subject.TimeSlotIdx && row_idx < (subject.TimeSlotIdx + subject.SubjectTimeSlots);
-                                        const has_hit_subject_in_col = day_idx == subject.DayIdx;
-                                        return has_hit_subject_in_row && has_hit_subject_in_col;
-                                    });
+                            <Typography variant="h6">{
+                                `Section ${SECTION_CHARACTERS[sectionIndex]}`
+                            }</Typography>
+                        </Box>
 
-                                    if (availableSubjectTimeSlotMove) {
-                                        if (availableSubjectTimeSlotMove[day_idx][row_idx]) {
-                                            return <td
-                                                key={day_idx}
-                                                className="empty-slot free-move-slot"
-                                                onClick={() => handleDropPickedUpSubject(day_idx, row_idx)}
-                                            ></td>;
-                                        }
-                                    }
 
-                                    return is_occupied ? null : <td key={day_idx} className="empty-slot"></td>;
-                                })}
+                    </>) : null}
+
+                    <table className="time-table" style={{ display: sectionIndex ? 'revert' : 'none' }}>
+                        <thead>
+                            <tr>
+                                <th className="time-slot-header">Time Slot</th>
+                                {DAYS.map((day) => (
+                                    <th key={day} className="day-header">{day}</th>
+                                ))}
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {generateTimeSlotRowLabels(startHour, timeSlotMinuteInterval, dailyTimeSlots).map((time_slot_label, row_idx) => (
+                                <tr key={row_idx}>
+                                    <td className="time-slot">{time_slot_label}</td>
+                                    {DAYS.map((_, day_idx) => {
+                                        const has_assigned_subject = classAssignedSubjects.find(
+                                            (subj) => subj.DayIdx === day_idx && subj.TimeSlotIdx === row_idx
+                                        );
+
+                                        if (has_assigned_subject) {
+                                            return (
+                                                <td
+                                                    key={day_idx}
+                                                    className={`subject-cell ${subjectColors[has_assigned_subject.SubjectCode]}`}
+                                                    rowSpan={has_assigned_subject.SubjectTimeSlots}
+                                                    onClick={() => {
+                                                        handlePickupSubject(has_assigned_subject)
+                                                        setPickedUpColor(`subject-cell ${subjectColors[has_assigned_subject.SubjectCode]}`)
+                                                    }}
+                                                >
+                                                    <div className="subject-content">
+                                                        <div className="subject-name">{has_assigned_subject.SubjectCode}</div>
+                                                        <div className="instructor">{has_assigned_subject.InstructorLastName}</div>
+                                                        <div className="room">{has_assigned_subject.RoomName}</div>
+                                                    </div>
+                                                </td>
+                                            );
+                                        }
+
+                                        // row spans occupy space in a tr despite not having the td element spanning in that tr,
+                                        // that's why this logic is needed because if we didn't do this, we will add empty slots
+                                        // to the rows with cells that are affected by a row spans, which could lead to new empty
+                                        // slots that can go outside of the table.
+
+                                        const is_occupied = classAssignedSubjects.some((subject) => {
+                                            const has_hit_subject_in_row = row_idx >= subject.TimeSlotIdx && row_idx < (subject.TimeSlotIdx + subject.SubjectTimeSlots);
+                                            const has_hit_subject_in_col = day_idx == subject.DayIdx;
+                                            return has_hit_subject_in_row && has_hit_subject_in_col;
+                                        });
+
+                                        if (availableSubjectTimeSlotMove) {
+                                            if (availableSubjectTimeSlotMove[day_idx][row_idx]) {
+                                                return <td
+                                                    key={day_idx}
+                                                    className="empty-slot free-move-slot"
+                                                    onClick={() => handleDropPickedUpSubject(day_idx, row_idx)}
+                                                ></td>;
+                                            }
+                                        }
+
+                                        return is_occupied ? null : <td key={day_idx} className="empty-slot"></td>;
+                                    })}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
 
                 {(!sectionIndex) ?
                     <Box height={200}></Box> :
                     null
                 }
+
+                <Box display={(Number.isInteger(Number.parseInt(sectionIndex, 10))) ? 'flex' : 'none'} justifyContent={'center'}>
+                    <Button onClick={reactToPrintFn} endIcon={<PrintIcon />}>Print</Button>
+                </Box>
 
                 <Box padding={1} gap={1} display={'flex'} justifyContent={'space-evenly'}>
                     <Button

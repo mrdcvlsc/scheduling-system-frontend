@@ -66,11 +66,6 @@
 
 }
 
-.disabled-slot:hover, .occupied-slot:hover, .available-slot:hover {
-    /* outline: 0.2em solid rgb(44, 0, 85) !important;
-    border: 0.2em solid rgb(44, 0, 85) !important; */
-}
-
 .disabled-slot {
     background-color: rgba(170, 170, 170, 0.7);
 }

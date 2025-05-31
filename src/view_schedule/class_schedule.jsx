@@ -22,6 +22,8 @@ import { ThemeProvider } from "@emotion/react";
 import theme from "../components/Theme";
 import { Box, Typography } from "@mui/material";
 
+import "../assets/SubjectColors.css";
+
 function TimeTable() {
 
     /////////////////////////////////////////////////////////////////////////////////
