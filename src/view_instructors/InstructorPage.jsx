@@ -6,16 +6,15 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
+import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
 
 import { Loading, Popup } from "../components/Loading";
 
 import "../assets/main.css";
-import "./TimeTable.css";
-import DeleteIcon from '@mui/icons-material/Delete';
-
-import "./TimeTableDropdowns.css";
-import "./instructors.css";
+import "../instructors/TimeTable.css";
+import "../instructors/TimeTableDropdowns.css";
+import "../instructors/instructors.css";
 
 import { fetchAllDepartments } from "../js/departments"
 import { fetchInstructors } from "../js/instructors_v2"

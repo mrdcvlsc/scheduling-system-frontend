@@ -1,7 +1,7 @@
 .subject-cell {
     font-weight: bold;
     font-size: 0.875em;
-    border: thin solid #ddd;
+    box-shadow: inset 0 0 0 0.07em #ddd;
     text-align: center;
     width: 14.2857%;
 }
@@ -13,147 +13,181 @@
 }
 
 .color-1 {
-    background-color: red;
-    color: white;
+    background: linear-gradient(to bottom right, #F28C8C, #e76f6f);
+    color: #ffffff;
+    box-shadow: inset 0 0 0 0.07em #c75d5d;
 }
 
 .color-2 {
-    background-color: #008812;
+    background: linear-gradient(to bottom right, #4CAF50, #3d8b40);
     color: white;
+    box-shadow: inset 0 0 0 0.07em #3d8b40;
 }
 
 .color-3 {
-    background-color: #fb6d00;
-    color: white; 
+    background: linear-gradient(to bottom right, #FC9E4F, #e7832c);
+    color: #4A2C00;
+    box-shadow: inset 0 0 0 0.07em #d97b26;
 }
 
 .color-4 {
-    background-color: blue;
+    background: linear-gradient(to bottom right, #7A7AFF, #5959d1);
     color: white;
+    box-shadow: inset 0 0 0 0.07em #5959d1;
 }
 
 .color-5 {
-    background-color: yellow;
-    color: black;
+    background: linear-gradient(to bottom right, #FAF98B, #e1df59);
+    color: #4C4C00;
+    box-shadow: inset 0 0 0 0.07em #d6d44e;
 }
 
 .color-6 {
-    background-color: purple;
-    color: white;
+    background: linear-gradient(to bottom right, #C080C0, #9c659c);
+    color: #ffffff;
+    box-shadow: inset 0 0 0 0.07em #9c659c;
 }
 
 .color-7 {
-    background-color: #000000;
-    color: white;   
+    background: linear-gradient(to bottom right, #444444, #2e2e2e);
+    color: white;
+    box-shadow: inset 0 0 0 0.07em #2e2e2e;
 }
 
 .color-8 {
-    background-color: #00FA9A;
-    color: black;
+    background: linear-gradient(to bottom right, #66FCD1, #38c5a6);
+    color: #003D30;
+    box-shadow: inset 0 0 0 0.07em #38c5a6;
 }
 
 .color-9 {
-    background-color: #B22222;
-    color: white;
+    background: linear-gradient(to bottom right, #D16565, #a94a4a);
+    color: #ffffff;
+    box-shadow: inset 0 0 0 0.07em #a94a4a;
 }
 
 .color-10 {
-    background-color: #89c80b;
-    color: white;
+    background: linear-gradient(to bottom right, #B1DC5A, #93b842);
+    color: #2E3D0B;
+    box-shadow: inset 0 0 0 0.07em #93b842;
 }
 
 .color-11 {
-    background-color: #1E90FF;
-    color: white;
+    background: linear-gradient(to bottom right, #7AB5F9, #5f9ce0);
+    color: #0D2C52;
+    box-shadow: inset 0 0 0 0.07em #5f9ce0;
 }
 
 .color-12 {
-    background-color: #C71585;
-    color: white;
+    background: linear-gradient(to bottom right, #DC6FAF, #b65591);
+    color: #ffffff;
+    box-shadow: inset 0 0 0 0.07em #b65591;
 }
 
 .color-13 {
-    color: white;
-    background-color: #fe5517;
+    background: linear-gradient(to bottom right, #FFA07A, #e97c58);
+    color: #5A2B1B;
+    box-shadow: inset 0 0 0 0.07em #e97c58;
 }
 
 .color-14 {
-    background-color: #FF1493;
-    color: white;
+    background: linear-gradient(to bottom right, #F778C0, #dc5fa8);
+    color: #4A1E3C;
+    box-shadow: inset 0 0 0 0.07em #dc5fa8;
 }
 
 .color-15 {
-    background-color: #00BFFF;
-    color: black;
+    background: linear-gradient(to bottom right, #66D7FF, #42bde9);
+    color: #003544;
+    box-shadow: inset 0 0 0 0.07em #42bde9;
 }
 
 .color-16 {
-    background-color: #A52A2A;
-    color: white;
+    background: linear-gradient(to bottom right, #C97B7B, #a86060);
+    color: #3A1F1F;
+    box-shadow: inset 0 0 0 0.07em #a86060;
 }
 
 .color-17 {
-    background-color: #20B2AA;
-    color: white;
+    background: linear-gradient(to bottom right, #73D4CB, #50bdb3);
+    color: #003B36;
+    box-shadow: inset 0 0 0 0.07em #50bdb3;
 }
 
 .color-18 {
-    background-color: #8B4513;
-    color: white;
+    background: linear-gradient(to bottom right, #BC8F6F, #a07252);
+    color: #3D2A1B;
+    box-shadow: inset 0 0 0 0.07em #a07252;
 }
 
 .color-19 {
-    background-color: #ae500d;
-    color: white;
+    background: linear-gradient(to bottom right, #D38C5D, #b67143);
+    color: #43240D;
+    box-shadow: inset 0 0 0 0.07em #b67143;
 }
 
 .color-20 {
-    background-color: #F4A300;
-    color: black;
+    background: linear-gradient(to bottom right, #F8C85F, #e0ad3e);
+    color: #4A3900;
+    box-shadow: inset 0 0 0 0.07em #e0ad3e;
 }
 
 .color-21 {
-    background-color: #BA55D3;
-    color: white;
+    background: linear-gradient(to bottom right, #D7A7E6, #bc87cc);
+    color: #431A5E;
+    box-shadow: inset 0 0 0 0.07em #bc87cc;
 }
 
 .color-22 {
-    background-color: #ff9068;
+    background: linear-gradient(to bottom right, #FFC3A6, #e6a481);
+    color: #4A2E1B;
+    box-shadow: inset 0 0 0 0.07em #e6a481;
 }
 
 .color-23 {
-    background-color: #4682B4;
-    color: white;
+    background: linear-gradient(to bottom right, #8DB9D3, #6da2c0);
+    color: #153346;
+    box-shadow: inset 0 0 0 0.07em #6da2c0;
 }
 
 .color-24 {
-    background-color: #370c4d;
+    background: linear-gradient(to bottom right, #7D5A92, #644476);
     color: white;
+    box-shadow: inset 0 0 0 0.07em #644476;
 }
 
 .color-25 {
-    background-color: #ffbebe9b;
+    background: linear-gradient(to bottom right, #FFE5E5, #e6cccc);
+    color: #5C2C2C;
+    box-shadow: inset 0 0 0 0.07em #e6cccc;
 }
 
 .color-26 {
-    background-color: #c50707;
-    color: white;
+    background: linear-gradient(to bottom right, #DB6B6B, #b25252);
+    color: #3C1A1A;
+    box-shadow: inset 0 0 0 0.07em #b25252;
 }
 
 .color-27 {
-    background-color: #ff0055;
-    color: white;
+    background: linear-gradient(to bottom right, #F782A6, #da6a8e);
+    color: #4A1F2E;
+    box-shadow: inset 0 0 0 0.07em #da6a8e;
 }
 
 .color-28 {
-    background-color: #00f794;
+    background: linear-gradient(to bottom right, #66F7C2, #3cd9a7);
+    color: #004F3C;
+    box-shadow: inset 0 0 0 0.07em #3cd9a7;
 }
 
 .color-29 {
-    background-color: #e74646;
+    background: linear-gradient(to bottom right, #F38C8C, #cd6d6d);
+    color: #4B1F1F;
+    box-shadow: inset 0 0 0 0.07em #cd6d6d;
 }
 
 .color-30 {
-    background-color: #00884d;
-    color: white;
+    background: linear-gradient(to bottom right, #49C394, #3ea67e);
+    color: #003D2A;
+    box-shadow: inset 0 0 0 0.07em #3ea67e;
 }

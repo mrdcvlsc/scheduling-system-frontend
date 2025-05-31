@@ -1,5 +1,4 @@
 .table-container {
-    /* overflow-x: auto; */
     display: flex;
     flex-direction: column;
     gap: 0.5em;
@@ -17,9 +16,6 @@
     background-color: #004466;
     color: white;
     padding: 0.2em;
-    /* position: sticky; */
-    /* top: 0; */
-    /* z-index: 10; */
     border-inline: thin solid #ddd;
 }
 
@@ -30,13 +26,16 @@
     padding: 0.2em;
     border: thin solid #ddd;
     width: 14.2857%;
+
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .empty-slot {
     background-color: white;
     border: thin solid #ddd;
     width: 14.2857%;
-
 }
 
 .subject-cell {
@@ -61,11 +60,14 @@
     font-weight: normal;
 }
 
+
 .free-move-slot {
-    background-color: rgb(143, 239, 0);
+    background: linear-gradient(135deg, #93f50067, #74d1038c);
+    box-shadow: inset 0 0 0 0.07em #5da400;
+    transition: background 0.3s ease;
 }
 
 .free-move-slot:hover {
-    background-color: rgb(59, 197, 0);
+    background: linear-gradient(135deg, #3bc500, #2d9f00);
     cursor: pointer;
 }

@@ -1,5 +1,4 @@
 .table-container {
-    /* overflow-x: auto; */
     display: flex;
     flex-direction: column;
     gap: 0.5em;
@@ -35,7 +34,7 @@
 
 .time-slot-cover {
     position: absolute;
-    
+
     width: 100%;
     height: 100%;
 
@@ -54,7 +53,18 @@
     border: thin solid rgb(44, 0, 85) !important;
 }
 
-.disabled-slot, .occupied-slot, .available-slot {
+.subject-cell {
+    font-weight: bold;
+    font-size: 0.875em;
+    border: thin solid #ddd;
+    text-align: center;
+    width: 14.2857%;
+}
+
+
+.disabled-slot,
+.occupied-slot,
+.available-slot {
     position: relative;
 
     width: 14.2857%;
@@ -62,18 +72,31 @@
     user-select: none;
 
     cursor: pointer;
+}
 
-
+.empty-slot {
+    background-color: white;
+    border: thin solid #ddd;
+    width: 14.2857%;
 }
 
 .disabled-slot {
-    background-color: rgba(170, 170, 170, 0.7);
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.202), rgba(0, 0, 0, 0.383));
+    box-shadow: inset 0 0 0 0.07em #02020257;
 }
 
 .occupied-slot {
-    background-color: rgba(255, 0, 0, 0.7);
+    background: linear-gradient(135deg, rgba(255, 0, 0, 0.12), rgba(226, 0, 0, 0.26));
+    box-shadow: inset 0 0 0 0.07em #c5000057;
 }
 
 .available-slot {
-    background-color: rgba(12, 249, 0, 0.623);
+    background: linear-gradient(135deg, #93f50067, #74d1038c);
+    box-shadow: inset 0 0 0 0.07em #5da400;
+    transition: background 0.3s ease;
+}
+
+.available-slot:hover {
+    background: linear-gradient(135deg, #3bc500, #2d9f00);
+    cursor: pointer;
 }

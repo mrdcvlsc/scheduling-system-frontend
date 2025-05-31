@@ -735,7 +735,9 @@ export default function InstructorDataView({
                                 );
                             }
 
-                            if (!is_available_default) {
+                            if (mode === "view") {
+                                class_name = "empty-slot"
+                            } else if (!is_available_default) {
                                 class_name = "disabled-slot"
                             } else if (is_available_default && !is_available_alloc) {
                                 class_name = "occupied-slot"
@@ -831,7 +833,7 @@ export default function InstructorDataView({
                                         setIsDragSelect(false)
                                     }}
                                 >
-                                    <span className={`time-slot-cover ${selected}`}></span>
+                                    {(mode !== "view") ? <span className={`time-slot-cover ${selected}`}></span> : null}
                                 </td>
                             )
                         })}

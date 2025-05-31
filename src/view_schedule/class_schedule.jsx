@@ -4,8 +4,8 @@ import { createRoot } from "react-dom/client";
 import { Loading, Popup } from "../components/Loading";
 
 import "../assets/main.css";
-import "./TimeTable.css";
-import "./TimeTableDropdowns.css";
+import "../schedule/TimeTable.css";
+import "../schedule/TimeTableDropdowns.css";
 
 import { fetchAllDepartments, fetchDepartmentCurriculumsData } from "../js/departments"
 import { fetchClassJsonSchedule, fetchResourceEstimates, generateSchedule, getValidateSchedules, deleteClearDepartmentSchedule, deleteClearSectionSchedule, getSchedGenStatus } from "../js/schedule"
