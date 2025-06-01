@@ -11,6 +11,9 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
 import { InstructorTimeSlotBitMap } from "../js/instructor-time-slot-bit-map"
 
+import { useReactToPrint } from "react-to-print";
+import PrintIcon from '@mui/icons-material/Print';
+
 import { Box, Typography, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { generateTimeSlotRowLabels } from "../js/week-time-table-grid-functions";
 import { ContextMenu, ContextMenuItem, Position, useContextMenuState } from "../components/ContextMenu";
@@ -21,6 +24,12 @@ import { fetchInstructorResources } from "../js/instructors_v2"
 import { Loading, Popup } from "../components/Loading";
 
 import "../assets/SubjectColors.css";
+
+const SEMESTER_NAMES = [
+    "1st Semester",
+    "2nd Semester",
+    "Mid-year",
+]
 
 export default function InstructorDataView({
     selectedDepartment,
@@ -395,6 +404,39 @@ export default function InstructorDataView({
         }
     }
 
+    /////////////////////////////////////////////////////////////////////////////////
+    //                      PRINTING STATES, REFS AND HANDLERS
+    /////////////////////////////////////////////////////////////////////////////////
+
+    const [isPrinting, setIsPrinting] = useState(false);
+    const contentRef = useRef(null);
+
+    const promiseResolveRef = useRef(null);
+
+    useEffect(() => {
+        if (isPrinting && promiseResolveRef.current) {
+            promiseResolveRef.current();
+        }
+    }, [isPrinting]);
+
+    const reactToPrintFn = useReactToPrint({
+        contentRef,
+        documentTitle: `${selectedInstructor.FirstName} ${selectedInstructor.MiddleInitial} ${selectedInstructor.LastName} - ${SEMESTER_NAMES[semesterIndex]} ${new Date().getFullYear()}`,
+        onBeforePrint: () => {
+            return new Promise((resolve) => {
+                promiseResolveRef.current = resolve;
+                setIsPrinting(true);
+            });
+        },
+        onAfterPrint: () => {
+            promiseResolveRef.current = null;
+            setIsPrinting(false);
+        }
+        ,
+    });
+
+    /////////////////////////////////////////////////////////////////////////////////
+
     return (<>
         <ContextMenu
             closeAfterClick={true}
@@ -699,148 +741,178 @@ export default function InstructorDataView({
             }
         </Box>
 
-        <table className="time-table">
-            <thead>
-                <tr>
-                    <th className="time-slot-header">Time Slot</th>
-                    {DAYS.map((day) => (
-                        <th key={day} className="day-header">{day}</th>
-                    ))}
-                </tr>
-            </thead>
-            <tbody>
-                {generateTimeSlotRowLabels(startHour, timeSlotMinuteInterval, dailyTimeSlots).map((time_slot_label, time_slot_index) => (
-                    <tr key={time_slot_index}>
-                        <td className="time-slot">{time_slot_label}</td>
-                        {DAYS.map((_, day_index) => {
-                            let class_name = ""
-                            let selected = ""
+        <div ref={contentRef} style={{ padding: (isPrinting && Number.isInteger(Number.parseInt(semesterIndex, 10))) ? '1em' : '0px' }}>
+            
+            {(isPrinting && Number.isInteger(Number.parseInt(semesterIndex, 10))) ? (<>
+                <Box display={'flex'} justifyContent={'center'} alignItems={'center'} padding={1} bgcolor={'green'} marginBottom={2}>
+                    <Typography variant="h5" color={'white'}>Cavite Statue University - Silang Campus</Typography>
+                </Box>
 
-                            const is_available_default = baseResourceTimeSlots?.getAvailability(day_index, time_slot_index) ? true : false
-                            const is_available_alloc = semsResourceTimeSlots?.getAvailability(day_index, time_slot_index) ? true : false
-                            const has_assigned_subject = allocatedSubjectAssign.find(
-                                (subj) => subj.DayIdx === day_index && subj.TimeSlotIdx === time_slot_index
-                            );
+                <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} marginBottom={1}>
+                    <Typography variant="h6">{
+                        `${selectedInstructor.FirstName} ${selectedInstructor.MiddleInitial} ${selectedInstructor.LastName}`
+                    }</Typography>
 
-                            if (has_assigned_subject) {
-                                const subject_color_key = `${has_assigned_subject.SubjectCode}${has_assigned_subject.CourseSection}`
-                                return (
-                                    <td key={day_index} className={`subject-cell ${subjectColors[subject_color_key]}`} rowSpan={has_assigned_subject.SubjectTimeSlots}>
-                                        <div className="subject-content">
-                                            <div className="subject-time-slot-line-1">{has_assigned_subject.SubjectCode}</div>
-                                            <div className="subject-time-slot-line-2">{has_assigned_subject.CourseSection}</div>
-                                            <div className="subject-time-slot-line-3">{has_assigned_subject.RoomName}</div>
-                                        </div>
-                                    </td>
-                                );
-                            }
+                    <Typography variant="h6">{
+                        `${SEMESTER_NAMES[semesterIndex]} ${new Date().getFullYear()}`
+                    }</Typography>
+                </Box>
 
-                            if (mode === "view") {
-                                class_name = "empty-slot"
-                            } else if (!is_available_default) {
-                                class_name = "disabled-slot"
-                            } else if (is_available_default && !is_available_alloc) {
-                                class_name = "occupied-slot"
-                            } else {
-                                class_name = "available-slot"
-                            }
 
-                            if (selectedTimeSlots?.has(`${day_index}:${time_slot_index}`)) {
-                                selected = "selected-time-slot-cell"
-                            }
+            </>) : null}
 
-                            const is_occupied = allocatedSubjectAssign.some((subject) => {
-                                const has_hit_subject_in_row = time_slot_index >= subject.TimeSlotIdx && time_slot_index < (subject.TimeSlotIdx + subject.SubjectTimeSlots);
-                                const has_hit_subject_in_col = day_index == subject.DayIdx;
-                                return has_hit_subject_in_row && has_hit_subject_in_col;
-                            });
-
-                            if (is_occupied) {
-                                return null
-                            }
-
-                            return (
-                                <td
-                                    key={day_index}
-                                    className={class_name}
-
-                                    onContextMenu={(event) => {
-                                        event.preventDefault()
-
-                                        if (mode === "view") {
-                                            return
-                                        }
-
-                                        console.log(`right click: class="${event.target.className}"`)
-
-                                        const available = semsResourceTimeSlots?.getAvailability(day_index, time_slot_index)
-                                        console.log(`day(${day_index}), time_slot(${time_slot_index} = available? ${available})`)
-
-                                        contextMenuState.setShow(true)
-                                        contextMenuState.setPosition(new Position(event.clientX, event.clientY))
-
-                                        const is_selected = selectedTimeSlots.has(`${day_index}${time_slot_index}`)
-
-                                        if (!is_selected) {
-                                            const new_selected_time_slots = new Set(selectedTimeSlots)
-                                            new_selected_time_slots.add(`${day_index}:${time_slot_index}`)
-                                            setSelectedTimeSlots(new_selected_time_slots)
-                                            console.log(new_selected_time_slots)
-                                        }
-                                    }}
-
-                                    onMouseDown={(event) => {
-                                        if (mode === "view") {
-                                            return
-                                        }
-
-                                        console.log(`drag start: class="${event.target.className}"`)
-                                        setIsDragSelect(true)
-
-                                        const is_selected = selectedTimeSlots.has(`${day_index}${time_slot_index}`)
-
-                                        if (!is_selected) {
-                                            const new_selected_time_slots = new Set(selectedTimeSlots)
-                                            new_selected_time_slots.add(`${day_index}:${time_slot_index}`)
-                                            setSelectedTimeSlots(new_selected_time_slots)
-                                            console.log(new_selected_time_slots)
-                                        }
-                                    }}
-
-                                    onMouseEnter={(event) => {
-                                        if (mode === "view") {
-                                            return
-                                        }
-
-                                        console.log(`dragging: class="${event.target.className}"`)
-
-                                        const is_selected = selectedTimeSlots.has(`${day_index}${time_slot_index}`)
-
-                                        if (!is_selected && isDragSelect) {
-                                            const new_selected_time_slots = new Set(selectedTimeSlots)
-                                            new_selected_time_slots.add(`${day_index}:${time_slot_index}`)
-                                            setSelectedTimeSlots(new_selected_time_slots)
-                                            console.log(new_selected_time_slots)
-                                        }
-                                    }}
-
-                                    onMouseUp={(event) => {
-                                        if (mode === "view") {
-                                            return
-                                        }
-
-                                        console.log(`drag end: class="${event.target.className}"`)
-                                        setIsDragSelect(false)
-                                    }}
-                                >
-                                    {(mode !== "view") ? <span className={`time-slot-cover ${selected}`}></span> : null}
-                                </td>
-                            )
-                        })}
+            <table className="time-table">
+                <thead>
+                    <tr>
+                        <th className="time-slot-header">Time Slot</th>
+                        {DAYS.map((day) => (
+                            <th key={day} className="day-header">{day}</th>
+                        ))}
                     </tr>
-                ))}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {generateTimeSlotRowLabels(startHour, timeSlotMinuteInterval, dailyTimeSlots).map((time_slot_label, time_slot_index) => (
+                        <tr key={time_slot_index}>
+                            <td className="time-slot">{time_slot_label}</td>
+                            {DAYS.map((_, day_index) => {
+                                let class_name = ""
+                                let selected = ""
+
+                                const is_available_default = baseResourceTimeSlots?.getAvailability(day_index, time_slot_index) ? true : false
+                                const is_available_alloc = semsResourceTimeSlots?.getAvailability(day_index, time_slot_index) ? true : false
+                                const has_assigned_subject = allocatedSubjectAssign.find(
+                                    (subj) => subj.DayIdx === day_index && subj.TimeSlotIdx === time_slot_index
+                                );
+
+                                if (has_assigned_subject) {
+                                    const subject_color_key = `${has_assigned_subject.SubjectCode}${has_assigned_subject.CourseSection}`
+                                    return (
+                                        <td key={day_index} className={`subject-cell ${subjectColors[subject_color_key]}`} rowSpan={has_assigned_subject.SubjectTimeSlots}>
+                                            <div className="subject-content">
+                                                <div className="subject-time-slot-line-1">{has_assigned_subject.SubjectCode}</div>
+                                                <div className="subject-time-slot-line-2">{has_assigned_subject.CourseSection}</div>
+                                                <div className="subject-time-slot-line-3">{has_assigned_subject.RoomName}</div>
+                                            </div>
+                                        </td>
+                                    );
+                                }
+
+                                if (mode === "view") {
+                                    class_name = "empty-slot"
+                                } else if (!is_available_default) {
+                                    class_name = "disabled-slot"
+                                } else if (is_available_default && !is_available_alloc) {
+                                    class_name = "occupied-slot"
+                                } else {
+                                    class_name = "available-slot"
+                                }
+
+                                if (selectedTimeSlots?.has(`${day_index}:${time_slot_index}`)) {
+                                    selected = "selected-time-slot-cell"
+                                }
+
+                                const is_occupied = allocatedSubjectAssign.some((subject) => {
+                                    const has_hit_subject_in_row = time_slot_index >= subject.TimeSlotIdx && time_slot_index < (subject.TimeSlotIdx + subject.SubjectTimeSlots);
+                                    const has_hit_subject_in_col = day_index == subject.DayIdx;
+                                    return has_hit_subject_in_row && has_hit_subject_in_col;
+                                });
+
+                                if (is_occupied) {
+                                    return null
+                                }
+
+                                return (
+                                    <td
+                                        key={day_index}
+                                        className={class_name}
+
+                                        onContextMenu={(event) => {
+                                            event.preventDefault()
+
+                                            if (mode === "view") {
+                                                return
+                                            }
+
+                                            console.log(`right click: class="${event.target.className}"`)
+
+                                            const available = semsResourceTimeSlots?.getAvailability(day_index, time_slot_index)
+                                            console.log(`day(${day_index}), time_slot(${time_slot_index} = available? ${available})`)
+
+                                            contextMenuState.setShow(true)
+                                            contextMenuState.setPosition(new Position(event.clientX, event.clientY))
+
+                                            const is_selected = selectedTimeSlots.has(`${day_index}${time_slot_index}`)
+
+                                            if (!is_selected) {
+                                                const new_selected_time_slots = new Set(selectedTimeSlots)
+                                                new_selected_time_slots.add(`${day_index}:${time_slot_index}`)
+                                                setSelectedTimeSlots(new_selected_time_slots)
+                                                console.log(new_selected_time_slots)
+                                            }
+                                        }}
+
+                                        onMouseDown={(event) => {
+                                            if (mode === "view") {
+                                                return
+                                            }
+
+                                            console.log(`drag start: class="${event.target.className}"`)
+                                            setIsDragSelect(true)
+
+                                            const is_selected = selectedTimeSlots.has(`${day_index}${time_slot_index}`)
+
+                                            if (!is_selected) {
+                                                const new_selected_time_slots = new Set(selectedTimeSlots)
+                                                new_selected_time_slots.add(`${day_index}:${time_slot_index}`)
+                                                setSelectedTimeSlots(new_selected_time_slots)
+                                                console.log(new_selected_time_slots)
+                                            }
+                                        }}
+
+                                        onMouseEnter={(event) => {
+                                            if (mode === "view") {
+                                                return
+                                            }
+
+                                            console.log(`dragging: class="${event.target.className}"`)
+
+                                            const is_selected = selectedTimeSlots.has(`${day_index}${time_slot_index}`)
+
+                                            if (!is_selected && isDragSelect) {
+                                                const new_selected_time_slots = new Set(selectedTimeSlots)
+                                                new_selected_time_slots.add(`${day_index}:${time_slot_index}`)
+                                                setSelectedTimeSlots(new_selected_time_slots)
+                                                console.log(new_selected_time_slots)
+                                            }
+                                        }}
+
+                                        onMouseUp={(event) => {
+                                            if (mode === "view") {
+                                                return
+                                            }
+
+                                            console.log(`drag end: class="${event.target.className}"`)
+                                            setIsDragSelect(false)
+                                        }}
+                                    >
+                                        {(mode !== "view") ? <span className={`time-slot-cover ${selected}`}></span> : null}
+                                    </td>
+                                )
+                            })}
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+
+        {(!semesterIndex) ?
+            <Box height={5}></Box> :
+            null
+        }
+
+        <Box display={(Number.isInteger(Number.parseInt(semesterIndex, 10))) ? 'flex' : 'none'} justifyContent={'center'}>
+            <Button onClick={reactToPrintFn} endIcon={<PrintIcon />}>Print</Button>
+        </Box>
 
         <div style={{ height: '3.25em' }} />
     </>)

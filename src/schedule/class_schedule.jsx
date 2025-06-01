@@ -666,8 +666,10 @@ function TimeTable() {
     const [cellHeight, setCellHeight] = useState(0);
 
 
+    
     /////////////////////////////////////////////////////////////////////////////////
-    // printing states & refs - start
+    //                      PRINTING STATES, REFS AND HANDLERS
+    /////////////////////////////////////////////////////////////////////////////////
 
     const [isPrinting, setIsPrinting] = useState(false);
     const contentRef = useRef(null);
@@ -682,7 +684,7 @@ function TimeTable() {
 
     const reactToPrintFn = useReactToPrint({
         contentRef,
-        documentTitle: `${departmentCurriculumsData[curriculumIndex]?.CurriculumName} - ${SEMESTER_NAMES[semesterIndex]} - Section ${SECTION_CHARACTERS[sectionIndex]}`,
+        documentTitle: `${departmentCurriculumsData[curriculumIndex]?.CurriculumName} - ${SEMESTER_NAMES[semesterIndex]} ${new Date().getFullYear()} - Section ${SECTION_CHARACTERS[sectionIndex]}`,
         onBeforePrint: () => {
             return new Promise((resolve) => {
                 promiseResolveRef.current = resolve;
@@ -696,7 +698,6 @@ function TimeTable() {
         ,
     });
 
-    // printing states & refs - end
     /////////////////////////////////////////////////////////////////////////////////
 
     return (
@@ -815,7 +816,7 @@ function TimeTable() {
 
                         <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} marginBottom={1}>
                             <Typography variant="h6">{
-                                `${departmentCurriculumsData[curriculumIndex].CurriculumName} - ${SEMESTER_NAMES[semesterIndex]}`
+                                `${departmentCurriculumsData[curriculumIndex].CurriculumName} - ${SEMESTER_NAMES[semesterIndex]} ${new Date().getFullYear()}`
                             }</Typography>
 
                             <Typography variant="h6">{
