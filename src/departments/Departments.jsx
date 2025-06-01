@@ -132,16 +132,16 @@ function Departments() {
             <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: '0.5em' }}>
                 <Box display={'flex'} gap={'0.5em'}>
                     <TextField
-                        sx={{ width: '7.5em' }}
+                        sx={{ minWidth: 100, maxWidth: 130 }}
                         size="small"
                         label="Search Code"
                         value={codeMatch}
                         onChange={(e) => setCodeMatch(e.target.value)}
                     />
                     <TextField
-                        sx={{ width: '8em' }}
+                        sx={{ minWidth: 100, maxWidth: 500 }}
                         size="small"
-                        label="Search Name"
+                        label="Search Department Name"
                         value={nameMatch}
                         onChange={(e) => setNameMatch(e.target.value)}
                     />
@@ -200,7 +200,7 @@ function Departments() {
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            departmentList.map((department) => (
+                            departmentList.map((department) => ((department.DepartmentID) ?
                                 <TableRow key={department.DepartmentID}>
                                     <TableCell>{department.DepartmentID}</TableCell>
                                     <TableCell>{department.Code}</TableCell>
@@ -235,7 +235,7 @@ function Departments() {
                                             Delete
                                         </Button>
                                     </TableCell>
-                                </TableRow>
+                                </TableRow> : null
                             ))
                         )}
                     </TableBody>
