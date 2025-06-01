@@ -170,71 +170,65 @@ function InstructorPage() {
         />
 
         <Box display={!mode ? 'block' : 'none'}>
-            <Box padding={1} sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
-                <FormControl sx={{ minWidth: 130 }} size="small">
-                    <InputLabel id="label-id-department">Department</InputLabel>
-                    <Select
-                        id="id-department" labelId="label-id-department" label="Department"
-                        value={departmentID}
-                        onChange={handleDepartmentChange}
-                    >
-                        {departments ?
-                            departments.map((department, index) => (
-                                <MenuItem key={index} value={department.DepartmentID}>{`${department.Code} - ${department.Name}`}</MenuItem>
-                            )) : null
-                        }
-                    </Select>
-                </FormControl>
+            <Box padding={1} display={'flex'} justifyContent={'space-between'}>
+                <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
+                    <FormControl sx={{ minWidth: 150, maxWidth: 151 }} size="small">
+                        <InputLabel id="label-id-department">Department</InputLabel>
+                        <Select
+                            id="id-department" labelId="label-id-department" label="Department"
+                            value={departmentID}
+                            onChange={handleDepartmentChange}
+                        >
+                            {departments ?
+                                departments.map((department, index) => (
+                                    <MenuItem key={index} value={department.DepartmentID}>{`${department.Code} - ${department.Name}`}</MenuItem>
+                                )) : null
+                            }
+                        </Select>
+                    </FormControl>
 
-                <TextField
-                    sx={{ width: '15em' }}
-                    size="small"
-                    label="First Name"
-                    defaultValue={firstNameMatch}
-                    onChange={(e) => setFirstNameMatch(e.target.value)}
-                />
-                <TextField
-                    sx={{ width: '15em' }}
-                    size="small"
-                    label="Middle Initial"
-                    defaultValue={middleInitialMatch}
-                    onChange={(e) => setMiddleInitialMatch(e.target.value)}
-                />
-                <TextField
-                    sx={{ width: '17em' }}
-                    size="small"
-                    label="Last Name"
-                    defaultValue={lastNameMatch}
-                    onChange={(e) => setLastNameMatch(e.target.value)}
-                />
+                    {(Number.isInteger(Number.parseInt(departmentID, 10))) ? <>
+                        <TextField
+                            disabled={!Number.isInteger(Number.parseInt(departmentID, 10))}
+                            sx={{ minWidth: 150 }}
+                            size="small"
+                            label="First Name"
+                            defaultValue={firstNameMatch}
+                            onChange={(e) => setFirstNameMatch(e.target.value)}
+                        />
+                        <TextField
+                            disabled={!Number.isInteger(Number.parseInt(departmentID, 10))}
+                            sx={{ minWidth: 50 }}
+                            size="small"
+                            label="Middle Initial"
+                            defaultValue={middleInitialMatch}
+                            onChange={(e) => setMiddleInitialMatch(e.target.value)}
+                        />
+                        <TextField
+                            disabled={!Number.isInteger(Number.parseInt(departmentID, 10))}
+                            sx={{ minWidth: 150 }}
+                            size="small"
+                            label="Last Name"
+                            defaultValue={lastNameMatch}
+                            onChange={(e) => setLastNameMatch(e.target.value)}
+                        />
 
-                <Button
-                    disabled={!departmentID}
-                    size="small"
-                    variant="contained"
-                    onClick={async () => {
-                        setPage(0);
-                        console.log('departmentID : ', departmentID)
-                        load_instructors(departmentID, pageSize, 0, firstNameMatch, middleInitialMatch, lastNameMatch);
-                    }}
-                ><SearchIcon /></Button>
+                        <Button
+                            disabled={!Number.isInteger(Number.parseInt(departmentID, 10))}
+                            size="small"
+                            variant="contained"
+                            onClick={async () => {
+                                setPage(0);
+                                console.log('departmentID : ', departmentID)
+                                load_instructors(departmentID, pageSize, 0, firstNameMatch, middleInitialMatch, lastNameMatch);
+                            }}
+                        ><SearchIcon /></Button>
+                    </> : null}
+                </Box>
 
-                {/* <FormControl sx={{ minWidth: 115 }} size="small">
-                    <InputLabel id="label-id-semester">Semester</InputLabel>
-                    <Select autoWidth
-                        labelId="label-id-semester"
-                        label="Semester"
-                        value={semesterIndex}
-                        onChange={handleSemesterChange}
-                        disabled={!Number.isInteger(departmentID)}
-                    >
-                        <MenuItem value={0}>1st Semester</MenuItem>
-                        <MenuItem value={1}>2nd Semester</MenuItem>
-                    </Select>
-                </FormControl> */}
 
-                <Box style={{ width: '100%', display: 'flex', justifyContent: 'right' }}>
-                    <Button disabled={!Number.isInteger(departmentID)}
+                <Box minWidth={250} style={{ display: 'flex', justifyContent: 'right' }}>
+                    {(Number.isInteger(Number.parseInt(departmentID, 10))) ? <Button disabled={!Number.isInteger(departmentID)}
                         endIcon={<AddIcon />} size="small" color="secondary" variant="contained"
                         onClick={() => {
                             setIsLoading(true)
@@ -254,7 +248,8 @@ function InstructorPage() {
                         loading={IsLoading}
                     >
                         Add New Instructor
-                    </Button>
+                    </Button> : null}
+
                 </Box>
             </Box>
 
@@ -262,70 +257,70 @@ function InstructorPage() {
         </Box >
 
         <Box paddingInline={1}>
-        {mode === "" ? <TableContainer component={Paper}>
-            <Table size="small">
-                <TableHead>
-                    <TableRow sx={{ height: 1 }}>
-                        <TableCell>ID</TableCell>
-                        <TableCell>Last Name</TableCell>
-                        <TableCell>First Name</TableCell>
-                        <TableCell>Middle Initial</TableCell>
-                        <TableCell align="right">Actions</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {loading ? (
-                        <TableRow>
-                            <TableCell colSpan={5} align="center">
-                                <CircularProgress />
-                            </TableCell>
+            {mode === "" ? <TableContainer component={Paper}>
+                <Table size="small">
+                    <TableHead>
+                        <TableRow sx={{ height: 1 }}>
+                            <TableCell>ID</TableCell>
+                            <TableCell>First Name</TableCell>
+                            <TableCell>Middle Initial</TableCell>
+                            <TableCell>Last Name</TableCell>
+                            <TableCell align="right">Actions</TableCell>
                         </TableRow>
-                    ) : (
-                        instructors.map((instructor, index) => (
-                            <TableRow key={instructor.InstructorID}>
-                                <TableCell>{instructor.InstructorID}</TableCell>
-                                <TableCell>{instructor.LastName}</TableCell>
-                                <TableCell>{instructor.FirstName}</TableCell>
-                                <TableCell>{instructor.MiddleInitial}</TableCell>
-                                <TableCell align="right">
-                                    <Button
-                                        variant="contained" color="primary" size="small"
-                                        style={{ marginRight: 8 }}
-                                        startIcon={<VisibilityIcon />}
-                                        onClick={() => {
-                                            setSelectedInstructor(instructor)
-                                            setMode("view")
-                                        }}
-                                    >
-                                        View
-                                    </Button>
-                                    <Button
-                                        variant="contained" color="error" size="small" endIcon={<DeleteIcon />}
-                                        onClick={() => {
-                                            setInstructorToDelete(instructor)
-                                            setIsDialogDeleteShow(true)
-                                        }}
-                                    >
-                                        Delete
-                                    </Button>
+                    </TableHead>
+                    <TableBody>
+                        {loading ? (
+                            <TableRow>
+                                <TableCell colSpan={5} align="center">
+                                    <CircularProgress />
                                 </TableCell>
                             </TableRow>
-                        ))
-                    )}
-                </TableBody>
-            </Table>
+                        ) : (
+                            instructors.map((instructor, index) => (
+                                <TableRow key={instructor.InstructorID}>
+                                    <TableCell>{instructor.InstructorID}</TableCell>
+                                    <TableCell>{instructor.FirstName}</TableCell>
+                                    <TableCell>{instructor.MiddleInitial}</TableCell>
+                                    <TableCell>{instructor.LastName}</TableCell>
+                                    <TableCell align="right">
+                                        <Button
+                                            variant="contained" color="primary" size="small"
+                                            style={{ marginRight: 8 }}
+                                            startIcon={<VisibilityIcon />}
+                                            onClick={() => {
+                                                setSelectedInstructor(instructor)
+                                                setMode("view")
+                                            }}
+                                        >
+                                            View
+                                        </Button>
+                                        <Button
+                                            variant="contained" color="error" size="small" endIcon={<DeleteIcon />}
+                                            onClick={() => {
+                                                setInstructorToDelete(instructor)
+                                                setIsDialogDeleteShow(true)
+                                            }}
+                                        >
+                                            Delete
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        )}
+                    </TableBody>
+                </Table>
 
-            {/* Pagination */}
-            <TablePagination
-                rowsPerPageOptions={[1, 5, 10, 15]}
-                component="div"
-                count={totalCount}
-                rowsPerPage={pageSize}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-        </TableContainer> : null}
+                {/* Pagination */}
+                <TablePagination
+                    rowsPerPageOptions={[1, 5, 10, 15]}
+                    component="div"
+                    count={totalCount}
+                    rowsPerPage={pageSize}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+            </TableContainer> : null}
         </Box>
 
         <Dialog
