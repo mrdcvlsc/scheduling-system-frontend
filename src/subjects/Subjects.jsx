@@ -14,6 +14,8 @@ import {
     ThemeProvider,
 } from "@mui/material";
 
+import SearchIcon from '@mui/icons-material/Search';
+
 import DoneIcon from '@mui/icons-material/Done';
 import CancelIcon from '@mui/icons-material/Cancel';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
@@ -129,14 +131,14 @@ function Subjects() {
             <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: '0.5em' }}>
                 <Box display={'flex'} gap={'0.5em'}>
                     <TextField
-                        sx={{ width: '7.5em' }}
+                        sx={{ maxWidth: 130 }}
                         size="small"
                         label="Search Code"
                         value={codeMatch}
                         onChange={(e) => setCodeMatch(e.target.value)}
                     />
                     <TextField
-                        sx={{ width: '8em' }}
+                        sx={{ minWidth: 300 }}
                         size="small"
                         label="Search Name"
                         value={nameMatch}
@@ -150,7 +152,7 @@ function Subjects() {
                             load_subjects(pageSize, 0, codeMatch, nameMatch);
                         }}
                     >
-                        Search
+                    <SearchIcon/>
                     </Button>
                 </Box>
 
