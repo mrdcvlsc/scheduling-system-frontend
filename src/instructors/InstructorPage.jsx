@@ -249,7 +249,6 @@ function InstructorPage() {
                     >
                         Add New Instructor
                     </Button> : null}
-
                 </Box>
             </Box>
 

@@ -177,7 +177,7 @@ function Rooms() {
 
         <Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: '0.5em' }}>
-                <FormControl sx={{ minWidth: 130 }} size="small">
+                <FormControl sx={{ minWidth: 150, maxWidth: 151 }} size="small">
                     <InputLabel id="label-id-department">Department</InputLabel>
                     <Select
                         id="id-department" labelId="label-id-department" label="Department"
@@ -202,35 +202,36 @@ function Rooms() {
                     >
                         {departmentList ?
                             departmentList.map((department_iter, index) => (
-                                <MenuItem key={index} value={department_iter.DepartmentID}>{`${department_iter.Code}`}</MenuItem>
+                                <MenuItem key={index} value={department_iter.DepartmentID}>{`${department_iter.Code} - ${department_iter.Name}`}</MenuItem>
                             )) : null
                         }
                     </Select>
                 </FormControl>
 
-                {/* > new room will be a form dialog */}
-                <Button disabled={!Number.isInteger(departmentID)}
-                    endIcon={<AddIcon />} size="medium" color="secondary" variant="contained"
-                    onClick={() => {
-                        const new_empty_room_fields = {
-                            Name: null,
-                            Capacity: null,
-                            RoomType: null,
-                        }
+                {(Number.isInteger(Number.parseInt(departmentID, 10))) ?
+                    <Button disabled={!Number.isInteger(departmentID)}
+                        endIcon={<AddIcon />} size="medium" color="secondary" variant="contained"
+                        onClick={() => {
+                            const new_empty_room_fields = {
+                                Name: null,
+                                Capacity: null,
+                                RoomType: null,
+                            }
 
-                        setSharingDepartmentIDs([])
-                        setSharingDepartments([])
+                            setSharingDepartmentIDs([])
+                            setSharingDepartments([])
 
-                        setRoom(new_empty_room_fields)
-                        console.log('new_empty_room_fields =', new_empty_room_fields)
-                        setMode("new")
-                        setIsDialogFormOpen(true)
-                    }}
-                >
-                    Add New Room
-                </Button>
+                            setRoom(new_empty_room_fields)
+                            console.log('new_empty_room_fields =', new_empty_room_fields)
+                            setMode("new")
+                            setIsDialogFormOpen(true)
+                        }}
+                    >
+                        Add New Room to {department.Code}
+                    </Button> : null
+                }
             </Box>
-            
+
             <Box
                 paddingInlineStart={0}
                 paddingInlineEnd={3}
@@ -242,95 +243,95 @@ function Rooms() {
             </Box>
 
             <Box paddingInline={1}>
-            <TableContainer>
-                <Table size="small">
-                    <TableHead>
-                        <TableRow sx={{ height: 1 }}>
+                <TableContainer>
+                    <Table size="small">
+                        <TableHead>
+                            <TableRow sx={{ height: 1 }}>
 
-                            <TableCell>Room ID</TableCell>
-                            <TableCell>Name</TableCell>
-                            <TableCell>Capacity</TableCell>
-                            <TableCell>Room Type</TableCell>
-                            {departmentID == 0 ? <TableCell>Department Sharing</TableCell> : null}
-                            <TableCell align="right">Actions</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>{loading ? (
-                        <TableRow>
-                            <TableCell colSpan={departmentID == 0 ? 6 : 5} align="center">
-                                <CircularProgress />
-                            </TableCell>
-                        </TableRow>
-                    ) : (roomList?.map((room, index) => (
-                        <TableRow key={room.RoomID} sx={{ border: '1px solid yellow' }}>
-                            <TableCell>{room.RoomID}</TableCell>
-                            <TableCell>{room.Name}</TableCell>
-                            <TableCell>{room.Capacity}</TableCell>
-                            <TableCell>{RoomTypeName(room.RoomType)}</TableCell>
-                            {departmentID == 0 ? <TableCell>{room?.SharingDepartments ? `${room?.SharingDepartments?.length}x` : 'all'}</TableCell> : null}
-                            <TableCell align="right">
-                                <Button
-                                    variant="contained" color="primary" size="small"
-                                    style={{ marginRight: 8 }}
-                                    startIcon={<EditIcon />}
-                                    onClick={() => {
-                                        if (room.SharingDepartments) {
-                                            setSharingDepartmentIDs(room.SharingDepartments)
+                                <TableCell>Room ID</TableCell>
+                                <TableCell>Name</TableCell>
+                                <TableCell>Capacity</TableCell>
+                                <TableCell>Room Type</TableCell>
+                                {departmentID == 0 ? <TableCell>Department Sharing</TableCell> : null}
+                                <TableCell align="right">Actions</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>{loading ? (
+                            <TableRow>
+                                <TableCell colSpan={departmentID == 0 ? 6 : 5} align="center">
+                                    <CircularProgress />
+                                </TableCell>
+                            </TableRow>
+                        ) : (roomList?.map((room, index) => (
+                            <TableRow key={room.RoomID}>
+                                <TableCell>{room.RoomID}</TableCell>
+                                <TableCell>{room.Name}</TableCell>
+                                <TableCell>{room.Capacity}</TableCell>
+                                <TableCell>{RoomTypeName(room.RoomType)}</TableCell>
+                                {departmentID == 0 ? <TableCell>{room?.SharingDepartments ? `${room?.SharingDepartments?.length}x` : 'all'}</TableCell> : null}
+                                <TableCell align="right">
+                                    <Button
+                                        variant="contained" color="primary" size="small"
+                                        style={{ marginRight: 8 }}
+                                        startIcon={<EditIcon />}
+                                        onClick={() => {
+                                            if (room.SharingDepartments) {
+                                                setSharingDepartmentIDs(room.SharingDepartments)
 
-                                            const current_sharing_departments = room.SharingDepartments?.map((id) => {
-                                                return departmentList.find((find_dept) => {
-                                                    return id == find_dept.DepartmentID;
+                                                const current_sharing_departments = room.SharingDepartments?.map((id) => {
+                                                    return departmentList.find((find_dept) => {
+                                                        return id == find_dept.DepartmentID;
+                                                    })
                                                 })
-                                            })
 
-                                            setSharingDepartments(current_sharing_departments)
-                                        } else {
-                                            setSharingDepartmentIDs([])
-                                            setSharingDepartments([])
-                                        }
+                                                setSharingDepartments(current_sharing_departments)
+                                            } else {
+                                                setSharingDepartmentIDs([])
+                                                setSharingDepartments([])
+                                            }
 
-                                        setRoom(room)
-                                        console.log(room)
-                                        setMode("edit")
-                                        setIsDialogFormOpen(true)
-                                    }}
-                                >
-                                    Edit
-                                </Button>
-                                <Button
-                                    variant="contained" color="error" size="small" endIcon={<DeleteIcon />}
-                                    onClick={async () => {
-                                        setRoomToDelete(room)
-                                        setIsDialogDeleteShow(true)
-                                    }}
-                                >
-                                    Delete
-                                </Button>
-                            </TableCell>
-                        </TableRow>
-                    )))}</TableBody>
-                </Table>
+                                            setRoom(room)
+                                            console.log(room)
+                                            setMode("edit")
+                                            setIsDialogFormOpen(true)
+                                        }}
+                                    >
+                                        Edit
+                                    </Button>
+                                    <Button
+                                        variant="contained" color="error" size="small" endIcon={<DeleteIcon />}
+                                        onClick={async () => {
+                                            setRoomToDelete(room)
+                                            setIsDialogDeleteShow(true)
+                                        }}
+                                    >
+                                        Delete
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        )))}</TableBody>
+                    </Table>
 
-                <TablePagination
-                    rowsPerPageOptions={[1, 5, 10, 15]}
-                    component="div"
-                    count={totalCount}
-                    rowsPerPage={pageSize}
-                    page={page}
+                    <TablePagination
+                        rowsPerPageOptions={[1, 5, 10, 15]}
+                        component="div"
+                        count={totalCount}
+                        rowsPerPage={pageSize}
+                        page={page}
 
-                    onPageChange={async (_, new_page) => {
-                        console.log('handleChangePage :', new_page)
-                        setPage(new_page);
-                        await load_rooms(departmentID, pageSize, new_page)
-                    }}
+                        onPageChange={async (_, new_page) => {
+                            console.log('handleChangePage :', new_page)
+                            setPage(new_page);
+                            await load_rooms(departmentID, pageSize, new_page)
+                        }}
 
-                    onRowsPerPageChange={async (event) => {
-                        setPageSize(parseInt(event.target.value, 10));
-                        setPage(0);
-                        await load_rooms(departmentID, parseInt(event.target.value, 10), 0)
-                    }}
-                />
-            </TableContainer>
+                        onRowsPerPageChange={async (event) => {
+                            setPageSize(parseInt(event.target.value, 10));
+                            setPage(0);
+                            await load_rooms(departmentID, parseInt(event.target.value, 10), 0)
+                        }}
+                    />
+                </TableContainer>
             </Box>
         </Box>
 
@@ -448,7 +449,7 @@ function Rooms() {
             }}
         >
             <DialogTitle>{
-                mode === "new" ? ('Add New Room') : (mode === "edit" ? ('Edit Room') : 'Temp Title')
+                mode === "new" ? (`Add New Room to ${department.Code}`) : (mode === "edit" ? ('Edit Room') : 'Temp Title')
             }</DialogTitle>
             <DialogContent>
                 <DialogContentText>{
