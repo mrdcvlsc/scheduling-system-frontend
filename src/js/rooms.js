@@ -1,11 +1,15 @@
 import { DEV, API_VERSION, base_url } from "./basics.js";
 
-export async function fetchDepartmentRooms(department_id, page_size, page) {
+export async function fetchDepartmentRooms(department_id, page_size, page, name_match) {
   let api_request = `/${API_VERSION}/rooms?department_id=${department_id}&page_size=${page_size}&page=${page}`
 
   if (DEV) {
     console.log('call: fetchDepartmentRoomsDefaults')
     api_request = `${base_url}/${API_VERSION}/rooms?department_id=${department_id}&page_size=${page_size}&page=${page}`
+  }
+
+  if (name_match) {
+    api_request = `${api_request}&name_match=${name_match}`
   }
 
   const response = await fetch(api_request, {

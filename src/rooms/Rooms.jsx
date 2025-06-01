@@ -6,6 +6,8 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
+import SearchIcon from '@mui/icons-material/Search';
+
 import {
     Box,
     FormControl, InputLabel,
@@ -143,7 +145,7 @@ function Rooms() {
         setLoading(true);
 
         try {
-            const rooms = await fetchDepartmentRooms(department_id, page_size, new_page)
+            const rooms = await fetchDepartmentRooms(department_id, page_size, new_page, nameMatch)
             console.log(`fetched rooms : ${rooms}`)
 
             setRoomList(rooms.Rooms)
@@ -168,6 +170,10 @@ function Rooms() {
     const [sharingDepartmentIDs, setSharingDepartmentIDs] = useState([])
     const [sharingDepartments, setSharingDepartments] = useState([])
 
+    // search bars
+
+    const [nameMatch, setNameMatch] = useState("")
+
     return (<>
         <MainHeader pageName={'rooms'} />
 
@@ -177,36 +183,61 @@ function Rooms() {
 
         <Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: '0.5em' }}>
-                <FormControl sx={{ minWidth: 150, maxWidth: 151 }} size="small">
-                    <InputLabel id="label-id-department">Department</InputLabel>
-                    <Select
-                        id="id-department" labelId="label-id-department" label="Department"
-                        value={departmentID}
-                        onChange={async (e) => {
 
-                            const department_id = e.target.value
+                <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
+                    <FormControl sx={{ minWidth: 150, maxWidth: 151 }} size="small">
+                        <InputLabel id="label-id-department">Department</InputLabel>
+                        <Select
+                            id="id-department" labelId="label-id-department" label="Department"
+                            value={departmentID}
+                            onChange={async (e) => {
 
-                            console.log(`selected departmentID: ${department_id}`)
-                            setDepartmentID(department_id)
+                                const department_id = e.target.value
 
-                            for (let i = 0; i < departmentList?.length; i++) {
-                                if (departmentList[i].DepartmentID === department_id) {
-                                    setDepartment(departmentList[i])
-                                    break
+                                console.log(`selected departmentID: ${department_id}`)
+                                setDepartmentID(department_id)
+
+                                for (let i = 0; i < departmentList?.length; i++) {
+                                    if (departmentList[i].DepartmentID === department_id) {
+                                        setDepartment(departmentList[i])
+                                        break
+                                    }
                                 }
-                            }
 
-                            setPage(0);
-                            await load_rooms(department_id, pageSize, 0)
-                        }}
-                    >
-                        {departmentList ?
-                            departmentList.map((department_iter, index) => (
-                                <MenuItem key={index} value={department_iter.DepartmentID}>{`${department_iter.Code} - ${department_iter.Name}`}</MenuItem>
-                            )) : null
-                        }
-                    </Select>
-                </FormControl>
+                                setPage(0);
+                                await load_rooms(department_id, pageSize, 0)
+                            }}
+                        >
+                            {departmentList ?
+                                departmentList.map((department_iter, index) => (
+                                    <MenuItem key={index} value={department_iter.DepartmentID}>{`${department_iter.Code} - ${department_iter.Name}`}</MenuItem>
+                                )) : null
+                            }
+                        </Select>
+                    </FormControl>
+
+                    {(Number.isInteger(Number.parseInt(departmentID, 10))) ? <>
+                        <TextField
+                            disabled={!Number.isInteger(Number.parseInt(departmentID, 10))}
+                            sx={{ minWidth: 150 }}
+                            size="small"
+                            label="Room Name"
+                            defaultValue={nameMatch}
+                            onChange={(e) => setNameMatch(e.target.value)}
+                        />
+
+                        <Button
+                            disabled={!Number.isInteger(Number.parseInt(departmentID, 10))}
+                            size="small"
+                            variant="contained"
+                            onClick={async () => {
+                                setPage(0);
+                                console.log('departmentID : ', departmentID)
+                                load_rooms(departmentID, pageSize, 0, nameMatch);
+                            }}
+                        ><SearchIcon /></Button>
+                    </> : null}
+                </Box>
 
                 {(Number.isInteger(Number.parseInt(departmentID, 10))) ?
                     <Button disabled={!Number.isInteger(departmentID)}
