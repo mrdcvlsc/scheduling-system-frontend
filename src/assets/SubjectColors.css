@@ -13,7 +13,7 @@
 }
 
 .color-1 {
-    background: linear-gradient(to bottom right, #F28C8C, #e76f6f);
+    background: linear-gradient(to bottom right, #ff6767db, #c41b1bd9);
     color: #ffffff;
     box-shadow: inset 0 0 0 0.07em #c75d5d;
 }
@@ -26,7 +26,7 @@
 
 .color-3 {
     background: linear-gradient(to bottom right, #FC9E4F, #e7832c);
-    color: #4A2C00;
+    color: #ffffff;
     box-shadow: inset 0 0 0 0.07em #d97b26;
 }
 
@@ -38,7 +38,7 @@
 
 .color-5 {
     background: linear-gradient(to bottom right, #FAF98B, #e1df59);
-    color: #4C4C00;
+    color: #000000;
     box-shadow: inset 0 0 0 0.07em #d6d44e;
 }
 
@@ -68,13 +68,13 @@
 
 .color-10 {
     background: linear-gradient(to bottom right, #B1DC5A, #93b842);
-    color: #2E3D0B;
+    color: #1f2908;
     box-shadow: inset 0 0 0 0.07em #93b842;
 }
 
 .color-11 {
     background: linear-gradient(to bottom right, #7AB5F9, #5f9ce0);
-    color: #0D2C52;
+    color: #ffffff;
     box-shadow: inset 0 0 0 0.07em #5f9ce0;
 }
 
@@ -86,25 +86,25 @@
 
 .color-13 {
     background: linear-gradient(to bottom right, #FFA07A, #e97c58);
-    color: #5A2B1B;
+    color: #3f1e13;
     box-shadow: inset 0 0 0 0.07em #e97c58;
 }
 
 .color-14 {
     background: linear-gradient(to bottom right, #F778C0, #dc5fa8);
-    color: #4A1E3C;
+    color: #291021;
     box-shadow: inset 0 0 0 0.07em #dc5fa8;
 }
 
 .color-15 {
     background: linear-gradient(to bottom right, #66D7FF, #42bde9);
-    color: #003544;
+    color: #022b37;
     box-shadow: inset 0 0 0 0.07em #42bde9;
 }
 
 .color-16 {
     background: linear-gradient(to bottom right, #C97B7B, #a86060);
-    color: #3A1F1F;
+    color: #ffffff;
     box-shadow: inset 0 0 0 0.07em #a86060;
 }
 
