@@ -95,3 +95,26 @@ export async function patchUpdateRoom(room) {
     throw new Error(`${response.status} : ${await response.text()}`);
   }
 }
+
+export async function fetchRoomAllocation(room_id) {
+  let api_request = `/${API_VERSION}/room_allocation?room_id=${room_id}`
+
+  if (DEV) {
+    console.log('call: fetchRoomAllocation')
+    api_request = `${base_url}/${API_VERSION}/room_allocation?room_id=${room_id}`
+  }
+
+  const response = await fetch(api_request, {
+    headers: {
+      Accept: "application/json",
+    },
+    credentials: "include",
+    method: 'GET'
+  });
+
+  if (!response.ok) {
+    throw Error(`${response.status} :${await response.text()}`);
+  }
+
+  return response.json();
+}
