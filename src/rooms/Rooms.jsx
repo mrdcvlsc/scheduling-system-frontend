@@ -7,6 +7,7 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
 import SearchIcon from '@mui/icons-material/Search';
+import PreviewIcon from '@mui/icons-material/Preview';
 
 import {
     Box,
@@ -47,6 +48,7 @@ import { fetchAllDepartments } from "../js/departments"
 import { fetchDepartmentRooms, deleteRemoveRoom, patchUpdateRoom, postCreateRoom } from "../js/rooms"
 import { MainHeader } from "../components/Header";
 import theme from "../components/Theme";
+import RoomSchedule from "./RoomSchedule";
 
 function RoomTypeName(room_type) {
     switch (room_type) {
@@ -174,6 +176,11 @@ function Rooms() {
 
     const [nameMatch, setNameMatch] = useState("")
 
+    // room schedule view
+
+    const [isViewRoomSchedule, setIsViewRoomSchedule] = useState(false)
+    const [roomToView, setRoomToView] = useState(null)
+
     return (<>
         <MainHeader pageName={'rooms'} />
 
@@ -181,7 +188,7 @@ function Rooms() {
             setPopupOptions(null);
         }} />
 
-        <Box>
+        {!isViewRoomSchedule ? <Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: '0.5em' }}>
 
                 <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
@@ -304,6 +311,17 @@ function Rooms() {
                                     <Button
                                         variant="contained" color="primary" size="small"
                                         style={{ marginRight: 8 }}
+                                        startIcon={<PreviewIcon />}
+                                        onClick={() => {
+                                            setRoomToView(room)
+                                            setIsViewRoomSchedule(true)
+                                        }}
+                                    >
+                                        Schedule View
+                                    </Button>
+                                    <Button
+                                        variant="contained" color="primary" size="small"
+                                        style={{ marginRight: 8 }}
                                         startIcon={<EditIcon />}
                                         onClick={() => {
                                             if (room.SharingDepartments) {
@@ -364,7 +382,14 @@ function Rooms() {
                     />
                 </TableContainer>
             </Box>
-        </Box>
+        </Box> : <RoomSchedule
+            roomToView={roomToView}
+            setRoomToView={setRoomToView}
+            setIsViewRoomSchedule={setIsViewRoomSchedule}
+            selectedDepartment={department}
+            popupOptions={popupOptions}
+            setPopupOptions={setPopupOptions}
+        />}
 
         {/* delete dialog */}
         <Dialog
