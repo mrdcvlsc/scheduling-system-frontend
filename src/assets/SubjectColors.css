@@ -191,3 +191,183 @@
     color: #003D2A;
     box-shadow: inset 0 0 0 0.07em #3ea67e;
 }
+
+.color-31 {
+    background: linear-gradient(to bottom right, #FFD1DC, #FFC0CB);
+    color: #000000;
+    box-shadow: inset 0 0 0 0.07em #FFB3C6;
+}
+
+.color-32 {
+    background: linear-gradient(to bottom right, #E6DAF8, #D3C1F2);
+    color: #4B0082;
+    box-shadow: inset 0 0 0 0.07em #C0A1D4;
+}
+
+.color-33 {
+    background: linear-gradient(to bottom right, #D5F5E3, #ABEBC6);
+    color: #0B3D2E;
+    box-shadow: inset 0 0 0 0.07em #85C39E;
+}
+
+.color-34 {
+    background: linear-gradient(to bottom right, #FFE5B4, #FFDAB3);
+    color: #4A3000;
+    box-shadow: inset 0 0 0 0.07em #E6B887;
+}
+
+.color-35 {
+    background: linear-gradient(to bottom right, #D0EBFF, #A8D9FF);
+    color: #00304C;
+    box-shadow: inset 0 0 0 0.07em #6FB3E6;
+}
+
+.color-36 {
+    background: linear-gradient(to bottom right, #E2F0CB, #C8E6A1);
+    color: #2E3D16;
+    box-shadow: inset 0 0 0 0.07em #A4C070;
+}
+
+.color-37 {
+    background: linear-gradient(to bottom right, #FEF9C3, #FEF38A);
+    color: #4A4200;
+    box-shadow: inset 0 0 0 0.07em #E6DA5E;
+}
+
+.color-38 {
+    background: linear-gradient(to bottom right, #FFD8CC, #FFC4B3);
+    color: #4A1E10;
+    box-shadow: inset 0 0 0 0.07em #E6A087;
+}
+
+.color-39 {
+    background: linear-gradient(to bottom right, #C2F0F0, #A0E0E0);
+    color: #004A4A;
+    box-shadow: inset 0 0 0 0.07em #75C8C8;
+}
+
+.color-40 {
+    background: linear-gradient(to bottom right, #F8E1F4, #F3D0E6);
+    color: #4A1A3D;
+    box-shadow: inset 0 0 0 0.07em #D8A5C5;
+}
+
+.color-41 {
+    background: linear-gradient(to bottom right, #CFEAFD, #AEDCFD);
+    color: #07304A;
+    box-shadow: inset 0 0 0 0.07em #6BA0D8;
+}
+
+.color-42 {
+    background: linear-gradient(to bottom right, #E0FFF4, #B3FFE0);
+    color: #004D36;
+    box-shadow: inset 0 0 0 0.07em #3ACA9F;
+}
+
+.color-43 {
+    background: linear-gradient(to bottom right, #FFF0E1, #FFE0C4);
+    color: #4A2F1B;
+    box-shadow: inset 0 0 0 0.07em #E6B58A;
+}
+
+.color-44 {
+    background: linear-gradient(to bottom right, #EED2EE, #DAB5DA);
+    color: #4D1A4D;
+    box-shadow: inset 0 0 0 0.07em #C08CC0;
+}
+
+.color-45 {
+    background: linear-gradient(to bottom right, #F4D0D0, #E6B8B8);
+    color: #4A0D0D;
+    box-shadow: inset 0 0 0 0.07em #C89696;
+}
+
+.color-46 {
+    background: linear-gradient(to bottom right, #EBF7E0, #D4F0C0);
+    color: #2D3E13;
+    box-shadow: inset 0 0 0 0.07em #A4C88A;
+}
+
+.color-47 {
+    background: linear-gradient(to bottom right, #D0F2EF, #A1E5DE);
+    color: #004C47;
+    box-shadow: inset 0 0 0 0.07em #73C2B9;
+}
+
+.color-48 {
+    background: linear-gradient(to bottom right, #FFEBDD, #FFD8BB);
+    color: #4A2A10;
+    box-shadow: inset 0 0 0 0.07em #E6AB7F;
+}
+
+.color-49 {
+    background: linear-gradient(to bottom right, #E8E2F2, #D0C3E6);
+    color: #3E1F4C;
+    box-shadow: inset 0 0 0 0.07em #B29ED0;
+}
+
+.color-50 {
+    background: linear-gradient(to bottom right, #F5F5F5, #E0E0E0);
+    color: #333333;
+    box-shadow: inset 0 0 0 0.07em #BFBFBF;
+}
+
+.color-51 {
+    background: linear-gradient(to bottom right, #FFF9CC, #FFF39A);
+    color: #4A4500;
+    box-shadow: inset 0 0 0 0.07em #E6DA62;
+}
+
+.color-52 {
+    background: linear-gradient(to bottom right, #E1F4FF, #B3E8FF);
+    color: #00314A;
+    box-shadow: inset 0 0 0 0.07em #82C7E6;
+}
+
+.color-53 {
+    background: linear-gradient(to bottom right, #FFE3E5, #FFCCD1);
+    color: #4A1A1C;
+    box-shadow: inset 0 0 0 0.07em #E69AA1;
+}
+
+.color-54 {
+    background: linear-gradient(to bottom right, #E6EFD0, #CDDFA5);
+    color: #2E3D12;
+    box-shadow: inset 0 0 0 0.07em #A0B878;
+}
+
+.color-55 {
+    background: linear-gradient(to bottom right, #F0E6FF, #E0CCFF);
+    color: #3D004A;
+    box-shadow: inset 0 0 0 0.07em #B99EE6;
+}
+
+.color-56 {
+    background: linear-gradient(to bottom right, #D5EBFF, #AAD7FF);
+    color: #002B44;
+    box-shadow: inset 0 0 0 0.07em #6EABE6;
+}
+
+.color-57 {
+    background: linear-gradient(to bottom right, #FFD9EE, #FFB3DD);
+    color: #4A0834;
+    box-shadow: inset 0 0 0 0.07em #E680B8;
+}
+
+.color-58 {
+    background: linear-gradient(to bottom right, #E0FFE8, #B3FFD1);
+    color: #004A38;
+    box-shadow: inset 0 0 0 0.07em #7FD7A8;
+}
+
+.color-59 {
+    background: linear-gradient(to bottom right, #FFDACE, #FFC5B9);
+    color: #4A1C14;
+    box-shadow: inset 0 0 0 0.07em #E69177;
+}
+
+.color-60 {
+    background: linear-gradient(to bottom right, #E0E8F0, #C0D1E0);
+    color: #2A3D4E;
+    box-shadow: inset 0 0 0 0.07em #90A3B8;
+}
