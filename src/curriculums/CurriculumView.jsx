@@ -728,8 +728,8 @@ function CurriculumView({
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button type="submit">Save Subject</Button>
-                    <Button onClick={() => {
+                    <Button variant='outlined' type="submit">Save Subject</Button>
+                    <Button variant='outlined' onClick={() => {
                         setIsDialogFormOpen(false);
                         setChipInstructors([]);
                     }}>Cancel</Button>

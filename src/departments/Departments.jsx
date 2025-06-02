@@ -20,6 +20,7 @@ import ClearAllIcon from '@mui/icons-material/ClearAll';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import SearchIcon from '@mui/icons-material/Search';
 
 import "../assets/main.css";
 import { fetchDepartmentsPaginated, deleteRemoveDepartment, patchUpdateDepartment, postCreateDepartment } from "../js/departments";
@@ -153,7 +154,7 @@ function Departments() {
                             load_departments(pageSize, 0, codeMatch, nameMatch);
                         }}
                     >
-                        Search
+                        <SearchIcon/>
                     </Button>
                 </Box>
 
@@ -416,8 +417,8 @@ function Departments() {
 
             </DialogContent>
             <DialogActions>
-                <Button type="submit">{mode === "new" ? "Save" : "Apply Changes"}</Button>
-                <Button onClick={() => setIsDialogFormOpen(false)}>Cancel</Button>
+                <Button variant="outlined" type="submit">{mode === "new" ? "Save" : "Apply Changes"}</Button>
+                <Button variant="outlined" onClick={() => setIsDialogFormOpen(false)}>Cancel</Button>
             </DialogActions>
         </Dialog>
     </>);

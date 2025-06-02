@@ -13,6 +13,7 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import { fetchCurriculumPageList, deleteRemoveCurriculum } from '../js/curriculums';
 import { fetchAllDepartments } from '../js/departments'
@@ -150,7 +151,7 @@ export default function SubjectSelection({ open, onClose, curriculum, setEditedC
                                 load_subjects(pageSize, 0, codeMatch, nameMatch);
                             }}
                         >
-                            Search
+                            <SearchIcon />
                         </Button>
                     </Box>
                 </Box>

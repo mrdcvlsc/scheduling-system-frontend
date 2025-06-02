@@ -668,10 +668,10 @@ function Rooms() {
 
             </DialogContent>
             <DialogActions>
-                <Button type="submit">{
+                <Button variant="outlined" type="submit">{
                     mode === "new" ? ('Save') : (mode === "edit" ? ('Apply Changes') : 'Temp Success')
                 }</Button>
-                <Button onClick={() => {
+                <Button variant="outlined" onClick={() => {
                     setSharingDepartmentIDs([])
                     setSharingDepartments([])
                     setIsDialogFormOpen(false)

@@ -418,8 +418,8 @@ function Subjects() {
                 />
             </DialogContent>
             <DialogActions>
-                <Button type="submit">{mode === "new" ? "Save" : "Apply Changes"}</Button>
-                <Button onClick={() => setIsDialogFormOpen(false)}>Cancel</Button>
+                <Button variant="outlined" type="submit">{mode === "new" ? "Save" : "Apply Changes"}</Button>
+                <Button variant="outlined" onClick={() => setIsDialogFormOpen(false)}>Cancel</Button>
             </DialogActions>
         </Dialog>
     </>);
