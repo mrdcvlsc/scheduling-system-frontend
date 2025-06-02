@@ -5,12 +5,20 @@ import { Loading } from "../components/Loading";
 import { fetchRoomAllocation } from "../js/rooms";
 import { generateTimeSlotRowLabels } from "../js/week-time-table-grid-functions";
 
+import { useReactToPrint } from "react-to-print";
+
+import PrintIcon from '@mui/icons-material/Print';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
 import "../schedule/TimeTable.css";
 import "../schedule/TimeTableDropdowns.css";
 import "../assets/SubjectColors.css";
 
+const SEMESTER_NAMES = [
+    "1st Semester",
+    "2nd Semester",
+    "Mid-year",
+]
 
 export default function RoomSchedule({
     roomToView, setRoomToView, setIsViewRoomSchedule,
@@ -97,6 +105,39 @@ export default function RoomSchedule({
         setIsViewRoomSchedule(null)
     }
 
+    /////////////////////////////////////////////////////////////////////////////////
+    //                      PRINTING STATES, REFS AND HANDLERS
+    /////////////////////////////////////////////////////////////////////////////////
+
+    const [isPrinting, setIsPrinting] = useState(false);
+    const contentRef = useRef(null);
+
+    const promiseResolveRef = useRef(null);
+
+    useEffect(() => {
+        if (isPrinting && promiseResolveRef.current) {
+            promiseResolveRef.current();
+        }
+    }, [isPrinting]);
+
+    const reactToPrintFn = useReactToPrint({
+        contentRef,
+        documentTitle: `${roomToView.Name} - ${SEMESTER_NAMES[semesterIndex]} ${new Date().getFullYear()}`,
+        onBeforePrint: () => {
+            return new Promise((resolve) => {
+                promiseResolveRef.current = resolve;
+                setIsPrinting(true);
+            });
+        },
+        onAfterPrint: () => {
+            promiseResolveRef.current = null;
+            setIsPrinting(false);
+        }
+        ,
+    });
+
+    /////////////////////////////////////////////////////////////////////////////////
+
     return (<>
         <Loading
             IsLoading={IsLoading}
@@ -130,75 +171,101 @@ export default function RoomSchedule({
             </Box>
         </Box>
 
-        <table className="time-table">
-            <thead>
-                <tr>
-                    <th className="time-slot-header">Time Slot</th>
-                    {DAYS.map((day) => (
-                        <th key={day} className="day-header">{day}</th>
-                    ))}
-                </tr>
-            </thead>
-            <tbody>
-                {generateTimeSlotRowLabels(startHour, timeSlotMinuteInterval, dailyTimeSlots).map((time_slot_label, time_slot_index) => (
-                    <tr key={time_slot_index}>
-                        <td className="time-slot">{time_slot_label}</td>
-                        {DAYS.map((_, day_index) => {
-                            let class_name = ""
-                            let selected = ""
+        <div ref={contentRef} style={{ padding: (isPrinting && Number.isInteger(Number.parseInt(semesterIndex, 10))) ? '1em' : '0px' }}>
 
-                            console.log('what is this then? = ', selectedSemesterSubject)
+            {(isPrinting && Number.isInteger(Number.parseInt(semesterIndex, 10))) ? (<>
+                <Box display={'flex'} justifyContent={'center'} alignItems={'center'} padding={1} bgcolor={'green'} marginBottom={2}>
+                    <Typography variant="h5" color={'white'}>Cavite Statue University - Silang Campus</Typography>
+                </Box>
 
-                            const has_assigned_subject = selectedSemesterSubject.find(
-                                (subj) => subj.DayIdx === day_index && subj.TimeSlotIdx === time_slot_index
-                            );
+                <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} marginBottom={1}>
+                    <Typography variant="h6">{
+                        `${roomToView.Name} Schedule`
+                    }</Typography>
 
-                            if (has_assigned_subject) {
-                                const subject_color_key = `${has_assigned_subject.SubjectCode}${has_assigned_subject.CourseSection}`
-                                return (
-                                    <td key={day_index} className={`subject-cell ${subjectColors[subject_color_key]}`} rowSpan={has_assigned_subject.SubjectTimeSlots}>
-                                        <div className="subject-content">
-                                            <div className="subject-time-slot-line-1">{has_assigned_subject.SubjectCode}</div>
-                                            <div className="subject-time-slot-line-2">{has_assigned_subject.CourseSection}</div>
-                                            <div className="subject-time-slot-line-3">{has_assigned_subject.InstructorName}</div>
-                                        </div>
-                                    </td>
-                                );
-                            }
+                    <Typography variant="h6">{
+                        `${SEMESTER_NAMES[semesterIndex]} - ${new Date().getFullYear()}`
+                    }</Typography>
+                </Box>
 
-                            // if (mode === "view") {
-                            class_name = "empty-slot"
-                            // } else {
-                            //     class_name = "available-slot"
-                            // }
 
-                            // if (selectedTimeSlots?.has(`${day_index}:${time_slot_index}`)) {
-                            //     selected = "selected-time-slot-cell"
-                            // }
+            </>) : null}
 
-                            const is_occupied = selectedSemesterSubject.some((subject) => {
-                                const has_hit_subject_in_row = time_slot_index >= subject.TimeSlotIdx && time_slot_index < (subject.TimeSlotIdx + subject.SubjectTimeSlots);
-                                const has_hit_subject_in_col = day_index == subject.DayIdx;
-                                return has_hit_subject_in_row && has_hit_subject_in_col;
-                            });
 
-                            if (is_occupied) {
-                                return null
-                            }
-
-                            return (
-                                <td
-                                    key={day_index}
-                                    className={class_name}
-                                >
-                                    <span className={`time-slot-cover ${selected}`}></span>
-                                </td>
-                            )
-                        })}
+            <table className="time-table">
+                <thead>
+                    <tr>
+                        <th className="time-slot-header">Time Slot</th>
+                        {DAYS.map((day) => (
+                            <th key={day} className="day-header">{day}</th>
+                        ))}
                     </tr>
-                ))}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {generateTimeSlotRowLabels(startHour, timeSlotMinuteInterval, dailyTimeSlots).map((time_slot_label, time_slot_index) => (
+                        <tr key={time_slot_index}>
+                            <td className="time-slot">{time_slot_label}</td>
+                            {DAYS.map((_, day_index) => {
+                                let class_name = ""
+                                let selected = ""
+
+                                console.log('what is this then? = ', selectedSemesterSubject)
+
+                                const has_assigned_subject = selectedSemesterSubject.find(
+                                    (subj) => subj.DayIdx === day_index && subj.TimeSlotIdx === time_slot_index
+                                );
+
+                                if (has_assigned_subject) {
+                                    const subject_color_key = `${has_assigned_subject.SubjectCode}${has_assigned_subject.CourseSection}`
+                                    return (
+                                        <td key={day_index} className={`subject-cell ${subjectColors[subject_color_key]}`} rowSpan={has_assigned_subject.SubjectTimeSlots}>
+                                            <div className="subject-content">
+                                                <div className="subject-time-slot-line-1">{has_assigned_subject.SubjectCode}</div>
+                                                <div className="subject-time-slot-line-2">{has_assigned_subject.CourseSection}</div>
+                                                <div className="subject-time-slot-line-3">{has_assigned_subject.InstructorName}</div>
+                                            </div>
+                                        </td>
+                                    );
+                                }
+
+                                // if (mode === "view") {
+                                class_name = "empty-slot"
+                                // } else {
+                                //     class_name = "available-slot"
+                                // }
+
+                                // if (selectedTimeSlots?.has(`${day_index}:${time_slot_index}`)) {
+                                //     selected = "selected-time-slot-cell"
+                                // }
+
+                                const is_occupied = selectedSemesterSubject.some((subject) => {
+                                    const has_hit_subject_in_row = time_slot_index >= subject.TimeSlotIdx && time_slot_index < (subject.TimeSlotIdx + subject.SubjectTimeSlots);
+                                    const has_hit_subject_in_col = day_index == subject.DayIdx;
+                                    return has_hit_subject_in_row && has_hit_subject_in_col;
+                                });
+
+                                if (is_occupied) {
+                                    return null
+                                }
+
+                                return (
+                                    <td
+                                        key={day_index}
+                                        className={class_name}
+                                    >
+                                        <span className={`time-slot-cover ${selected}`}></span>
+                                    </td>
+                                )
+                            })}
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+
+        <Box display={(Number.isInteger(Number.parseInt(semesterIndex, 10))) ? 'flex' : 'none'} justifyContent={'center'}>
+            <Button onClick={reactToPrintFn} endIcon={<PrintIcon />}>Print</Button>
+        </Box>
 
         <div style={{ height: '3.25em' }} />
     </>)
