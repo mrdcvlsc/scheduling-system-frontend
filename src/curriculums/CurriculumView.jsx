@@ -319,12 +319,15 @@ function CurriculumView({
                             ":hover": { backgroundColor: 'orange' },
                         }}
                     >
-                        <Box margin={'0px'} display={'flex'} justifyContent={'space-between'} minWidth={'11em'}>
-                            <Typography variant='h6' component="span">Year Level - {year_level.Name}</Typography>
+                        <Box margin={'0px'} display={'flex'} justifyContent={'space-between'} minWidth={'11em'} gap={1}>
+                            <Typography fontWeight={700} variant='h5' component="span">Year Level - {year_level.Name}</Typography>
                             {(mode === "view") ? (<Typography variant='h6' component="span">{year_level?.IsActive ? ' (Active)' : ' (Inactive)'}</Typography>) : null}
                         </Box>
                     </AccordionSummary>
                     <AccordionDetails sx={{ minHeight: '0px', padding: '0.2em 1em 0.5em 1em' }}>
+                        <Box marginTop={1} padding={1} borderRadius={1} sx={{
+                            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.52)',
+                        }}>
                         {(mode === "edit" || mode === "new") ? <Box display={'flex'} gap={'2em'} alignItems={'center'}>
                             <FormGroup>
                                 <FormControlLabel control={
@@ -341,7 +344,7 @@ function CurriculumView({
                             </FormGroup>
 
                             <Button
-                                size='small'
+                                size='large'
                                 sx={{ minHeight: '10px', height: '2.3em' }}
                                 variant='contained'
                                 color="success"
@@ -370,7 +373,7 @@ function CurriculumView({
                             </Button>
 
                             <Button
-                                size='small'
+                                size='large'
                                 sx={{ minHeight: '10px', height: '2.3em' }}
                                 variant='contained'
                                 color="error"
@@ -410,7 +413,7 @@ function CurriculumView({
                                     ":hover": { backgroundColor: 'ButtonHighlight', color: 'black', outline: 'thin solid black' },
                                 }}
                             >
-                                <Typography variant='body2' component="span">{`${semester?.Name} - ${semester.Sections} Sections`}</Typography>
+                                <Typography variant='h6' component="span">{`${semester?.Name} - ${semester.Sections} Sections`}</Typography>
                             </AccordionSummary>
                             <AccordionDetails sx={{ minHeight: '0px', padding: '0.3em', display: 'flex', flexDirection: 'column', gap: '0.5em' }}>
                                 <Box width={'100%'} display={'flex'} justifyContent={'space-between'} gap={'1em'} alignItems={'center'} paddingBlockEnd={'0px'}>
@@ -419,7 +422,7 @@ function CurriculumView({
                                             variant="contained"
                                             color="secondary"
                                             sx={{ minHeight: '2px', height: '2.3em' }}
-                                            size="small"
+                                            size="large"
                                             endIcon={<AddIcon />}
                                             onClick={() => {
                                                 setIsAddingSubjects(true)
@@ -432,23 +435,26 @@ function CurriculumView({
                                             Add Subject
                                         </Button>
 
-                                        <TextField
-                                            size='small'
-                                            required
-                                            id={`${editedCurriculum?.CurriculumCode}-${index_year_level}-${index_semester}-Sections`}
-                                            sx={{ minWidth: '5em' }}
-                                            name="Sections"
-                                            label="Sections"
-                                            type="number"
-                                            variant="standard"
-                                            defaultValue={semester?.Sections || 0}
-                                            slotProps={{ htmlInput: { min: 0, max: 15 } }}
-                                            onChange={(e) => {
-                                                semester.Sections = parseInt(e.target.value);
-                                                let edited_curriculum = editedCurriculum;
-                                                setEditedCurriculum(edited_curriculum);
-                                            }}
-                                        />
+                                        <Box display={'flex'} alignItems={'baseline'} gap={2}>
+                                            <Typography fontWeight={'bold'} variant='body1'>Number of Sections for {year_level?.Name}, {semester?.Name} </Typography>
+                                            <TextField
+                                                size='small'
+                                                required
+                                                id={`${editedCurriculum?.CurriculumCode}-${index_year_level}-${index_semester}-Sections`}
+                                                sx={{ minWidth: '5em' }}
+                                                name="Sections"
+                                                label="Sections"
+                                                type="number"
+                                                variant="filled"
+                                                defaultValue={semester?.Sections || 0}
+                                                slotProps={{ htmlInput: { min: 0, max: 15 } }}
+                                                onChange={(e) => {
+                                                    semester.Sections = parseInt(e.target.value);
+                                                    let edited_curriculum = editedCurriculum;
+                                                    setEditedCurriculum(edited_curriculum);
+                                                }}
+                                            />
+                                        </Box>
                                     </> : null}
                                 </Box>
                                 <TableContainer component={Paper}>
@@ -486,7 +492,7 @@ function CurriculumView({
                                                     <Button
                                                         variant="contained"
                                                         color="primary"
-                                                        size="small"
+                                                        size="large"
                                                         style={{ marginRight: 8 }}
                                                         startIcon={<EditIcon />}
                                                         onClick={async () => {
@@ -525,15 +531,15 @@ function CurriculumView({
 
                                                             setIsDialogFormOpen(true);
                                                         }}
-                                                        sx={{ minHeight: '0px', fontSize: '0.8em', height: '2.2em', padding: '0px 0.8em', margin: '0px' }}
+                                                        sx={{ minHeight: '0px', fontSize: '1em', height: '2.2em', padding: '0px 0.8em', margin: '0px' }}
                                                     >
                                                         Modify
                                                     </Button>
                                                     <Button
-                                                        sx={{ minHeight: '0px', fontSize: '0.8em', height: '2.2em', padding: '0px 0.8em', margin: '0px' }}
+                                                        sx={{ minHeight: '0px', fontSize: '1em', height: '2.2em', padding: '0px 0.8em', margin: '0px' }}
                                                         variant="contained"
                                                         color="error"
-                                                        size="small"
+                                                        size="large"
                                                         endIcon={<RemoveCircleOutlineIcon />}
                                                         onClick={() => {
                                                             setIsLoading(true)
@@ -552,12 +558,15 @@ function CurriculumView({
                                 </TableContainer>
                             </AccordionDetails>
                         </Accordion>)) : <Box padding={'1em'}><Typography fontStyle={'italic'}>empty semester</Typography></Box>}
+                        </Box>
                     </AccordionDetails>
                 </Accordion>)) : <Box padding={'1em'}><Typography fontStyle={'italic'}>empty year levels</Typography></Box>}
                 <Box
                     display={'flex'}
                     justifyContent={'space-evenly'}
-                    padding={'0.5em'}
+                    paddingTop={0}
+                    paddingInline={3}
+                    marginBottom={2}
                     gap={'3em'}
                 >
                     {(mode === "new" || mode === "edit") ? <>
@@ -565,7 +574,7 @@ function CurriculumView({
                             variant='contained'
                             color="success"
                             fullWidth
-                            size='small'
+                            size='large'
                             startIcon={<AddIcon />}
                             onClick={() => {
                                 if (editedCurriculum.YearLevels.length === YEAR_LEVEL_NAMES.length) {
@@ -595,7 +604,7 @@ function CurriculumView({
                             color="error"
                             endIcon={<RemoveIcon />}
                             fullWidth
-                            size='small'
+                            size='large'
                             onClick={() => {
                                 if (editedCurriculum.YearLevels.length === 0) {
                                     setPopupOptions({
