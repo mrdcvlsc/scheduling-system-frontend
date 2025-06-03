@@ -263,8 +263,10 @@ export default function RoomSchedule({
             </table>
         </div>
 
+        <div style={{ height: '0.8em' }} />
+
         <Box display={(Number.isInteger(Number.parseInt(semesterIndex, 10))) ? 'flex' : 'none'} justifyContent={'center'}>
-            <Button onClick={reactToPrintFn} endIcon={<PrintIcon />}>Print</Button>
+            <Button variant="outlined" size="medium" onClick={reactToPrintFn} endIcon={<PrintIcon />}>Print</Button>
         </Box>
 
         <div style={{ height: '3.25em' }} />

@@ -900,7 +900,7 @@ function TimeTable() {
                 }
 
                 <Box display={(Number.isInteger(Number.parseInt(sectionIndex, 10))) ? 'flex' : 'none'} justifyContent={'center'}>
-                    <Button onClick={reactToPrintFn} endIcon={<PrintIcon />}>Print</Button>
+                    <Button variant="outlined" size="medium" onClick={reactToPrintFn} endIcon={<PrintIcon />}>Print</Button>
                 </Box>
 
                 <Box padding={1} gap={1} display={'flex'} justifyContent={'space-evenly'}>
