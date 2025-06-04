@@ -666,12 +666,13 @@ function TimeTable() {
     const [cellHeight, setCellHeight] = useState(0);
 
 
-    
+
     /////////////////////////////////////////////////////////////////////////////////
     //                      PRINTING STATES, REFS AND HANDLERS
     /////////////////////////////////////////////////////////////////////////////////
 
     const [isPrinting, setIsPrinting] = useState(false);
+    const [isBlackAndWhite, setIsBlackAndWhite] = useState(false)
     const contentRef = useRef(null);
 
     const promiseResolveRef = useRef(null);
@@ -694,6 +695,24 @@ function TimeTable() {
         onAfterPrint: () => {
             promiseResolveRef.current = null;
             setIsPrinting(false);
+        }
+        ,
+    });
+
+    const reactToPrintBlackAndWhiteFn = useReactToPrint({
+        contentRef,
+        documentTitle: `${departmentCurriculumsData[curriculumIndex]?.CurriculumName} - ${SEMESTER_NAMES[semesterIndex]} ${new Date().getFullYear()} - Section ${SECTION_CHARACTERS[sectionIndex]}`,
+        onBeforePrint: () => {
+            return new Promise((resolve) => {
+                promiseResolveRef.current = resolve;
+                setIsPrinting(true);
+                setIsBlackAndWhite(true);
+            });
+        },
+        onAfterPrint: () => {
+            promiseResolveRef.current = null;
+            setIsPrinting(false);
+            setIsBlackAndWhite(false);
         }
         ,
     });
@@ -810,8 +829,12 @@ function TimeTable() {
                 <div ref={contentRef} style={{ padding: (isPrinting && Number.isInteger(Number.parseInt(sectionIndex, 10))) ? '1em' : '0px' }}>
 
                     {(isPrinting && Number.isInteger(Number.parseInt(sectionIndex, 10))) ? (<>
-                        <Box display={'flex'} justifyContent={'center'} alignItems={'center'} padding={1} bgcolor={'green'} marginBottom={2}>
-                            <Typography variant="h5" color={'white'}>Cavite Statue University - Silang Campus</Typography>
+                        <Box
+                            display={'flex'} justifyContent={'center'} alignItems={'center'}
+                            padding={1} marginBottom={2}
+                            bgcolor={(!isBlackAndWhite) ? 'green' : 'white'}
+                        >
+                            <Typography variant="h5" color={(!isBlackAndWhite) ? 'white' : 'black'}>Cavite Statue University - Silang Campus</Typography>
                         </Box>
 
                         <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} marginBottom={1}>
@@ -830,9 +853,15 @@ function TimeTable() {
                     <table className="time-table" style={{ display: sectionIndex ? 'revert' : 'none' }}>
                         <thead>
                             <tr>
-                                <th className="time-slot-header">Time Slot</th>
+                                <th
+                                    className="time-slot-header"
+                                    style={{ ...((isBlackAndWhite) ? { background: 'white', color: 'black', border: 'thin solid black' } : {}) }}
+                                >Time Slot</th>
                                 {DAYS.map((day) => (
-                                    <th key={day} className="day-header">{day}</th>
+                                    <th
+                                        key={day} className="day-header"
+                                        style={{ ...((isBlackAndWhite) ? { background: 'white', color: 'black', border: 'thin solid black' } : {}) }}
+                                    >{day}</th>
                                 ))}
                             </tr>
                         </thead>
@@ -849,7 +878,7 @@ function TimeTable() {
                                             return (
                                                 <td
                                                     key={day_idx}
-                                                    className={`subject-cell ${subjectColors[has_assigned_subject.SubjectCode]}`}
+                                                    className={`subject-cell ${(!isBlackAndWhite) ? subjectColors[has_assigned_subject.SubjectCode] : 'color-bw'}`}
                                                     rowSpan={has_assigned_subject.SubjectTimeSlots}
                                                     onClick={() => {
                                                         handlePickupSubject(has_assigned_subject)
@@ -899,8 +928,9 @@ function TimeTable() {
                     null
                 }
 
-                <Box display={(Number.isInteger(Number.parseInt(sectionIndex, 10))) ? 'flex' : 'none'} justifyContent={'center'}>
-                    <Button variant="outlined" size="medium" onClick={reactToPrintFn} endIcon={<PrintIcon />}>Print</Button>
+                <Box gap={1} display={(Number.isInteger(Number.parseInt(sectionIndex, 10))) ? 'flex' : 'none'} justifyContent={'center'}>
+                    <Button variant="outlined" size="medium" onClick={reactToPrintFn} endIcon={<PrintIcon />}>Print Colored</Button>
+                    <Button variant="outlined" size="medium" onClick={reactToPrintBlackAndWhiteFn} endIcon={<PrintIcon />}>Print Black & White</Button>
                 </Box>
 
                 <Box padding={1} gap={1} display={'flex'} justifyContent={'space-evenly'}>
@@ -959,45 +989,50 @@ function TimeTable() {
                         Cancel Move
                     </Button> : null}
                 </Box>
-            </div>
+            </div >
 
-            {schedGenStatus ?
-                <>
+            {
+                schedGenStatus ?
+                    <>
+                        < Box padding={2} >
+                            <Typography
+                                variant="h6"
+                                style={{
+                                    color: getScheduleGenerationStatusColor(schedGenStatus.Status),
+                                    textAlign: 'center'
+                                }}
+                            >
+                                {schedGenStatus.Status}
+                            </Typography>
+                            <Typography variant="body2" style={{ color: 'black', textAlign: 'center' }}>
+                                {schedGenStatus.Message}
+                            </Typography>
+
+                            {
+                                sectionIndex ?
+                                    <LinearProgressWithLabel
+                                        value={
+                                            Number.isNaN(Number.parseInt(extractGenerationNumber(schedGenStatus.Message), 10)) ?
+                                                0 : (Number.parseInt(extractGenerationNumber(schedGenStatus.Message), 10) / NUMBER_OF_GENERATIONS) * 100
+                                        }
+                                    />
+                                    : null
+                            }
+
+                        </Box >
+                    </>
+                    : null
+            }
+
+            {
+                resourceEstimates ?
                     <Box padding={2}>
-                        <Typography
-                            variant="h6"
-                            style={{
-                                color: getScheduleGenerationStatusColor(schedGenStatus.Status),
-                                textAlign: 'center'
-                            }}
-                        >
-                            {schedGenStatus.Status}
+                        <Typography variant="body1" style={{ color: 'black', textAlign: 'center' }}>
+                            {resourceEstimates}
                         </Typography>
-                        <Typography variant="body2" style={{ color: 'black', textAlign: 'center' }}>
-                            {schedGenStatus.Message}
-                        </Typography>
-
-                        {sectionIndex ?
-                            <LinearProgressWithLabel
-                                value={
-                                    Number.isNaN(Number.parseInt(extractGenerationNumber(schedGenStatus.Message), 10)) ?
-                                        0 : (Number.parseInt(extractGenerationNumber(schedGenStatus.Message), 10) / NUMBER_OF_GENERATIONS) * 100
-                                }
-                            />
-                            : null
-                        }
-
                     </Box>
-                </>
-                : null}
-
-            {resourceEstimates ?
-                <Box padding={2}>
-                    <Typography variant="body1" style={{ color: 'black', textAlign: 'center' }}>
-                        {resourceEstimates}
-                    </Typography>
-                </Box>
-                : null}
+                    : null
+            }
 
             <Box display={'flex'} justifyContent={'center'} alignItems={'center'} padding={5}>
                 <a href="/view_schedule/">link for publicly accessible schedule page view</a>
