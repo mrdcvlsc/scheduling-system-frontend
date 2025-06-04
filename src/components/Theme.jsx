@@ -3,9 +3,9 @@ import { alpha } from '@mui/material';
 
 const gradients = {
   // Primary (pastel-purple → lavender) – unchanged
-  primary: 'linear-gradient(200deg, #9575CD 0%, #B39DDB 100%)',
+  primary: 'linear-gradient(200deg,rgb(137, 94, 210) 0%,rgb(161, 128, 223) 100%)',
   // Secondary (pastel-teal → mint) – unchanged
-  secondary: 'linear-gradient(90deg, #4DB6AC 0%, #80CBC4 100%)',
+  secondary: 'linear-gradient(90deg,rgb(35, 177, 163) 0%,rgb(110, 194, 185) 100%)',
   // Header (pastel-purple → pastel-teal → lavender) – unchanged
   header: 'linear-gradient(90deg, #9575CD 0%, #4DB6AC 50%, #B39DDB 100%)',
   // Table header (lavender → pastel-purple) – unchanged
@@ -37,7 +37,7 @@ const theme = createTheme({
       paper: '#FFFFFF',
     },
     primary: {
-      main: '#9575CD',      // pastel-purple
+      main: 'rgb(114, 59, 209)',      // pastel-purple
       contrastText: '#FFFFFF',
     },
     secondary: {
@@ -63,7 +63,7 @@ const theme = createTheme({
     },
   },
   shape: {
-    borderRadius: 6,
+    borderRadius: 5,
   },
   components: {
     MuiCssBaseline: {
