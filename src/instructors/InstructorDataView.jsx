@@ -513,7 +513,6 @@ export default function InstructorDataView({
                         justifyContent: 'right',
                         p: 0.15,
                         gap: 1,
-                        // border: '2px solid green', // debug border
                         m: 0,
                         height: 1
                     }}
@@ -622,8 +621,8 @@ export default function InstructorDataView({
 
             {/* second page heading - instructor name display */}
 
-            <Box sx={{ p: 1, width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderBlockEnd: 'thin solid grey' }}>
-                <Box sx={{ display: 'flex', gap: '2em', alignItems: 'baseline' }}>
+            <Box sx={{ p: 1, width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBlockEnd: 'thin solid grey' }}>
+                <Box sx={{ display: 'flex', flexDirection: 'row', gap: '2em', alignItems: 'baseline' }}>
                     {mode === "view" ? (
                         <>
                             <Typography variant="subtitle2">INSTRUCTOR'S NAME:</Typography>
@@ -678,29 +677,31 @@ export default function InstructorDataView({
                 </Box>
 
                 {mode === "edit" ?
-                    <FormControl sx={{ width: 130 }} size="small" fullWidth>
-                        <InputLabel id="label-id-edit-department">Department</InputLabel>
-                        <Select
-                            id="id-edit-department" labelId="label-id-edit-department" label="Department"
-                            defaultValue={selectedInstructor?.DepartmentID}
-                            onChange={(e) => {
-                                console.log('change department : ', departments)
-                                selectedInstructor.DepartmentID = Number(e.target.value)
-                            }}
+                    <Box maxWidth={200}>
+                        <FormControl size="small" fullWidth>
+                            <InputLabel id="label-id-edit-department">Move to Department</InputLabel>
+                            <Select
+                                id="id-edit-department" labelId="label-id-edit-department" label="Move to Department"
+                                defaultValue={selectedInstructor?.DepartmentID}
+                                onChange={(e) => {
+                                    console.log('change department : ', departments)
+                                    selectedInstructor.DepartmentID = Number(e.target.value)
+                                }}
 
-                            onClick={() => {
-                                console.log('change department : ', departments)
-                                console.log('instructor : ', selectedInstructor)
-                            }}
-                        >
-                            {departments ?
-                                departments.map((department, index) => {
-                                    return <MenuItem key={index} value={department.DepartmentID}>{`${department.Code} - ${department.Name}`}</MenuItem>
-                                }) : null
-                            }
-                        </Select>
-                    </FormControl>
-                    : <Typography align='right' width={'100%'} variant='body1' fontStyle={'italic'}>
+                                onClick={() => {
+                                    console.log('change department : ', departments)
+                                    console.log('instructor : ', selectedInstructor)
+                                }}
+                            >
+                                {departments ?
+                                    departments.map((department, index) => {
+                                        return <MenuItem key={index} value={department.DepartmentID}>{`${department.Code} - ${department.Name}`}</MenuItem>
+                                    }) : null
+                                }
+                            </Select>
+                        </FormControl>
+                    </Box>
+                    : <Typography align='right' variant='body1' fontStyle={'italic'}>
                         {departments.find(dept => dept.DepartmentID == selectedInstructor?.DepartmentID)?.Name || 'Department not found'}
                     </Typography>
                 }
@@ -709,7 +710,7 @@ export default function InstructorDataView({
         </Box>
 
         <Divider orientation="vertical" flexItem />
-        <Typography align="center" sx={{ background: 'gold', color: 'black', marginBottom: '0.05em' }}>Instructor Availability Time Slot</Typography>
+        {(mode === "edit" || mode === "new") ? <Typography align="center" sx={{ background: 'gold', color: 'black', marginBottom: '0.05em' }}>Instructor Availability Time Slot</Typography> : null}
 
         <Box
             style={{
