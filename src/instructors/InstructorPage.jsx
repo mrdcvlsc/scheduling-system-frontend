@@ -8,7 +8,7 @@ import '@fontsource/roboto/700.css';
 
 import SearchIcon from '@mui/icons-material/Search';
 
-import { Loading, Popup } from "../components/Loading";
+import { Loading, Popup, POPUP_ERROR_COLOR, POPUP_SUCCESS_COLOR, POPUP_WARNING_COLOR } from "../components/Loading";
 
 import "../assets/main.css";
 import "./TimeTable.css";
@@ -61,7 +61,7 @@ function InstructorPage() {
             } catch (err) {
                 setPopupOptions({
                     Heading: "Failed to Fetch All Department Data",
-                    HeadingStyle: { background: "red", color: "white" },
+                    HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                     Message: `${err}`
                 });
                 setIsLoading(false);
@@ -81,7 +81,7 @@ function InstructorPage() {
         } catch (err) {
             setPopupOptions({
                 Heading: "Failed to fetch instructors",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err}`
             })
         }
@@ -138,7 +138,7 @@ function InstructorPage() {
         } catch (err) {
             setPopupOptions({
                 Heading: "Delete Failed",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err}`
             })
         }

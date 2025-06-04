@@ -30,7 +30,7 @@ import {
     Chip,
 } from "@mui/material";
 
-import { Popup } from "../components/Loading";
+import { Popup, POPUP_ERROR_COLOR, POPUP_SUCCESS_COLOR } from "../components/Loading";
 
 import DoneIcon from '@mui/icons-material/Done';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -81,13 +81,13 @@ function Rooms() {
 
             setPopupOptions({
                 Heading: "Delete Success",
-                HeadingStyle: { background: "green", color: "white" },
+                HeadingStyle: { background: POPUP_SUCCESS_COLOR, color: "white" },
                 Message: 'the room was succesfully deleted'
             })
         } catch (err) {
             setPopupOptions({
                 Heading: "Delete Failed",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err}`
             })
         }
@@ -128,7 +128,7 @@ function Rooms() {
             } catch (err) {
                 setPopupOptions({
                     Heading: "Failed to Fetch All Department Data",
-                    HeadingStyle: { background: "red", color: "white" },
+                    HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                     Message: `${err}`
                 });
                 setLoading(false);
@@ -155,7 +155,7 @@ function Rooms() {
         } catch (err) {
             setPopupOptions({
                 Heading: "Failed to fetch rooms",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err}`
             })
         }
@@ -471,7 +471,7 @@ function Rooms() {
 
                                 setPopupOptions({
                                     Heading: "Edit Successful",
-                                    HeadingStyle: { background: "green", color: "white" },
+                                    HeadingStyle: { background: POPUP_SUCCESS_COLOR, color: "white" },
                                     Message: "changes to the room data are saved"
                                 });
                             } else if (mode === "new") {
@@ -480,7 +480,7 @@ function Rooms() {
 
                                 setPopupOptions({
                                     Heading: "Add Successful",
-                                    HeadingStyle: { background: "green", color: "white" },
+                                    HeadingStyle: { background: POPUP_SUCCESS_COLOR, color: "white" },
                                     Message: "a new room was added"
                                 });
                             }
@@ -490,7 +490,7 @@ function Rooms() {
                         } catch (err) {
                             setPopupOptions({
                                 Heading: "Room Update Failed",
-                                HeadingStyle: { background: "red", color: "white" },
+                                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                                 Message: `${err}`
                             });
                             setLoading(false);

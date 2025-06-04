@@ -1,6 +1,6 @@
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 import { useState, useEffect, useRef } from "react";
-import { Loading } from "../components/Loading";
+import { Loading, POPUP_ERROR_COLOR } from "../components/Loading";
 
 import { fetchRoomAllocation } from "../js/rooms";
 import { generateTimeSlotRowLabels } from "../js/week-time-table-grid-functions";
@@ -58,7 +58,7 @@ export default function RoomSchedule({
                 setSubjects([])
                 setPopupOptions({
                     Heading: "Unable To Load Room Schedule",
-                    HeadingStyle: { background: "red", color: "white" },
+                    HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                     Message: `${err}`
                 });
             } finally {

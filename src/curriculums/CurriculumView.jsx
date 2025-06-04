@@ -39,7 +39,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import ClearIcon from '@mui/icons-material/Clear';
 import { loadCurriculum, postCreateCurriculum, patchUpdateCurriculum } from '../js/curriculums';
 import { fetchInstructorBasic } from '../js/instructors_v2';
-import { Loading, Popup } from "../components/Loading";
+import { Loading, Popup, POPUP_ERROR_COLOR, POPUP_WARNING_COLOR } from "../components/Loading";
 
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { CheckBox } from '@mui/icons-material';
@@ -105,7 +105,7 @@ function CurriculumView({
             } catch (err) {
                 setPopupOptions({
                     Heading: "Failed to fetch specific curriculum data",
-                    HeadingStyle: { background: "red", color: "white" },
+                    HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                     Message: `${err}`
                 });
                 setIsLoading(false);
@@ -186,7 +186,7 @@ function CurriculumView({
                                 } catch (err) {
                                     setPopupOptions({
                                         Heading: "Failed to edit curriculum",
-                                        HeadingStyle: { background: "red", color: "white" },
+                                        HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                                         Message: `${err}`
                                     });
                                 }
@@ -230,7 +230,7 @@ function CurriculumView({
                                 } catch (err) {
                                     setPopupOptions({
                                         Heading: "Failed to add curriculum",
-                                        HeadingStyle: { background: "red", color: "white" },
+                                        HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                                         Message: `${err}`
                                     });
 
@@ -353,7 +353,7 @@ function CurriculumView({
                                     if (year_level.Semesters.length === SEMESTER_NAMES.length) {
                                         setPopupOptions({
                                             Heading: "Semester Limit Reach",
-                                            HeadingStyle: { background: "yellow", color: "black" },
+                                            HeadingStyle: { background: POPUP_WARNING_COLOR, color: "black" },
                                             Message: 'you can not add more semester to this year level',
                                         });
                                         return
@@ -382,7 +382,7 @@ function CurriculumView({
                                     if (year_level.Semesters.length === 0) {
                                         setPopupOptions({
                                             Heading: "Semester Limit Reach",
-                                            HeadingStyle: { background: "yellow", color: "black" },
+                                            HeadingStyle: { background: POPUP_WARNING_COLOR, color: "black" },
                                             Message: 'you can not decrease more semester to this year level',
                                         });
                                         return
@@ -524,7 +524,7 @@ function CurriculumView({
                                                             } catch (err) {
                                                                 setPopupOptions({
                                                                     Heading: "Read Subject Error",
-                                                                    HeadingStyle: { background: "yellow", color: "black" },
+                                                                    HeadingStyle: { background: POPUP_WARNING_COLOR, color: "black" },
                                                                     Message: `${err}`,
                                                                 });
                                                             }
@@ -580,7 +580,7 @@ function CurriculumView({
                                 if (editedCurriculum.YearLevels.length === YEAR_LEVEL_NAMES.length) {
                                     setPopupOptions({
                                         Heading: "Year Limit Reach",
-                                        HeadingStyle: { background: "yellow", color: "black" },
+                                        HeadingStyle: { background: POPUP_WARNING_COLOR, color: "black" },
                                         Message: 'you can not add more year level to this curriculum',
                                     });
                                     return
@@ -609,7 +609,7 @@ function CurriculumView({
                                 if (editedCurriculum.YearLevels.length === 0) {
                                     setPopupOptions({
                                         Heading: "Year Limit Reach",
-                                        HeadingStyle: { background: "yellow", color: "black" },
+                                        HeadingStyle: { background: POPUP_WARNING_COLOR, color: "black" },
                                         Message: 'you can not remove more year level to this curriculum',
                                     });
                                     return
@@ -668,7 +668,7 @@ function CurriculumView({
                             } catch (err) {
                                 setPopupOptions({
                                     Heading: "Operation Failed",
-                                    HeadingStyle: { background: "red", color: "white" },
+                                    HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                                     Message: `${err.message}`,
                                 });
                             } finally {

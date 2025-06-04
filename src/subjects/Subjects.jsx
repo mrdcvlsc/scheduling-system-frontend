@@ -25,7 +25,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import "../assets/main.css";
 import { fetchSubjects, deleteRemoveSubject, patchUpdateSubject, postCreateSubject } from "../js/subjects";
-import { Popup } from "../components/Loading";
+import { Popup, POPUP_ERROR_COLOR, POPUP_SUCCESS_COLOR, POPUP_WARNING_COLOR } from "../components/Loading";
 import { MainHeader } from "../components/Header";
 import theme from "../components/Theme";
 
@@ -72,7 +72,7 @@ function Subjects() {
         } catch (err) {
             setPopupOptions({
                 Heading: "Failed to Fetch Subjects",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err.message}`,
             });
         }
@@ -86,13 +86,13 @@ function Subjects() {
             await load_subjects(pageSize, page, codeMatch, nameMatch);
             setPopupOptions({
                 Heading: "Delete Success",
-                HeadingStyle: { background: "green", color: "white" },
+                HeadingStyle: { background: POPUP_SUCCESS_COLOR, color: "white" },
                 Message: "The subject was successfully deleted",
             });
         } catch (err) {
             setPopupOptions({
                 Heading: "Delete Failed",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err.message}`,
             });
         }
@@ -111,7 +111,7 @@ function Subjects() {
         } else {
             setPopupOptions({
                 Heading: "Invalid Page",
-                HeadingStyle: { background: "orange", color: "white" },
+                HeadingStyle: { background: POPUP_WARNING_COLOR, color: "white" },
                 Message: `Please enter a page number between 1 and ${totalPages}`,
             });
         }
@@ -329,14 +329,14 @@ function Subjects() {
                                 await postCreateSubject(subjectData);
                                 setPopupOptions({
                                     Heading: "Add Successful",
-                                    HeadingStyle: { background: "green", color: "white" },
+                                    HeadingStyle: { background: POPUP_SUCCESS_COLOR, color: "white" },
                                     Message: "A new subject was added",
                                 });
                             } else if (mode === "edit") {
                                 await patchUpdateSubject(subjectData);
                                 setPopupOptions({
                                     Heading: "Edit Successful",
-                                    HeadingStyle: { background: "green", color: "white" },
+                                    HeadingStyle: { background: POPUP_SUCCESS_COLOR, color: "white" },
                                     Message: "Changes to the subject data are saved",
                                 });
                             }
@@ -344,7 +344,7 @@ function Subjects() {
                         } catch (err) {
                             setPopupOptions({
                                 Heading: "Operation Failed",
-                                HeadingStyle: { background: "red", color: "white" },
+                                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                                 Message: `${err.message}`,
                             });
                         } finally {

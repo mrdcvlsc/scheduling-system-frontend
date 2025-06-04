@@ -21,7 +21,7 @@ import { ContextMenu, ContextMenuItem, Position, useContextMenuState } from "../
 import { patchUpdateInsturctor, postCreateInsturctor } from "../js/instructors"
 import { fetchInstructorResources } from "../js/instructors_v2"
 
-import { Loading, Popup } from "../components/Loading";
+import { Loading, Popup, POPUP_ERROR_COLOR, POPUP_SUCCESS_COLOR, POPUP_WARNING_COLOR } from "../components/Loading";
 
 import "../assets/SubjectColors.css";
 
@@ -156,7 +156,7 @@ export default function InstructorDataView({
         } catch (err) {
             setPopupOptions({
                 Heading: "Page Load Error",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err}`
             });
         } finally {
@@ -219,7 +219,7 @@ export default function InstructorDataView({
         if (has_impossible_error) {
             setPopupOptions({
                 Heading: "That should not happen!",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: "we detected an instructor default time slot that is not available yet the corresponding allocation time slot is available"
             });
 
@@ -227,19 +227,19 @@ export default function InstructorDataView({
         } else if (enabled_time_slots === 0) {
             setPopupOptions({
                 Heading: "No Action",
-                HeadingStyle: { background: "orange", color: "white" },
+                HeadingStyle: { background: POPUP_WARNING_COLOR, color: "white" },
                 Message: "all selected time slots are either enabled or already occupied so no need to enable again"
             });
         } else if (!is_all_enabled) {
             setPopupOptions({
                 Heading: "Partially Successful",
-                HeadingStyle: { background: "orange", color: "white" },
+                HeadingStyle: { background: POPUP_WARNING_COLOR, color: "white" },
                 Message: `some selected time slots (${selectedTimeSlots.size - enabled_time_slots}/${selectedTimeSlots.size}) are already enabled and/or occupied so no need to enabled again`
             });
         } else {
             setPopupOptions({
                 Heading: "Fully Successful",
-                HeadingStyle: { background: "green", color: "white" },
+                HeadingStyle: { background: POPUP_SUCCESS_COLOR, color: "white" },
                 Message: "all selected time slots are enabled"
             });
         }
@@ -290,7 +290,7 @@ export default function InstructorDataView({
         if (has_impossible_error) {
             setPopupOptions({
                 Heading: "That should not happen!",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: "we detected an instructor default time slot that is not available yet the corresponding allocation time slot is available"
             });
 
@@ -298,19 +298,19 @@ export default function InstructorDataView({
         } else if (disabled_time_slots === 0) {
             setPopupOptions({
                 Heading: "No Action",
-                HeadingStyle: { background: "orange", color: "white" },
+                HeadingStyle: { background: POPUP_WARNING_COLOR, color: "white" },
                 Message: "all selected time slots are either disabled or already occupied so no need to disable again"
             });
         } else if (!is_all_disabled) {
             setPopupOptions({
                 Heading: "Partially Successful",
-                HeadingStyle: { background: "orange", color: "white" },
+                HeadingStyle: { background: POPUP_WARNING_COLOR, color: "white" },
                 Message: `some selected time slots (${selectedTimeSlots.size - disabled_time_slots}/${selectedTimeSlots.size}) are already disabled or occupied so no need to disable again`
             });
         } else {
             setPopupOptions({
                 Heading: "Fully Successful",
-                HeadingStyle: { background: "green", color: "white" },
+                HeadingStyle: { background: POPUP_SUCCESS_COLOR, color: "white" },
                 Message: "all selected time slots are disabled"
             });
         }
@@ -370,7 +370,7 @@ export default function InstructorDataView({
 
                 setPopupOptions({
                     Heading: "Edit Successful",
-                    HeadingStyle: { background: "green", color: "white" },
+                    HeadingStyle: { background: POPUP_SUCCESS_COLOR, color: "white" },
                     Message: "changes to the instructor data are saved"
                 });
 
@@ -382,7 +382,7 @@ export default function InstructorDataView({
 
                 setPopupOptions({
                     Heading: "Add Successful",
-                    HeadingStyle: { background: "green", color: "white" },
+                    HeadingStyle: { background: POPUP_SUCCESS_COLOR, color: "white" },
                     Message: "a new instructor was added"
                 });
 
@@ -397,7 +397,7 @@ export default function InstructorDataView({
         } catch (err) {
             setPopupOptions({
                 Heading: "Instructor Update Failed",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err}`
             });
             setIsLoading(false);

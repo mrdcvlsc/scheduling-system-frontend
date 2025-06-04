@@ -1,7 +1,7 @@
 import { StrictMode, useState, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
 
-import { Loading, Popup } from "../components/Loading";
+import { Loading, Popup, POPUP_ERROR_COLOR, POPUP_SUCCESS_COLOR, POPUP_WARNING_COLOR } from "../components/Loading";
 
 import "../assets/main.css";
 import "./TimeTable.css";
@@ -156,7 +156,7 @@ function TimeTable() {
         } catch (err) {
             setPopupOptions({
                 Heading: "Failed to Fetch All Department Data",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err}`
             });
             setIsLoading(false);
@@ -226,7 +226,7 @@ function TimeTable() {
             } catch (err) {
                 setPopupOptions({
                     Heading: "Failed to Fetch Semester Data",
-                    HeadingStyle: { background: "red", color: "white" },
+                    HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                     Message: `${err}`
                 });
                 setIsLoading(false);
@@ -312,7 +312,7 @@ function TimeTable() {
         } catch (err) {
             setPopupOptions({
                 Heading: "Error Retrieving Section Schedule",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err}`
             });
         }
@@ -360,7 +360,7 @@ function TimeTable() {
             console.error("Error loading schedule:", err);
             setPopupOptions({
                 Heading: "Failed to Load Schedule",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err}`,
             });
         }
@@ -378,14 +378,14 @@ function TimeTable() {
 
             setPopupOptions({
                 Heading: "Cleared Department Schedule",
-                HeadingStyle: { background: "green", color: "white" },
+                HeadingStyle: { background: POPUP_SUCCESS_COLOR, color: "white" },
                 Message: msg
             });
 
         } catch (err) {
             setPopupOptions({
                 Heading: "Clear Department Schedule Failed",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err}`
             });
         }
@@ -411,14 +411,14 @@ function TimeTable() {
 
             setPopupOptions({
                 Heading: "Cleared Section Schedule",
-                HeadingStyle: { background: "green", color: "white" },
+                HeadingStyle: { background: POPUP_SUCCESS_COLOR, color: "white" },
                 Message: msg
             });
 
         } catch (err) {
             setPopupOptions({
                 Heading: "Clear Section Schedule Failed",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err}`
             });
         }
@@ -443,13 +443,13 @@ function TimeTable() {
 
             setPopupOptions({
                 Heading: "Generating Schedule...",
-                HeadingStyle: { background: "Yellow", color: "black" },
+                HeadingStyle: { background: POPUP_WARNING_COLOR, color: "black" },
                 Message: msg
             });
         } catch (err) {
             setPopupOptions({
                 Heading: "Failed to generate schedule for the department",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err}`
             });
         }
@@ -466,20 +466,20 @@ function TimeTable() {
             if (validation_errors.length > 0 && Array.isArray(validation_errors)) {
                 setPopupOptions({
                     Heading: "Validation Problems",
-                    HeadingStyle: { background: "Orange", color: "black" },
+                    HeadingStyle: { background: POPUP_WARNING_COLOR, color: "black" },
                     Message: validation_errors
                 });
             } else {
                 setPopupOptions({
                     Heading: "Validation Result",
-                    HeadingStyle: { background: "Green", color: "white" },
+                    HeadingStyle: { background: POPUP_SUCCESS_COLOR, color: "white" },
                     Message: 'there are no problems found in the schedules'
                 });
             }
         } catch (err) {
             setPopupOptions({
                 Heading: "Validation Failed",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err}`
             });
         }
@@ -513,7 +513,7 @@ function TimeTable() {
         } catch (err) {
             setPopupOptions({
                 Heading: "Time Slot Availability Check Unavailable",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err}`
             });
 
@@ -579,7 +579,7 @@ function TimeTable() {
         if (!availableSubjectTimeSlotMove) {
             setPopupOptions({
                 Heading: "Time Slot Move Error",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `time slot availability array not found`
             });
             setIsLoading(false);
@@ -601,7 +601,7 @@ function TimeTable() {
         if (!is_movable) {
             setPopupOptions({
                 Heading: "Move Not Allowed",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `the subject to be move has a total of ${pickedUpSubject.SubjectTimeSlots} time slots, while the selected time slot only have ${total_free_time_slots} free time slots from the starting and preceding time slots`
             });
             setIsLoading(false);
@@ -624,7 +624,7 @@ function TimeTable() {
 
             setPopupOptions({
                 Heading: "Time Slot Move Success",
-                HeadingStyle: { background: "green", color: "white" },
+                HeadingStyle: { background: POPUP_SUCCESS_COLOR, color: "white" },
                 Message: msg
             });
 
@@ -637,7 +637,7 @@ function TimeTable() {
         } catch (err) {
             setPopupOptions({
                 Heading: "Time Slot Move Error",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err}`
             });
             setIsLoading(false);

@@ -1,5 +1,7 @@
 import "../assets/Loading.css";
 
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+
 export function Loading({
   IsLoading,
 }) {
@@ -64,3 +66,8 @@ export function Popup({
     </div>
   );
 }
+
+export const POPUP_ERROR_COLOR   = 'linear-gradient(145deg,rgb(210, 0, 0) 50%,rgba(208, 15, 15, 0.58) 100%)';
+export const POPUP_SUCCESS_COLOR = 'linear-gradient(135deg,rgb(21, 157, 21) 50%,rgba(0, 159, 19, 0.73) 100%)';
+export const POPUP_WARNING_COLOR = 'linear-gradient(135deg,rgb(255, 166, 0) 0%,rgba(254, 169, 0, 0.56) 100%)';
+export const POPUP_NOTICE_COLOR  = 'linear-gradient(135deg,rgb(255, 213, 0) 0%,rgba(255, 225, 0, 0.69) 100%)';

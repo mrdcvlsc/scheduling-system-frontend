@@ -7,7 +7,7 @@ import '@fontsource/roboto/700.css';
 
 import SearchIcon from '@mui/icons-material/Search';
 
-import { Popup } from "../components/Loading";
+import { Popup, POPUP_ERROR_COLOR } from "../components/Loading";
 
 import "../assets/main.css";
 import "../instructors/TimeTable.css";
@@ -50,7 +50,7 @@ export default function InstructorSelection({
         } catch (err) {
             setPopupOptions({
                 Heading: "Failed to fetch instructors",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err}`
             })
         }
@@ -84,7 +84,7 @@ export default function InstructorSelection({
             } catch (err) {
                 setPopupOptions({
                     Heading: "Failed to Fetch All Department Data",
-                    HeadingStyle: { background: "red", color: "white" },
+                    HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                     Message: `${err}`
                 });
                 setIsLoading(false);
@@ -213,7 +213,7 @@ export default function InstructorSelection({
                                             if (has_instructor) {
                                                 setPopupOptions({
                                                     Heading: "Instructor Exists",
-                                                    HeadingStyle: { background: "red", color: "white" },
+                                                    HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                                                     Message: 'the instructor you want to add is already in this subject',
                                                 });
 

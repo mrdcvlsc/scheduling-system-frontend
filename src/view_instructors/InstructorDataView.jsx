@@ -10,7 +10,7 @@ import { Box, Typography, FormControl, InputLabel, Select, MenuItem } from "@mui
 import { generateTimeSlotRowLabels } from "../js/week-time-table-grid-functions";
 import { fetchInstructorResources } from "../js/instructors_v2"
 
-import { Loading } from "../components/Loading";
+import { Loading, POPUP_ERROR_COLOR } from "../components/Loading";
 
 import "../assets/SubjectColors.css";
 
@@ -133,7 +133,7 @@ export default function InstructorDataView({
         } catch (err) {
             setPopupOptions({
                 Heading: "Page Load Error",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err}`
             });
         } finally {

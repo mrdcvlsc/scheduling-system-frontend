@@ -17,7 +17,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import { fetchCurriculumPageList, deleteRemoveCurriculum } from '../js/curriculums';
 import { fetchAllDepartments } from '../js/departments'
-import { Popup } from '../components/Loading';
+import { Popup, POPUP_ERROR_COLOR, POPUP_WARNING_COLOR } from '../components/Loading';
 
 import CurriculumView from './CurriculumView'
 import { fetchSubjects } from '../js/subjects';
@@ -76,7 +76,7 @@ export default function SubjectSelection({ open, onClose, curriculum, setEditedC
         } catch (err) {
             setPopupOptions({
                 Heading: "Failed to Fetch Subjects",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err.message}`,
             });
         }
@@ -93,7 +93,7 @@ export default function SubjectSelection({ open, onClose, curriculum, setEditedC
         } else {
             setPopupOptions({
                 Heading: "Invalid Page",
-                HeadingStyle: { background: "orange", color: "white" },
+                HeadingStyle: { background: POPUP_WARNING_COLOR, color: "white" },
                 Message: `Please enter a page number between 1 and ${totalPages}`,
             });
         }
@@ -194,7 +194,7 @@ export default function SubjectSelection({ open, onClose, curriculum, setEditedC
                                                     if (has_subject(curriculum, subject.ID)) {
                                                         setPopupOptions({
                                                             Heading: "Subject Exists",
-                                                            HeadingStyle: { background: "red", color: "white" },
+                                                            HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                                                             Message: 'the subject you want to add is already in the curriculum',
                                                         });
 

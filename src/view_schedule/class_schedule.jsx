@@ -1,7 +1,7 @@
 import { StrictMode, useState, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
 
-import { Loading, Popup } from "../components/Loading";
+import { Loading, Popup, POPUP_ERROR_COLOR } from "../components/Loading";
 
 import "../assets/main.css";
 import "../schedule/TimeTable.css";
@@ -97,7 +97,7 @@ function TimeTable() {
         } catch (err) {
             setPopupOptions({
                 Heading: "Failed to Fetch All Department Data",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err}`
             });
             setIsLoading(false);
@@ -158,7 +158,7 @@ function TimeTable() {
             } catch (err) {
                 setPopupOptions({
                     Heading: "Failed to Fetch Semester Data",
-                    HeadingStyle: { background: "red", color: "white" },
+                    HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                     Message: `${err}`
                 });
                 setIsLoading(false);
@@ -241,7 +241,7 @@ function TimeTable() {
         } catch (err) {
             setPopupOptions({
                 Heading: "Error Retrieving Section Schedule",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err}`
             });
         }
@@ -293,7 +293,7 @@ function TimeTable() {
             console.error("Error loading schedule:", err);
             setPopupOptions({
                 Heading: "Failed to Load Schedule",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err}`,
             });
         }

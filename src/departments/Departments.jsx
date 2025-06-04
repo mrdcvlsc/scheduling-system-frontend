@@ -24,7 +24,7 @@ import SearchIcon from '@mui/icons-material/Search';
 
 import "../assets/main.css";
 import { fetchDepartmentsPaginated, deleteRemoveDepartment, patchUpdateDepartment, postCreateDepartment } from "../js/departments";
-import { Popup } from "../components/Loading";
+import { Popup, POPUP_ERROR_COLOR, POPUP_SUCCESS_COLOR, POPUP_WARNING_COLOR } from "../components/Loading";
 import { MainHeader } from "../components/Header";
 import theme from "../components/Theme";
 
@@ -74,7 +74,7 @@ function Departments() {
         } catch (err) {
             setPopupOptions({
                 Heading: "Failed to Fetch Departments",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err.message}`,
             });
         }
@@ -88,13 +88,13 @@ function Departments() {
             await load_departments(pageSize, page, codeMatch, nameMatch);
             setPopupOptions({
                 Heading: "Delete Success",
-                HeadingStyle: { background: "green", color: "white" },
+                HeadingStyle: { background: POPUP_SUCCESS_COLOR, color: "white" },
                 Message: "The department was successfully deleted",
             });
         } catch (err) {
             setPopupOptions({
                 Heading: "Delete Failed",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err.message}`,
             });
         }
@@ -113,7 +113,7 @@ function Departments() {
         } else {
             setPopupOptions({
                 Heading: "Invalid Page",
-                HeadingStyle: { background: "orange", color: "white" },
+                HeadingStyle: { background: POPUP_WARNING_COLOR, color: "white" },
                 Message: `Please enter a page number between 1 and ${totalPages}`,
             });
         }
@@ -334,14 +334,14 @@ function Departments() {
                                 await postCreateDepartment(departmentData);
                                 setPopupOptions({
                                     Heading: "Add Successful",
-                                    HeadingStyle: { background: "green", color: "white" },
+                                    HeadingStyle: { background: POPUP_SUCCESS_COLOR, color: "white" },
                                     Message: "A new department was added",
                                 });
                             } else if (mode === "edit") {
                                 await patchUpdateDepartment(departmentData);
                                 setPopupOptions({
                                     Heading: "Edit Successful",
-                                    HeadingStyle: { background: "green", color: "white" },
+                                    HeadingStyle: { background: POPUP_SUCCESS_COLOR, color: "white" },
                                     Message: "Changes to the department data are saved",
                                 });
                             }
@@ -349,7 +349,7 @@ function Departments() {
                         } catch (err) {
                             setPopupOptions({
                                 Heading: "Operation Failed",
-                                HeadingStyle: { background: "red", color: "white" },
+                                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                                 Message: `${err.message}`,
                             });
                         } finally {

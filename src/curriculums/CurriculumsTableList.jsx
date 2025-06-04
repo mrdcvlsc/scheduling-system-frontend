@@ -17,7 +17,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddIcon from '@mui/icons-material/Add';
 import { fetchCurriculumPageList, deleteRemoveCurriculum } from '../js/curriculums';
 import { fetchAllDepartments } from '../js/departments'
-import { Popup } from '../components/Loading';
+import { Popup, POPUP_ERROR_COLOR, POPUP_SUCCESS_COLOR } from '../components/Loading';
 
 import CurriculumView from './CurriculumView'
 import { MainHeader } from '../components/Header';
@@ -59,7 +59,7 @@ function CurriculumsTableList() {
             } catch (err) {
                 setPopupOptions({
                     Heading: "Failed to Fetch All Department Data",
-                    HeadingStyle: { background: "red", color: "white" },
+                    HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                     Message: `${err}`
                 });
                 setIsLoading(false);
@@ -85,7 +85,7 @@ function CurriculumsTableList() {
         } catch (err) {
             setPopupOptions({
                 Heading: "Failed to Fetch Curriculums",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err.message}`,
             });
         }
@@ -110,13 +110,13 @@ function CurriculumsTableList() {
 
             setPopupOptions({
                 Heading: "Delete Success",
-                HeadingStyle: { background: "green", color: "white" },
+                HeadingStyle: { background: POPUP_SUCCESS_COLOR, color: "white" },
                 Message: "The curriculum was successfully deleted",
             });
         } catch (err) {
             setPopupOptions({
                 Heading: "Delete Failed",
-                HeadingStyle: { background: "red", color: "white" },
+                HeadingStyle: { background: POPUP_ERROR_COLOR, color: "white" },
                 Message: `${err.message}`,
             });
         }
