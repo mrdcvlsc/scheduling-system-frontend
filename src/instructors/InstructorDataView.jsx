@@ -409,6 +409,7 @@ export default function InstructorDataView({
     /////////////////////////////////////////////////////////////////////////////////
 
     const [isPrinting, setIsPrinting] = useState(false);
+    const [isBlackAndWhite, setIsBlackAndWhite] = useState(false)
     const contentRef = useRef(null);
 
     const promiseResolveRef = useRef(null);
@@ -431,6 +432,24 @@ export default function InstructorDataView({
         onAfterPrint: () => {
             promiseResolveRef.current = null;
             setIsPrinting(false);
+        }
+        ,
+    });
+
+    const reactToPrintBlackAndWhiteFn = useReactToPrint({
+        contentRef,
+        documentTitle: `${selectedInstructor.FirstName} ${selectedInstructor.MiddleInitial} ${selectedInstructor.LastName} - ${SEMESTER_NAMES[semesterIndex]} ${new Date().getFullYear()}`,
+        onBeforePrint: () => {
+            return new Promise((resolve) => {
+                promiseResolveRef.current = resolve;
+                setIsPrinting(true);
+                setIsBlackAndWhite(true);
+            });
+        },
+        onAfterPrint: () => {
+            promiseResolveRef.current = null;
+            setIsPrinting(false);
+            setIsBlackAndWhite(false);
         }
         ,
     });
@@ -742,10 +761,14 @@ export default function InstructorDataView({
         </Box>
 
         <div ref={contentRef} style={{ padding: (isPrinting && Number.isInteger(Number.parseInt(semesterIndex, 10))) ? '1em' : '0px' }}>
-            
+
             {(isPrinting && Number.isInteger(Number.parseInt(semesterIndex, 10))) ? (<>
-                <Box display={'flex'} justifyContent={'center'} alignItems={'center'} padding={1} bgcolor={'green'} marginBottom={2}>
-                    <Typography variant="h5" color={'white'}>Cavite Statue University - Silang Campus</Typography>
+                <Box
+                    display={'flex'} justifyContent={'center'} alignItems={'center'}
+                    padding={1} marginBottom={2}
+                    bgcolor={(!isBlackAndWhite) ? 'green' : 'white'}
+                >
+                    <Typography variant="h5" color={(!isBlackAndWhite) ? 'white' : 'black'}>Cavite Statue University - Silang Campus</Typography>
                 </Box>
 
                 <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} marginBottom={1}>
@@ -764,9 +787,15 @@ export default function InstructorDataView({
             <table className="time-table">
                 <thead>
                     <tr>
-                        <th className="time-slot-header">Time Slot</th>
+                        <th
+                            className="time-slot-header"
+                            style={{ ...((isBlackAndWhite) ? { background: 'white', color: 'black', border: 'thin solid black' } : {}) }}
+                        >Time Slot</th>
                         {DAYS.map((day) => (
-                            <th key={day} className="day-header">{day}</th>
+                            <th
+                                key={day} className="day-header"
+                                style={{ ...((isBlackAndWhite) ? { background: 'white', color: 'black', border: 'thin solid black' } : {}) }}
+                            >{day}</th>
                         ))}
                     </tr>
                 </thead>
@@ -787,7 +816,7 @@ export default function InstructorDataView({
                                 if (has_assigned_subject) {
                                     const subject_color_key = `${has_assigned_subject.SubjectCode}${has_assigned_subject.CourseSection}`
                                     return (
-                                        <td key={day_index} className={`subject-cell ${subjectColors[subject_color_key]}`} rowSpan={has_assigned_subject.SubjectTimeSlots}>
+                                        <td key={day_index} className={`subject-cell ${(!isBlackAndWhite) ? subjectColors[subject_color_key] : 'color-bw'}`} rowSpan={has_assigned_subject.SubjectTimeSlots}>
                                             <div className="subject-content">
                                                 <div className="subject-time-slot-line-1">{has_assigned_subject.SubjectCode}</div>
                                                 <div className="subject-time-slot-line-2">{has_assigned_subject.CourseSection}</div>
@@ -910,8 +939,9 @@ export default function InstructorDataView({
             null
         }
 
-        <Box display={(Number.isInteger(Number.parseInt(semesterIndex, 10))) ? 'flex' : 'none'} justifyContent={'center'}>
-            <Button variant="outlined" size="medium" onClick={reactToPrintFn} endIcon={<PrintIcon />}>Print</Button>
+        <Box gap={1} display={(Number.isInteger(Number.parseInt(semesterIndex, 10))) ? 'flex' : 'none'} justifyContent={'center'}>
+            <Button variant="outlined" size="medium" onClick={reactToPrintFn} endIcon={<PrintIcon />}>Print Colored</Button>
+            <Button variant="outlined" size="medium" onClick={reactToPrintBlackAndWhiteFn} endIcon={<PrintIcon />}>Print Black & White</Button>
         </Box>
 
         <div style={{ height: '3.25em' }} />
