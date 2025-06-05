@@ -928,7 +928,7 @@ function TimeTable() {
                     null
                 }
 
-                <Box gap={1} display={(Number.isInteger(Number.parseInt(sectionIndex, 10))) ? 'flex' : 'none'} justifyContent={'center'}>
+                <Box gap={1} display={(Number.isInteger(Number.parseInt(sectionIndex, 10)) && (schedGenStatus.Status !== "in progress")) ? 'flex' : 'none'} justifyContent={'center'}>
                     <Button variant="outlined" size="medium" onClick={reactToPrintFn} endIcon={<PrintIcon />}>Print Colored</Button>
                     <Button variant="outlined" size="medium" onClick={reactToPrintBlackAndWhiteFn} endIcon={<PrintIcon />}>Print Black & White</Button>
                 </Box>
@@ -991,48 +991,41 @@ function TimeTable() {
                 </Box>
             </div >
 
-            {
-                schedGenStatus ?
-                    <>
-                        < Box padding={2} >
-                            <Typography
-                                variant="h6"
-                                style={{
-                                    color: getScheduleGenerationStatusColor(schedGenStatus.Status),
-                                    textAlign: 'center'
-                                }}
-                            >
-                                {schedGenStatus.Status}
-                            </Typography>
-                            <Typography variant="body2" style={{ color: 'black', textAlign: 'center' }}>
-                                {schedGenStatus.Message}
-                            </Typography>
-
-                            {
-                                sectionIndex ?
-                                    <LinearProgressWithLabel
-                                        value={
-                                            Number.isNaN(Number.parseInt(extractGenerationNumber(schedGenStatus.Message), 10)) ?
-                                                0 : (Number.parseInt(extractGenerationNumber(schedGenStatus.Message), 10) / NUMBER_OF_GENERATIONS) * 100
-                                        }
-                                    />
-                                    : null
-                            }
-
-                        </Box >
-                    </>
-                    : null
-            }
-
-            {
-                resourceEstimates ?
-                    <Box padding={2}>
-                        <Typography variant="body1" style={{ color: 'black', textAlign: 'center' }}>
-                            {resourceEstimates}
+            {schedGenStatus ?
+                <>
+                    < Box padding={2} >
+                        <Typography
+                            variant="h6"
+                            style={{
+                                color: getScheduleGenerationStatusColor(schedGenStatus.Status),
+                                textAlign: 'center'
+                            }}
+                        >
+                            {schedGenStatus.Status}
                         </Typography>
-                    </Box>
-                    : null
-            }
+                        <Typography variant="body2" style={{ color: 'black', textAlign: 'center' }}>
+                            {schedGenStatus.Message}
+                        </Typography>
+
+                        {sectionIndex ?
+                            <LinearProgressWithLabel
+                                value={
+                                    Number.isNaN(Number.parseInt(extractGenerationNumber(schedGenStatus.Message), 10)) ?
+                                        0 : (Number.parseInt(extractGenerationNumber(schedGenStatus.Message), 10) / NUMBER_OF_GENERATIONS) * 100
+                                }
+                            />
+                            : null}
+                    </Box >
+                </>
+                : null}
+
+            {resourceEstimates ?
+                <Box padding={2}>
+                    <Typography variant="body1" style={{ color: 'black', textAlign: 'center' }}>
+                        {resourceEstimates}
+                    </Typography>
+                </Box>
+                : null}
 
             <Box display={'flex'} justifyContent={'center'} alignItems={'center'} padding={5}>
                 <a href="/view_schedule/">link for publicly accessible schedule page view</a>
