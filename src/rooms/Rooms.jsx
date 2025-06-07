@@ -413,6 +413,7 @@ function Rooms() {
 
             <DialogActions>
                 <Button
+                    variant='outlined'
                     onClick={() => {
                         handleRoomDelete(roomToDelete?.RoomID)
                     }}
@@ -420,6 +421,7 @@ function Rooms() {
                 </Button>
 
                 <Button
+                    variant='outlined'
                     onClick={() => {
                         setIsDialogDeleteShow(false)
                     }}

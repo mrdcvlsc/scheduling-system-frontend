@@ -318,8 +318,8 @@ function CurriculumsTableList() {
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => handleCurriculumDelete(curriculumToDelete?.CurriculumID)}>Yes</Button>
-                <Button onClick={() => setIsDialogDeleteShow(false)}>No</Button>
+                <Button variant='outlined' onClick={() => handleCurriculumDelete(curriculumToDelete?.CurriculumID)}>Yes</Button>
+                <Button variant='outlined' onClick={() => setIsDialogDeleteShow(false)}>No</Button>
             </DialogActions>
         </Dialog>
 

@@ -292,8 +292,8 @@ function Subjects() {
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => handleSubjectDelete(subjectToDelete?.ID)}>Yes</Button>
-                <Button onClick={() => setIsDialogDeleteShow(false)}>No</Button>
+                <Button variant='outlined' onClick={() => handleSubjectDelete(subjectToDelete?.ID)}>Yes</Button>
+                <Button variant='outlined' onClick={() => setIsDialogDeleteShow(false)}>No</Button>
             </DialogActions>
         </Dialog>
 

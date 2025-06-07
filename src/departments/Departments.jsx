@@ -297,8 +297,8 @@ function Departments() {
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => handleDepartmentDelete(departmentToDelete?.DepartmentID)}>Yes</Button>
-                <Button onClick={() => setIsDialogDeleteShow(false)}>No</Button>
+                <Button variant='outlined' onClick={() => handleDepartmentDelete(departmentToDelete?.DepartmentID)}>Yes</Button>
+                <Button variant='outlined' onClick={() => setIsDialogDeleteShow(false)}>No</Button>
             </DialogActions>
         </Dialog>
 

@@ -343,6 +343,7 @@ function InstructorPage() {
 
             <DialogActions>
                 <Button
+                    variant="outlined"
                     onClick={() => {
                         handleInstructorDelete(instructorToDelete?.InstructorID)
                     }}
@@ -350,6 +351,7 @@ function InstructorPage() {
                 </Button>
 
                 <Button
+                    variant="outlined"
                     onClick={() => {
                         setIsDialogDeleteShow(false)
                         console.log("delete dialog 'No' click : red -", reducer)
