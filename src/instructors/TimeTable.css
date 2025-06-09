@@ -21,8 +21,9 @@
 
 .time-slot {
     background-color: #f1f4f8;
-    font-weight: bold;
-    font-size: 0.9em;
+    font-weight: normal;
+    font-size: 0.75em;
+    line-height: 1.4em;
     padding: 0.2em;
     border: thin solid #ddd;
     width: 14.2857%;
