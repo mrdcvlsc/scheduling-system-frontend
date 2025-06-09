@@ -27,6 +27,7 @@ import theme from "../components/Theme";
 import "../assets/SubjectColors.css";
 
 import { useReactToPrint } from "react-to-print";
+import { PrintHeader } from "../components/PrintHeader";
 
 const NUMBER_OF_GENERATIONS = 32
 
@@ -829,13 +830,7 @@ function TimeTable() {
                 <div ref={contentRef} style={{ padding: (isPrinting && Number.isInteger(Number.parseInt(sectionIndex, 10))) ? '1em' : '0px' }}>
 
                     {(isPrinting && Number.isInteger(Number.parseInt(sectionIndex, 10))) ? (<>
-                        <Box
-                            display={'flex'} justifyContent={'center'} alignItems={'center'}
-                            padding={1} marginBottom={2}
-                            bgcolor={(!isBlackAndWhite) ? 'green' : 'white'}
-                        >
-                            <Typography variant="h5" color={(!isBlackAndWhite) ? 'white' : 'black'}>Cavite Statue University - Silang Campus</Typography>
-                        </Box>
+                        <PrintHeader isBlackAndWhite={isBlackAndWhite}/>
 
                         <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} marginBottom={1}>
                             <Typography variant="h6">{

@@ -24,6 +24,7 @@ import { fetchInstructorResources } from "../js/instructors_v2"
 import { Loading, Popup, POPUP_ERROR_COLOR, POPUP_SUCCESS_COLOR, POPUP_WARNING_COLOR } from "../components/Loading";
 
 import "../assets/SubjectColors.css";
+import { PrintHeader } from "../components/PrintHeader";
 
 const SEMESTER_NAMES = [
     "1st Semester",
@@ -764,13 +765,7 @@ export default function InstructorDataView({
         <div ref={contentRef} style={{ padding: (isPrinting && Number.isInteger(Number.parseInt(semesterIndex, 10))) ? '1em' : '0px' }}>
 
             {(isPrinting && Number.isInteger(Number.parseInt(semesterIndex, 10))) ? (<>
-                <Box
-                    display={'flex'} justifyContent={'center'} alignItems={'center'}
-                    padding={1} marginBottom={2}
-                    bgcolor={(!isBlackAndWhite) ? 'green' : 'white'}
-                >
-                    <Typography variant="h5" color={(!isBlackAndWhite) ? 'white' : 'black'}>Cavite Statue University - Silang Campus</Typography>
-                </Box>
+                <PrintHeader isBlackAndWhite={isBlackAndWhite} />
 
                 <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} marginBottom={1}>
                     <Typography variant="h6">{
