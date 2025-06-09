@@ -15,7 +15,7 @@ import UNIVERSITY_LOGO from '../assets/cvsu-logo.png'
 export function PrintHeader({isBlackAndWhite}) {
     return (<Box display={'flex'} width={'100%'} justifyContent={'center'} gap={5}>
         <Box >
-            <img src={UNIVERSITY_LOGO} height={'100px'} style={{ filter: (isBlackAndWhite) ? 'grayscale(100%) contrast(120%)' : '' }} />
+            <img src={UNIVERSITY_LOGO} height={'90px'} style={{ filter: (isBlackAndWhite) ? 'grayscale(100%) contrast(120%)' : '' }} />
         </Box>
         <Box display={'flex'} flexDirection={'column'} alignItems={'center'}>
             <Typography lineHeight={'1.32rem'} variant="body1">Republic of the Philippines</Typography>
@@ -26,7 +26,7 @@ export function PrintHeader({isBlackAndWhite}) {
             <a href="mailto:cvsusilang@cvsu.edu.ph">cvsusilang@cvsu.edu.ph</a>
         </Box>
         <Box >
-            <img src={UNIVERSITY_LOGO} height={'100px'} style={{ visibility: 'hidden' }} />
+            <img src={UNIVERSITY_LOGO} height={'90px'} style={{ visibility: 'hidden' }} />
         </Box>
     </Box>);
 }
