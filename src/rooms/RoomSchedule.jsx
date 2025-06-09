@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, InputLabel, List, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { useState, useEffect, useRef } from "react";
 import { Loading, POPUP_ERROR_COLOR } from "../components/Loading";
 
@@ -126,6 +126,13 @@ export default function RoomSchedule({
         contentRef,
         documentTitle: `${roomToView.Name} - ${SEMESTER_NAMES[semesterIndex]} ${new Date().getFullYear()}`,
         onBeforePrint: () => {
+
+            localStorage.setItem('signatory-prepared-by', signatoryPreparedBy)
+            localStorage.setItem('position-prepared-by', positionPreparedBy)
+
+            localStorage.setItem('signatory-check-and-reviewed-by', signatoryCheckedAndReviewedBy)
+            localStorage.setItem('position-check-and-reviewed-by', positionCheckedAndReviewedBy)
+
             return new Promise((resolve) => {
                 promiseResolveRef.current = resolve;
                 setIsPrinting(true);
@@ -134,14 +141,20 @@ export default function RoomSchedule({
         onAfterPrint: () => {
             promiseResolveRef.current = null;
             setIsPrinting(false);
-        }
-        ,
+        },
     });
 
     const reactToPrintBlackAndWhiteFn = useReactToPrint({
         contentRef,
         documentTitle: `${roomToView.Name} - ${SEMESTER_NAMES[semesterIndex]} ${new Date().getFullYear()}`,
         onBeforePrint: () => {
+
+            localStorage.setItem('signatory-prepared-by', signatoryPreparedBy)
+            localStorage.setItem('position-prepared-by', positionPreparedBy)
+
+            localStorage.setItem('signatory-check-and-reviewed-by', signatoryCheckedAndReviewedBy)
+            localStorage.setItem('position-check-and-reviewed-by', positionCheckedAndReviewedBy)
+
             return new Promise((resolve) => {
                 promiseResolveRef.current = resolve;
                 setIsPrinting(true);
@@ -152,9 +165,32 @@ export default function RoomSchedule({
             promiseResolveRef.current = null;
             setIsPrinting(false);
             setIsBlackAndWhite(false);
-        }
-        ,
+        },
     });
+
+    const [signatoryPreparedBy, setSignatoryPreparedBy] = useState("")
+    const [positionPreparedBy, setPositionPreparedBy] = useState("")
+
+    const [signatoryCheckedAndReviewedBy, setSignatoryCheckedAndReviewedBy] = useState("")
+    const [positionCheckedAndReviewedBy, setPositionCheckedAndReviewedBy] = useState("")
+
+    const [isPrintDialogShow, setIsPrintDialogShow] = useState(false)
+
+    const handleOpenSignatoriesDialog = () => {
+        const signatory_prepared_by = localStorage.getItem('signatory-prepared-by')
+        const position_prepared_by = localStorage.getItem('position-prepared-by')
+
+        const signatory_checked_and_reviewed_by = localStorage.getItem('signatory-check-and-reviewed-by')
+        const position_checked_and_reviewed_by = localStorage.getItem('position-check-and-reviewed-by')
+
+        setSignatoryPreparedBy(signatory_prepared_by)
+        setPositionPreparedBy(position_prepared_by)
+
+        setSignatoryCheckedAndReviewedBy(signatory_checked_and_reviewed_by)
+        setPositionCheckedAndReviewedBy(position_checked_and_reviewed_by)
+
+        setIsPrintDialogShow(true)
+    }
 
     /////////////////////////////////////////////////////////////////////////////////
 
@@ -197,13 +233,17 @@ export default function RoomSchedule({
                 <PrintHeader isBlackAndWhite={isBlackAndWhite} />
 
                 <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} marginBottom={1}>
-                    <Typography variant="h6">{
-                        `${roomToView.Name} Schedule`
-                    }</Typography>
+                    <Box width={'30%'}><Typography variant="body1" fontWeight={'bold'} textAlign={'left'}>{
+                        `Room "${roomToView.Name}" Schedule`
+                    }</Typography></Box>
 
-                    <Typography variant="h6">{
-                        `${SEMESTER_NAMES[semesterIndex]} - ${new Date().getFullYear()}`
-                    }</Typography>
+                    <Box width={'40%'}><Typography variant="body1" flexWrap={true} fontWeight={'bold'} textAlign={'center'}>{
+                        selectedDepartment.Name
+                    }</Typography></Box>
+
+                    <Box width={'30%'}><Typography variant="body1" fontWeight={'bold'} textAlign={'right'}>{
+                        `${SEMESTER_NAMES[semesterIndex]}, ${new Date().getFullYear()}`
+                    }</Typography></Box>
                 </Box>
 
 
@@ -228,12 +268,13 @@ export default function RoomSchedule({
                 <tbody>
                     {generateTimeSlotRowLabels(startHour, timeSlotMinuteInterval, dailyTimeSlots).map((time_slot_label, time_slot_index) => (
                         <tr key={time_slot_index}>
-                            <td className="time-slot">{time_slot_label}</td>
+                            <td
+                                style={{ ...((isBlackAndWhite) ? { background: 'white', color: 'black' } : {}) }}
+                                className="time-slot"
+                            >{time_slot_label}</td>
                             {DAYS.map((_, day_index) => {
                                 let class_name = ""
                                 let selected = ""
-
-                                console.log('what is this then? = ', selectedSemesterSubject)
 
                                 const has_assigned_subject = selectedSemesterSubject.find(
                                     (subj) => subj.DayIdx === day_index && subj.TimeSlotIdx === time_slot_index
@@ -252,15 +293,7 @@ export default function RoomSchedule({
                                     );
                                 }
 
-                                // if (mode === "view") {
                                 class_name = "empty-slot"
-                                // } else {
-                                //     class_name = "available-slot"
-                                // }
-
-                                // if (selectedTimeSlots?.has(`${day_index}:${time_slot_index}`)) {
-                                //     selected = "selected-time-slot-cell"
-                                // }
 
                                 const is_occupied = selectedSemesterSubject.some((subject) => {
                                     const has_hit_subject_in_row = time_slot_index >= subject.TimeSlotIdx && time_slot_index < (subject.TimeSlotIdx + subject.SubjectTimeSlots);
@@ -285,14 +318,100 @@ export default function RoomSchedule({
                     ))}
                 </tbody>
             </table>
+
+            <Box display={'flex'} flexDirection={'row'} width={'100%'} justifyContent={'space-between'} paddingInline={5} paddingTop={1}>
+                {(signatoryPreparedBy) ? <Box display={'flex'} flexDirection={'column'}>
+                    <Typography variant="caption" marginBottom={3}>Prepared by:</Typography>
+                    <Typography variant="body1">{signatoryPreparedBy}</Typography>
+                    <Typography variant="caption">{positionPreparedBy}</Typography>
+                </Box> : null}
+
+                {(signatoryCheckedAndReviewedBy) ? <Box display={'flex'} flexDirection={'column'}>
+                    <Typography variant="caption" marginBottom={3}>Checked and Reviewed by:</Typography>
+                    <Typography variant="body1"> {signatoryCheckedAndReviewedBy}</Typography>
+                    <Typography variant="caption">{positionCheckedAndReviewedBy}</Typography>
+                </Box> : null}
+            </Box>
         </div>
 
         <div style={{ height: '0.8em' }} />
 
         <Box gap={1} display={(Number.isInteger(Number.parseInt(semesterIndex, 10))) ? 'flex' : 'none'} justifyContent={'center'}>
-            <Button variant="outlined" size="medium" onClick={reactToPrintFn} endIcon={<PrintIcon />}>Print Colored</Button>
-            <Button variant="outlined" size="medium" onClick={reactToPrintBlackAndWhiteFn} endIcon={<PrintIcon />}>Print Black & White</Button>
+            <Button variant="outlined" size="medium" onClick={handleOpenSignatoriesDialog} endIcon={<PrintIcon />}>Print</Button>
         </Box>
+
+        <Dialog
+            open={isPrintDialogShow}
+            onClose={() => {
+                setIsPrintDialogShow(false)
+            }}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+        >
+            <DialogTitle>Room Schedule Signatories</DialogTitle>
+
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                    Add signatories if needed to include in printing
+                </DialogContentText>
+
+                <Box display={'flex'} flexDirection={'column'} gap={2} marginTop={2}>
+                    <Box width={'100%'} display={'flex'} gap={1}>
+                        <TextField
+                            fullWidth
+                            label="Prepared By"
+                            autoFocus
+                            variant="standard"
+                            onChange={(e) => setSignatoryPreparedBy(e.target.value)}
+                            defaultValue={signatoryPreparedBy ? signatoryPreparedBy : ""}
+                        />
+                        <TextField
+                            label="Position"
+                            autoFocus
+                            variant="standard"
+                            onChange={(e) => setPositionPreparedBy(e.target.value)}
+                            defaultValue={positionPreparedBy ? positionPreparedBy : ""}
+                        />
+                    </Box>
+
+                    <Box width={'100%'} display={'flex'} gap={1}>
+                        <TextField
+                            fullWidth
+                            label="Check and Reviewed By"
+                            autoFocus
+                            variant="standard"
+                            onChange={(e) => setSignatoryCheckedAndReviewedBy(e.target.value)}
+                            defaultValue={signatoryCheckedAndReviewedBy ? signatoryCheckedAndReviewedBy : ""}
+                        />
+                        <TextField
+                            label="Position"
+                            autoFocus
+                            variant="standard"
+                            onChange={(e) => setPositionCheckedAndReviewedBy(e.target.value)}
+                            defaultValue={positionCheckedAndReviewedBy ? positionCheckedAndReviewedBy : ""}
+                        />
+                    </Box>
+                </Box>
+            </DialogContent>
+
+            <DialogActions>
+                <Button variant="outlined" size="medium" onClick={reactToPrintFn} endIcon={<PrintIcon />}>Print Colored</Button>
+                <Button variant="outlined" size="medium" onClick={reactToPrintBlackAndWhiteFn} endIcon={<PrintIcon />}>Print Black & White</Button>
+                <Button
+                    variant="outlined" size="medium"
+                    onClick={() => {
+                        setIsPrintDialogShow(false)
+                        setSignatoryPreparedBy("")
+                        setPositionPreparedBy("")
+                        setSignatoryCheckedAndReviewedBy("")
+                        setPositionCheckedAndReviewedBy("")
+                    }}
+                >
+                    Cancel
+                </Button>
+            </DialogActions>
+
+        </Dialog>
 
         <div style={{ height: '3.25em' }} />
     </>)
