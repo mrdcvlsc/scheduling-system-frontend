@@ -830,7 +830,7 @@ function TimeTable() {
                 <div ref={contentRef} style={{ padding: (isPrinting && Number.isInteger(Number.parseInt(sectionIndex, 10))) ? '1em' : '0px' }}>
 
                     {(isPrinting && Number.isInteger(Number.parseInt(sectionIndex, 10))) ? (<>
-                        <PrintHeader isBlackAndWhite={isBlackAndWhite}/>
+                        <PrintHeader isBlackAndWhite={isBlackAndWhite} />
 
                         <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} marginBottom={1}>
                             <Typography variant="h6">{
@@ -863,7 +863,10 @@ function TimeTable() {
                         <tbody>
                             {generateTimeSlotRowLabels(startHour, timeSlotMinuteInterval, dailyTimeSlots).map((time_slot_label, row_idx) => (
                                 <tr key={row_idx}>
-                                    <td className="time-slot">{time_slot_label}</td>
+                                    <td
+                                        style={{ ...((isBlackAndWhite) ? { background: 'white', color: 'black' } : {}) }}
+                                        className="time-slot"
+                                    >{time_slot_label}</td>
                                     {DAYS.map((_, day_idx) => {
                                         const has_assigned_subject = classAssignedSubjects.find(
                                             (subj) => subj.DayIdx === day_idx && subj.TimeSlotIdx === row_idx

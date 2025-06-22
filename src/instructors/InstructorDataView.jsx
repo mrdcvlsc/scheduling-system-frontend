@@ -798,7 +798,10 @@ export default function InstructorDataView({
                 <tbody>
                     {generateTimeSlotRowLabels(startHour, timeSlotMinuteInterval, dailyTimeSlots).map((time_slot_label, time_slot_index) => (
                         <tr key={time_slot_index}>
-                            <td className="time-slot">{time_slot_label}</td>
+                            <td
+                                style={{ ...((isBlackAndWhite) ? { background: 'white', color: 'black' } : {}) }}
+                                className="time-slot"
+                            >{time_slot_label}</td>
                             {DAYS.map((_, day_index) => {
                                 let class_name = ""
                                 let selected = ""
