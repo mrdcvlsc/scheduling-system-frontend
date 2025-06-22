@@ -126,15 +126,7 @@ export default function RoomSchedule({
         contentRef,
         documentTitle: `${roomToView.Name} - ${SEMESTER_NAMES[semesterIndex]} ${new Date().getFullYear()}`,
         onBeforePrint: () => {
-
-            localStorage.setItem('academic-year', academicYear)
-
-            localStorage.setItem('signatory-prepared-by', signatoryPreparedBy)
-            localStorage.setItem('position-prepared-by', positionPreparedBy)
-
-            localStorage.setItem('signatory-check-and-reviewed-by', signatoryCheckedAndReviewedBy)
-            localStorage.setItem('position-check-and-reviewed-by', positionCheckedAndReviewedBy)
-
+            saveAddedOptionalPrintingValues()
             return new Promise((resolve) => {
                 promiseResolveRef.current = resolve;
                 setIsPrinting(true);
@@ -150,15 +142,7 @@ export default function RoomSchedule({
         contentRef,
         documentTitle: `${roomToView.Name} - ${SEMESTER_NAMES[semesterIndex]} ${new Date().getFullYear()}`,
         onBeforePrint: () => {
-
-            localStorage.setItem('academic-year', academicYear)
-
-            localStorage.setItem('signatory-prepared-by', signatoryPreparedBy)
-            localStorage.setItem('position-prepared-by', positionPreparedBy)
-
-            localStorage.setItem('signatory-check-and-reviewed-by', signatoryCheckedAndReviewedBy)
-            localStorage.setItem('position-check-and-reviewed-by', positionCheckedAndReviewedBy)
-
+            saveAddedOptionalPrintingValues()
             return new Promise((resolve) => {
                 promiseResolveRef.current = resolve;
                 setIsPrinting(true);
@@ -201,6 +185,16 @@ export default function RoomSchedule({
         setPositionCheckedAndReviewedBy(position_checked_and_reviewed_by)
 
         setIsPrintDialogShow(true)
+    }
+
+    const saveAddedOptionalPrintingValues = () => {
+        localStorage.setItem('academic-year', academicYear)
+
+        localStorage.setItem('signatory-prepared-by', signatoryPreparedBy)
+        localStorage.setItem('position-prepared-by', positionPreparedBy)
+
+        localStorage.setItem('signatory-check-and-reviewed-by', signatoryCheckedAndReviewedBy)
+        localStorage.setItem('position-check-and-reviewed-by', positionCheckedAndReviewedBy)
     }
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -246,7 +240,7 @@ export default function RoomSchedule({
                 <Box display={'flex'} flexDirection={'column'} justifyContent={'center'} padding={1} gap={0}>
                     <Typography lineHeight={1} variant="body1" flexWrap={true} textAlign={'center'}>{selectedDepartment.Name?.toUpperCase()}</Typography>
                     <Typography lineHeight={1} variant="body1" flexWrap={true} fontWeight={'bold'} textAlign={'center'}>Room Schedule</Typography>
-                    <Typography lineHeight={1} variant="body1" textAlign={'center'}>{`${SEMESTER_NAMES[semesterIndex]}${academicYear ? (', ' + academicYear) : '' }`}</Typography>
+                    <Typography lineHeight={1} variant="body1" textAlign={'center'}>{`${SEMESTER_NAMES[semesterIndex]}${academicYear ? (', ' + academicYear) : ''}`}</Typography>
                 </Box>
 
                 <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} marginBottom={0.5}>

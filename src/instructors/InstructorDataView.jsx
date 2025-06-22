@@ -14,7 +14,7 @@ import { InstructorTimeSlotBitMap } from "../js/instructor-time-slot-bit-map"
 import { useReactToPrint } from "react-to-print";
 import PrintIcon from '@mui/icons-material/Print';
 
-import { Box, Typography, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Box, Typography, TextField, FormControl, InputLabel, Select, MenuItem, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from "@mui/material";
 import { generateTimeSlotRowLabels } from "../js/week-time-table-grid-functions";
 import { ContextMenu, ContextMenuItem, Position, useContextMenuState } from "../components/ContextMenu";
 
@@ -31,6 +31,23 @@ const SEMESTER_NAMES = [
     "2nd Semester",
     "Mid-year",
 ]
+
+function get_total_contact_hours(subjects) {
+    let total_contact_hours = 0;
+    if (Array.isArray(subjects) && Number.isInteger(subjects?.SubjectTimeSlots)) {
+        for (let i = 0; i < subjects.length; i++) {
+            total_contact_hours += subjects.SubjectTimeSlots
+        }
+    }
+
+    return total_contact_hours
+}
+
+function to_title_case(str = '') {
+    return str
+        .toLowerCase()
+        .replace(/\b\w/g, char => char.toUpperCase());
+}
 
 export default function InstructorDataView({
     selectedDepartment,
@@ -425,6 +442,7 @@ export default function InstructorDataView({
         contentRef,
         documentTitle: `${selectedInstructor.FirstName} ${selectedInstructor.MiddleInitial} ${selectedInstructor.LastName} - ${SEMESTER_NAMES[semesterIndex]} ${new Date().getFullYear()}`,
         onBeforePrint: () => {
+            saveAddedOptionalPrintingValues()
             return new Promise((resolve) => {
                 promiseResolveRef.current = resolve;
                 setIsPrinting(true);
@@ -433,14 +451,14 @@ export default function InstructorDataView({
         onAfterPrint: () => {
             promiseResolveRef.current = null;
             setIsPrinting(false);
-        }
-        ,
+        },
     });
 
     const reactToPrintBlackAndWhiteFn = useReactToPrint({
         contentRef,
         documentTitle: `${selectedInstructor.FirstName} ${selectedInstructor.MiddleInitial} ${selectedInstructor.LastName} - ${SEMESTER_NAMES[semesterIndex]} ${new Date().getFullYear()}`,
         onBeforePrint: () => {
+            saveAddedOptionalPrintingValues()
             return new Promise((resolve) => {
                 promiseResolveRef.current = resolve;
                 setIsPrinting(true);
@@ -451,9 +469,78 @@ export default function InstructorDataView({
             promiseResolveRef.current = null;
             setIsPrinting(false);
             setIsBlackAndWhite(false);
-        }
-        ,
+        },
     });
+
+    const [academicYear, setAcademicYear] = useState("")
+    const [highestEducationalAttainment, setHighestEducationalAttainment] = useState("")
+    const [numbersOfPreperation, setNumbersOfPreperation] = useState("")
+
+    const [consultation, setConsultation] = useState("")
+    const [designation, setDesignation] = useState("")
+    const [research, setResearch] = useState("")
+    const [extension, setExtension] = useState("")
+
+    const [signatoryConforme, setSignatoryConforme] = useState("")
+    const [positionConforme, setPositionConforme] = useState("")
+
+    const [signatoryRecommendingApproval, setSignatoryRecommendingApproval] = useState("")
+    const [positionRecommendingApproval, setPositionRecommendingApproval] = useState("")
+
+    const [signatoryReviewedBy, setSignatoryReviewedBy] = useState("")
+    const [positionReviewedBy, setPositionReviewedBy] = useState("")
+
+    const [signatoryApproved, setSignatoryApproved] = useState("")
+    const [positionApproved, setPositionApproved] = useState("")
+
+    const [isPrintDialogShow, setIsPrintDialogShow] = useState(false)
+
+    const handleOpenSignatoriesDialog = () => {
+
+        const academic_year = localStorage.getItem('academic-year')
+
+        const position_conforme = localStorage.getItem('position-conforme')
+
+        const signatory_recommending_approval = localStorage.getItem('signatory-recommending-approval')
+        const position_recommending_approval = localStorage.getItem('position-recommending-approval')
+
+        const signatory_reviewed_by = localStorage.getItem('signatory-reviewed-by')
+        const position_reviewed_by = localStorage.getItem('position-reviewed-by')
+
+        const signatory_approved = localStorage.getItem('signatory-approved')
+        const position_approved = localStorage.getItem('position-approved')
+
+        setAcademicYear(academic_year)
+
+        setSignatoryConforme(to_title_case(`${selectedInstructor.FirstName} ${selectedInstructor.MiddleInitial}. ${selectedInstructor.LastName}`))
+        setPositionConforme(position_conforme)
+
+        setSignatoryRecommendingApproval(signatory_recommending_approval)
+        setPositionRecommendingApproval(position_recommending_approval)
+
+        setSignatoryReviewedBy(signatory_reviewed_by)
+        setPositionReviewedBy(position_reviewed_by)
+
+        setSignatoryApproved(signatory_approved)
+        setPositionApproved(position_approved)
+
+        setIsPrintDialogShow(true)
+    }
+
+    const saveAddedOptionalPrintingValues = () => {
+        localStorage.setItem('academic-year', academicYear)
+
+        localStorage.setItem('position-conforme', positionConforme)
+
+        localStorage.setItem('signatory-recommending-approval', signatoryRecommendingApproval)
+        localStorage.setItem('position-recommending-approval', positionRecommendingApproval)
+
+        localStorage.setItem('signatory-reviewed-by', signatoryReviewedBy)
+        localStorage.setItem('position-reviewed-by', positionReviewedBy)
+
+        localStorage.setItem('signatory-approved', signatoryApproved)
+        localStorage.setItem('position-approved', positionApproved)
+    }
 
     /////////////////////////////////////////////////////////////////////////////////
 
@@ -767,17 +854,17 @@ export default function InstructorDataView({
             {(isPrinting && Number.isInteger(Number.parseInt(semesterIndex, 10))) ? (<>
                 <PrintHeader isBlackAndWhite={isBlackAndWhite} />
 
-                <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} marginBottom={1}>
-                    <Typography variant="h6">{
-                        `${selectedInstructor.FirstName} ${selectedInstructor.MiddleInitial} ${selectedInstructor.LastName}`
-                    }</Typography>
-
-                    <Typography variant="h6">{
-                        `${SEMESTER_NAMES[semesterIndex]} ${new Date().getFullYear()}`
-                    }</Typography>
+                <Box display={'flex'} flexDirection={'column'} justifyContent={'center'} padding={1} gap={0}>
+                    <Typography lineHeight={1} variant="body1" flexWrap={true} textAlign={'center'}>{selectedDepartment.Name?.toUpperCase()}</Typography>
+                    <Typography lineHeight={1} variant="body1" flexWrap={true} fontWeight={'bold'} textAlign={'center'}>Faculty Class Schedule</Typography>
+                    <Typography lineHeight={1} variant="body1" textAlign={'center'}>{`${SEMESTER_NAMES[semesterIndex]}${academicYear ? (', ' + academicYear) : ''}`}</Typography>
                 </Box>
 
-
+                <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} marginBottom={1}>
+                    <Typography variant="body1">{
+                        `Name: ${selectedInstructor.FirstName} ${selectedInstructor.MiddleInitial} ${selectedInstructor.LastName}`
+                    }</Typography>
+                </Box>
             </>) : null}
 
             <table className="time-table">
@@ -931,6 +1018,32 @@ export default function InstructorDataView({
                     ))}
                 </tbody>
             </table>
+
+            <Box display={'flex'} gap={3} flexDirection={'row'} flexWrap="wrap" width={'100%'} justifyContent={'space-between'} paddingInline={5} paddingTop={3}>
+                {(signatoryConforme) ? <Box display={'flex'} minWidth={1 / 3} flexDirection={'column'}>
+                    <Typography variant="caption" marginBottom={3}>Conforme:</Typography>
+                    <Typography variant="body1">{signatoryConforme}</Typography>
+                    <Typography variant="caption">{positionConforme}</Typography>
+                </Box> : null}
+
+                {(signatoryRecommendingApproval) ? <Box display={'flex'} minWidth={1 / 3} flexDirection={'column'}>
+                    <Typography variant="caption" marginBottom={3}>Recommending Approval:</Typography>
+                    <Typography variant="body1"> {signatoryRecommendingApproval}</Typography>
+                    <Typography variant="caption">{positionRecommendingApproval}</Typography>
+                </Box> : null}
+
+                {(signatoryReviewedBy) ? <Box display={'flex'} minWidth={1 / 3} flexDirection={'column'}>
+                    <Typography variant="caption" marginBottom={3}>Reviewed by:</Typography>
+                    <Typography variant="body1"> {signatoryReviewedBy}</Typography>
+                    <Typography variant="caption">{positionReviewedBy}</Typography>
+                </Box> : null}
+
+                {(signatoryApproved) ? <Box display={'flex'} minWidth={1 / 3} flexDirection={'column'}>
+                    <Typography variant="caption" marginBottom={3}>Approved:</Typography>
+                    <Typography variant="body1"> {signatoryApproved}</Typography>
+                    <Typography variant="caption">{positionApproved}</Typography>
+                </Box> : null}
+            </Box>
         </div>
 
         {(!semesterIndex) ?
@@ -938,10 +1051,165 @@ export default function InstructorDataView({
             null
         }
 
-        <Box gap={1} display={(Number.isInteger(Number.parseInt(semesterIndex, 10))) ? 'flex' : 'none'} justifyContent={'center'}>
-            <Button variant="outlined" size="medium" onClick={reactToPrintFn} endIcon={<PrintIcon />}>Print Colored</Button>
-            <Button variant="outlined" size="medium" onClick={reactToPrintBlackAndWhiteFn} endIcon={<PrintIcon />}>Print Black & White</Button>
-        </Box>
+        {mode === "view" ? <Box gap={1} display={(Number.isInteger(Number.parseInt(semesterIndex, 10))) ? 'flex' : 'none'} justifyContent={'center'}>
+            <Button variant="outlined" size="medium" onClick={handleOpenSignatoriesDialog} endIcon={<PrintIcon />}>Print</Button>
+        </Box> : null}
+
+        <Dialog
+            open={isPrintDialogShow}
+            onClose={() => {
+                setIsPrintDialogShow(false)
+            }}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+        >
+            <DialogTitle>Faculty Schedule Signatories</DialogTitle>
+
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                    Add signatories if needed to include in printing
+                </DialogContentText>
+
+                <Box display={'flex'} flexDirection={'column'} gap={2} marginTop={2}>
+
+                    <Box width={'100%'} display={'flex'} gap={1}>
+                        <TextField
+                            fullWidth
+                            label="S.Y. or A.Y. - 20XX - 20YY"
+                            autoFocus
+                            variant="standard"
+                            onChange={(e) => setAcademicYear(e.target.value)}
+                            defaultValue={academicYear ? academicYear : ""}
+                        />
+                    </Box>
+
+                    {/* 
+                    <Box width={'100%'} display={'flex'} gap={1}>
+                        <TextField
+                            fullWidth
+                            label="Highest Educational Attainment"
+                            autoFocus
+                            variant="standard"
+                            onChange={(e) => setHighestEducationalAttainment(e.target.value)}
+                            defaultValue={highestEducationalAttainment ? highestEducationalAttainment : ""}
+                        />
+                    </Box>
+
+                    <Box width={'100%'} display={'flex'} gap={1}>
+                        <TextField
+                            type="number"
+                            fullWidth
+                            label="Number of Preperation(s)"
+                            autoFocus
+                            variant="standard"
+                            onChange={(e) => setNumbersOfPreperation(e.target.value)}
+                            defaultValue={numbersOfPreperation ? numbersOfPreperation : ""}
+                        />
+                    </Box> */}
+
+                    <Box width={'100%'} display={'flex'} gap={1}>
+                        <TextField
+                            fullWidth
+                            label="Conforme"
+                            autoFocus
+                            variant="standard"
+                            onChange={(e) => setSignatoryConforme(e.target.value)}
+                            defaultValue={signatoryConforme ? signatoryConforme : ""}
+                        />
+                        <TextField
+                            label="Position"
+                            autoFocus
+                            variant="standard"
+                            onChange={(e) => setPositionConforme(e.target.value)}
+                            defaultValue={positionConforme ? positionConforme : ""}
+                        />
+                    </Box>
+
+                    <Box width={'100%'} display={'flex'} gap={1}>
+                        <TextField
+                            fullWidth
+                            label="Recommending Approval"
+                            autoFocus
+                            variant="standard"
+                            onChange={(e) => setSignatoryRecommendingApproval(e.target.value)}
+                            defaultValue={signatoryRecommendingApproval ? signatoryRecommendingApproval : ""}
+                        />
+                        <TextField
+                            label="Position"
+                            autoFocus
+                            variant="standard"
+                            onChange={(e) => setPositionRecommendingApproval(e.target.value)}
+                            defaultValue={positionRecommendingApproval ? positionRecommendingApproval : ""}
+                        />
+                    </Box>
+
+                    <Box width={'100%'} display={'flex'} gap={1}>
+                        <TextField
+                            fullWidth
+                            label="Reviewed by"
+                            autoFocus
+                            variant="standard"
+                            onChange={(e) => setSignatoryReviewedBy(e.target.value)}
+                            defaultValue={signatoryReviewedBy ? signatoryReviewedBy : ""}
+                        />
+                        <TextField
+                            label="Position"
+                            autoFocus
+                            variant="standard"
+                            onChange={(e) => setPositionReviewedBy(e.target.value)}
+                            defaultValue={positionReviewedBy ? positionReviewedBy : ""}
+                        />
+                    </Box>
+
+                    <Box width={'100%'} display={'flex'} gap={1}>
+                        <TextField
+                            fullWidth
+                            label="Approved"
+                            autoFocus
+                            variant="standard"
+                            onChange={(e) => setSignatoryApproved(e.target.value)}
+                            defaultValue={signatoryApproved ? signatoryApproved : ""}
+                        />
+                        <TextField
+                            label="Position"
+                            autoFocus
+                            variant="standard"
+                            onChange={(e) => setPositionApproved(e.target.value)}
+                            defaultValue={positionApproved ? positionApproved : ""}
+                        />
+                    </Box>
+                </Box>
+            </DialogContent>
+
+            <DialogActions>
+                <Button variant="outlined" size="medium" onClick={reactToPrintFn} endIcon={<PrintIcon />}>Print Colored</Button>
+                <Button variant="outlined" size="medium" onClick={reactToPrintBlackAndWhiteFn} endIcon={<PrintIcon />}>Print Black & White</Button>
+                <Button
+                    variant="outlined" size="medium"
+                    onClick={() => {
+                        setIsPrintDialogShow(false)
+
+                        setConsultation("")
+                        setDesignation("")
+                        setResearch("")
+                        setExtension("")
+
+                        setSignatoryConforme("")
+                        setSignatoryRecommendingApproval("")
+                        setSignatoryReviewedBy("")
+                        setSignatoryApproved("")
+
+                        setPositionConforme("")
+                        setPositionRecommendingApproval("")
+                        setPositionReviewedBy("")
+                        setPositionApproved("")
+                    }}
+                >
+                    Cancel
+                </Button>
+            </DialogActions>
+
+        </Dialog>
 
         <div style={{ height: '3.25em' }} />
     </>)
