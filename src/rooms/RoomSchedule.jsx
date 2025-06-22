@@ -127,6 +127,8 @@ export default function RoomSchedule({
         documentTitle: `${roomToView.Name} - ${SEMESTER_NAMES[semesterIndex]} ${new Date().getFullYear()}`,
         onBeforePrint: () => {
 
+            localStorage.setItem('academic-year', academicYear)
+
             localStorage.setItem('signatory-prepared-by', signatoryPreparedBy)
             localStorage.setItem('position-prepared-by', positionPreparedBy)
 
@@ -149,6 +151,8 @@ export default function RoomSchedule({
         documentTitle: `${roomToView.Name} - ${SEMESTER_NAMES[semesterIndex]} ${new Date().getFullYear()}`,
         onBeforePrint: () => {
 
+            localStorage.setItem('academic-year', academicYear)
+
             localStorage.setItem('signatory-prepared-by', signatoryPreparedBy)
             localStorage.setItem('position-prepared-by', positionPreparedBy)
 
@@ -168,6 +172,8 @@ export default function RoomSchedule({
         },
     });
 
+    const [academicYear, setAcademicYear] = useState("")
+
     const [signatoryPreparedBy, setSignatoryPreparedBy] = useState("")
     const [positionPreparedBy, setPositionPreparedBy] = useState("")
 
@@ -177,11 +183,16 @@ export default function RoomSchedule({
     const [isPrintDialogShow, setIsPrintDialogShow] = useState(false)
 
     const handleOpenSignatoriesDialog = () => {
+
+        const academic_year = localStorage.getItem('academic-year')
+
         const signatory_prepared_by = localStorage.getItem('signatory-prepared-by')
         const position_prepared_by = localStorage.getItem('position-prepared-by')
 
         const signatory_checked_and_reviewed_by = localStorage.getItem('signatory-check-and-reviewed-by')
         const position_checked_and_reviewed_by = localStorage.getItem('position-check-and-reviewed-by')
+
+        setAcademicYear(academic_year)
 
         setSignatoryPreparedBy(signatory_prepared_by)
         setPositionPreparedBy(position_prepared_by)
@@ -232,21 +243,17 @@ export default function RoomSchedule({
             {(isPrinting && Number.isInteger(Number.parseInt(semesterIndex, 10))) ? (<>
                 <PrintHeader isBlackAndWhite={isBlackAndWhite} />
 
-                <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} marginBottom={1}>
-                    <Box width={'30%'}><Typography variant="body1" fontWeight={'bold'} textAlign={'left'}>{
-                        `Room "${roomToView.Name}" Schedule`
-                    }</Typography></Box>
-
-                    <Box width={'40%'}><Typography variant="body1" flexWrap={true} fontWeight={'bold'} textAlign={'center'}>{
-                        selectedDepartment.Name
-                    }</Typography></Box>
-
-                    <Box width={'30%'}><Typography variant="body1" fontWeight={'bold'} textAlign={'right'}>{
-                        `${SEMESTER_NAMES[semesterIndex]}, ${new Date().getFullYear()}`
-                    }</Typography></Box>
+                <Box display={'flex'} flexDirection={'column'} justifyContent={'center'} padding={1} gap={0}>
+                    <Typography lineHeight={1} variant="body1" flexWrap={true} textAlign={'center'}>{selectedDepartment.Name?.toUpperCase()}</Typography>
+                    <Typography lineHeight={1} variant="body1" flexWrap={true} fontWeight={'bold'} textAlign={'center'}>Room Schedule</Typography>
+                    <Typography lineHeight={1} variant="body1" textAlign={'center'}>{`${SEMESTER_NAMES[semesterIndex]}${academicYear ? (', ' + academicYear) : '' }`}</Typography>
                 </Box>
 
-
+                <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} marginBottom={0.5}>
+                    <Box><Typography variant="body1" fontWeight={'bold'} textAlign={'left'}>{
+                        `Room: ${roomToView.Name}`
+                    }</Typography></Box>
+                </Box>
             </>) : null}
 
 
@@ -319,7 +326,7 @@ export default function RoomSchedule({
                 </tbody>
             </table>
 
-            <Box display={'flex'} flexDirection={'row'} width={'100%'} justifyContent={'space-between'} paddingInline={5} paddingTop={1}>
+            <Box display={'flex'} flexDirection={'row'} width={'100%'} justifyContent={'space-between'} paddingInline={5} paddingTop={3}>
                 {(signatoryPreparedBy) ? <Box display={'flex'} flexDirection={'column'}>
                     <Typography variant="caption" marginBottom={3}>Prepared by:</Typography>
                     <Typography variant="body1">{signatoryPreparedBy}</Typography>
@@ -356,6 +363,18 @@ export default function RoomSchedule({
                 </DialogContentText>
 
                 <Box display={'flex'} flexDirection={'column'} gap={2} marginTop={2}>
+
+                    <Box width={'100%'} display={'flex'} gap={1}>
+                        <TextField
+                            fullWidth
+                            label="S.Y. or A.Y. - 20XX - 20YY"
+                            autoFocus
+                            variant="standard"
+                            onChange={(e) => setAcademicYear(e.target.value)}
+                            defaultValue={academicYear ? academicYear : ""}
+                        />
+                    </Box>
+
                     <Box width={'100%'} display={'flex'} gap={1}>
                         <TextField
                             fullWidth
