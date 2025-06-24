@@ -854,7 +854,7 @@ export default function InstructorDataView({
             {(isPrinting && Number.isInteger(Number.parseInt(semesterIndex, 10))) ? (<>
                 <PrintHeader isBlackAndWhite={isBlackAndWhite} />
 
-                <Box display={'flex'} flexDirection={'column'} justifyContent={'center'} padding={1} gap={0}>
+                <Box display={'flex'} flexDirection={'column'} justifyContent={'center'} padding={1} gap={0} marginTop={1}>
                     <Typography lineHeight={1} variant="body1" flexWrap={true} textAlign={'center'}>{selectedDepartment.Name?.toUpperCase()}</Typography>
                     <Typography lineHeight={1} variant="body1" flexWrap={true} fontWeight={'bold'} textAlign={'center'}>Faculty Class Schedule</Typography>
                     <Typography lineHeight={1} variant="body1" textAlign={'center'}>{`${SEMESTER_NAMES[semesterIndex]}${academicYear ? (', ' + academicYear) : ''}`}</Typography>
